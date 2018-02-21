@@ -1,0 +1,22 @@
+# Use C++11 if available
+CXX_STD=CXX11
+
+UNAME := $(shell uname)
+
+PKG_LIBS = ./easywsclient/easywsclient.o
+ifeq ($(UNAME), SunOS)
+PKG_LIBS += -lkstat -lsendfile -lsocket
+endif
+ifeq ($(UNAME), FreeBSD)
+PKG_LIBS += -lkvm
+endif
+ifeq ($(UNAME), OpenBSD)
+PKG_LIBS += -lkvm
+endif
+
+PKG_CPPFLAGS = -I./easywsclient $(C_VISIBILITY)
+
+$(SHLIB): easywsclient/easywsclient.o
+
+easywsclient/easywsclient.o: easywsclient/easywsclient.cpp easywsclient/easywsclient.hpp
+#$(CC) -I easywsclient/ -o easywsclient/easywsclient.o easywsclient/easywsclient.cpp

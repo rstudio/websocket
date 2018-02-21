@@ -5,3 +5,7 @@ timesTwo <- function(x) {
     .Call(`_websocketClient_timesTwo`, x)
 }
 
+wsCreate <- function(url) {
+    .Call(`_websocketClient_wsCreate`, url)
+}
+
