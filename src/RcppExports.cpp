@@ -5,19 +5,8 @@
 
 using namespace Rcpp;
 
-// timesTwo
-NumericVector timesTwo(NumericVector x);
-RcppExport SEXP _websocketClient_timesTwo(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(timesTwo(x));
-    return rcpp_result_gen;
-END_RCPP
-}
 // wsCreate
-NumericVector wsCreate(std::string url);
+XPtr<WebSocket> wsCreate(std::string url);
 RcppExport SEXP _websocketClient_wsCreate(SEXP urlSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -27,10 +16,43 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// wsSend
+void wsSend(XPtr<WebSocket> ws_xptr, std::string msg);
+RcppExport SEXP _websocketClient_wsSend(SEXP ws_xptrSEXP, SEXP msgSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<WebSocket> >::type ws_xptr(ws_xptrSEXP);
+    Rcpp::traits::input_parameter< std::string >::type msg(msgSEXP);
+    wsSend(ws_xptr, msg);
+    return R_NilValue;
+END_RCPP
+}
+// wsPoll
+void wsPoll(XPtr<WebSocket> ws_xptr);
+RcppExport SEXP _websocketClient_wsPoll(SEXP ws_xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<WebSocket> >::type ws_xptr(ws_xptrSEXP);
+    wsPoll(ws_xptr);
+    return R_NilValue;
+END_RCPP
+}
+// wsClose
+void wsClose(XPtr<WebSocket> ws_xptr);
+RcppExport SEXP _websocketClient_wsClose(SEXP ws_xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<WebSocket> >::type ws_xptr(ws_xptrSEXP);
+    wsClose(ws_xptr);
+    return R_NilValue;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_websocketClient_timesTwo", (DL_FUNC) &_websocketClient_timesTwo, 1},
     {"_websocketClient_wsCreate", (DL_FUNC) &_websocketClient_wsCreate, 1},
+    {"_websocketClient_wsSend", (DL_FUNC) &_websocketClient_wsSend, 2},
+    {"_websocketClient_wsPoll", (DL_FUNC) &_websocketClient_wsPoll, 1},
+    {"_websocketClient_wsClose", (DL_FUNC) &_websocketClient_wsClose, 1},
     {NULL, NULL, 0}
 };
 
