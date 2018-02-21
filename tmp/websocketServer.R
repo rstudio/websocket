@@ -1,6 +1,7 @@
 # A little example server that Winston made for testing.
 
 library(httpuv)
+cat("Starting server on port 8080...\n")
 startServer("0.0.0.0", 8080,
   list(
     onWSOpen = function(ws) {
