@@ -20,7 +20,7 @@ brew install automake libtool
 
 Next run `remotes::install_github("rstudio/httpuv")`
 
-Then at an `R` prompt source the server with `source("tmp/websocketServer.R")`
+Then run `R -e 'source("tmp/websocketServer.R");httpuv::service(Inf)'`
 
 ## Usage examples
 
