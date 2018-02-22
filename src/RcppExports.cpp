@@ -6,7 +6,7 @@
 using namespace Rcpp;
 
 // wsCreate
-XPtr<WebSocket> wsCreate(std::string url);
+SEXP wsCreate(std::string url);
 RcppExport SEXP _websocketClient_wsCreate(SEXP urlSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -17,32 +17,32 @@ BEGIN_RCPP
 END_RCPP
 }
 // wsSend
-void wsSend(XPtr<WebSocket> ws_xptr, std::string msg);
+void wsSend(SEXP ws_xptr, std::string msg);
 RcppExport SEXP _websocketClient_wsSend(SEXP ws_xptrSEXP, SEXP msgSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtr<WebSocket> >::type ws_xptr(ws_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ws_xptr(ws_xptrSEXP);
     Rcpp::traits::input_parameter< std::string >::type msg(msgSEXP);
     wsSend(ws_xptr, msg);
     return R_NilValue;
 END_RCPP
 }
 // wsPoll
-void wsPoll(XPtr<WebSocket> ws_xptr);
+void wsPoll(SEXP ws_xptr);
 RcppExport SEXP _websocketClient_wsPoll(SEXP ws_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtr<WebSocket> >::type ws_xptr(ws_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ws_xptr(ws_xptrSEXP);
     wsPoll(ws_xptr);
     return R_NilValue;
 END_RCPP
 }
 // wsClose
-void wsClose(XPtr<WebSocket> ws_xptr);
+void wsClose(SEXP ws_xptr);
 RcppExport SEXP _websocketClient_wsClose(SEXP ws_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtr<WebSocket> >::type ws_xptr(ws_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ws_xptr(ws_xptrSEXP);
     wsClose(ws_xptr);
     return R_NilValue;
 END_RCPP

@@ -1,30 +1,36 @@
 #include <Rcpp.h>
 #include <easywsclient.hpp>
 using namespace Rcpp;
-using namespace easywsclient;
+//using namespace easywsclient;
 using easywsclient::WebSocket;
 
 // [[Rcpp::export]]
-XPtr<WebSocket> wsCreate(std::string url) {
+SEXP wsCreate(std::string url) {
   WebSocket *ws = WebSocket::from_url(url);
-  return XPtr<WebSocket>(ws);
+  SEXP ws_xptr = PROTECT(R_MakeExternalPtr(ws, R_NilValue, R_NilValue));
+  UNPROTECT(1);
+  return ws_xptr;
+}
+
+WebSocket* xptrGetWs(SEXP ws_xptr) {
+  if (TYPEOF(ws_xptr) != EXTPTRSXP) {
+    throw Rcpp::exception("Expected external pointer.");
+  }
+  return reinterpret_cast<WebSocket*>(R_ExternalPtrAddr(ws_xptr));
 }
 
 // [[Rcpp::export]]
-void wsSend(XPtr<WebSocket> ws_xptr, std::string msg) {
-  WebSocket *ws = ws_xptr.get();
-  ws->send(msg);
+void wsSend(SEXP ws_xptr, std::string msg) {
+  xptrGetWs(ws_xptr)->send(msg);
 }
 
 // [[Rcpp::export]]
-void wsPoll(XPtr<WebSocket> ws_xptr) {
-  WebSocket *ws = ws_xptr.get();
-  ws->poll();
+void wsPoll(SEXP ws_xptr) {
+  xptrGetWs(ws_xptr)->poll();
 }
 
 // [[Rcpp::export]]
-void wsClose(XPtr<WebSocket> ws_xptr) {
-  WebSocket *ws = ws_xptr.get();
-  ws->close();
+void wsClose(SEXP ws_xptr) {
+  xptrGetWs(ws_xptr)->close();
   // TODO Need to free XPtr and delete WebSocket
 }
