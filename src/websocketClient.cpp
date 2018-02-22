@@ -28,6 +28,9 @@ SEXP wsCreate(std::string url) {
 // [[Rcpp::export]]
 void wsSend(SEXP ws_xptr, std::string msg) {
   WebSocket *ws = xptrGetWs(ws_xptr);
+  if (ws->getReadyState() == WebSocket::readyStateValues::CLOSED) {
+    throw Rcpp::exception("Can't send, WebSocket is closed.");
+  }
   ws->send(msg);
   ws->poll();
 }
@@ -42,7 +45,12 @@ void wsReceive(SEXP ws_xptr, Rcpp::Function onMessage) {
 // [[Rcpp::export]]
 void wsClose(SEXP ws_xptr) {
   WebSocket *ws = xptrGetWs(ws_xptr);
+  if (ws->getReadyState() == WebSocket::readyStateValues::CLOSED) {
+    throw Rcpp::exception("Can't close, WebSocket is already closed.");
+  }
   ws->close();
+  // Here the state is CLOSING, calling poll() ensures the state will transition to CLOSED before this function returns.
+  ws->poll();
 }
 
 // [[Rcpp::export]]
