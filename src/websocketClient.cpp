@@ -30,6 +30,13 @@ void wsPoll(SEXP ws_xptr) {
 }
 
 // [[Rcpp::export]]
+void wsReceive(SEXP ws_xptr, Rcpp::Function onMessage) {
+  WebSocket *ws = xptrGetWs(ws_xptr);
+  ws->poll();
+  ws->dispatch(onMessage);
+}
+
+// [[Rcpp::export]]
 void wsClose(SEXP ws_xptr) {
   xptrGetWs(ws_xptr)->close();
   // TODO Need to free XPtr and delete WebSocket

@@ -13,6 +13,10 @@ wsPoll <- function(ws_xptr) {
     invisible(.Call(`_websocketClient_wsPoll`, ws_xptr))
 }
 
+wsReceive <- function(ws_xptr, onMessage) {
+    invisible(.Call(`_websocketClient_wsReceive`, ws_xptr, onMessage))
+}
+
 wsClose <- function(ws_xptr) {
     invisible(.Call(`_websocketClient_wsClose`, ws_xptr))
 }

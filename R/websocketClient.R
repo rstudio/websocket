@@ -13,6 +13,15 @@ WebsocketClient <- R6::R6Class("WebsocketClient",
     },
     connect = function() {
       private$wsObj <- wsCreate(private$url)
+      private$isOpen <- TRUE
+
+      handleIncoming <- function() {
+        if (private$isOpen) {
+          wsReceive(private$wsObj, private$onMessage)
+          later::later(handleIncoming, 0.01)
+        }
+      }
+      handleIncoming()
     },
     send = function(msg) {
       wsSend(private$wsObj, msg)
@@ -20,12 +29,14 @@ WebsocketClient <- R6::R6Class("WebsocketClient",
     },
     close = function() {
       wsClose(private$wsObj)
+      private$isOpen <- FALSE
     }
   ),
   private = list(
     url = NULL,
     onMessage = NULL,
     onDisconnected = NULL,
-    wsObj = NULL
+    wsObj = NULL,
+    isOpen = FALSE
   )
 )
