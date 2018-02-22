@@ -1,16 +1,7 @@
 #include <Rcpp.h>
 #include <easywsclient.hpp>
 using namespace Rcpp;
-//using namespace easywsclient;
 using easywsclient::WebSocket;
-
-// [[Rcpp::export]]
-SEXP wsCreate(std::string url) {
-  WebSocket *ws = WebSocket::from_url(url);
-  SEXP ws_xptr = PROTECT(R_MakeExternalPtr(ws, R_NilValue, R_NilValue));
-  UNPROTECT(1);
-  return ws_xptr;
-}
 
 WebSocket* xptrGetWs(SEXP ws_xptr) {
   if (TYPEOF(ws_xptr) != EXTPTRSXP) {
@@ -19,14 +10,26 @@ WebSocket* xptrGetWs(SEXP ws_xptr) {
   return reinterpret_cast<WebSocket*>(R_ExternalPtrAddr(ws_xptr));
 }
 
-// [[Rcpp::export]]
-void wsSend(SEXP ws_xptr, std::string msg) {
-  xptrGetWs(ws_xptr)->send(msg);
+void websocket_deleter(SEXP ws_xptr) {
+  delete xptrGetWs(ws_xptr);
+  R_ClearExternalPtr(ws_xptr);
+  Rprintf("Deleted the websocket\n");
 }
 
 // [[Rcpp::export]]
-void wsPoll(SEXP ws_xptr) {
-  xptrGetWs(ws_xptr)->poll();
+SEXP wsCreate(std::string url) {
+  WebSocket *ws = WebSocket::from_url(url);
+  SEXP ws_xptr = PROTECT(R_MakeExternalPtr(ws, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(ws_xptr, websocket_deleter, TRUE);
+  UNPROTECT(1);
+  return ws_xptr;
+}
+
+// [[Rcpp::export]]
+void wsSend(SEXP ws_xptr, std::string msg) {
+  WebSocket *ws = xptrGetWs(ws_xptr);
+  ws->send(msg);
+  ws->poll();
 }
 
 // [[Rcpp::export]]
@@ -38,6 +41,19 @@ void wsReceive(SEXP ws_xptr, Rcpp::Function onMessage) {
 
 // [[Rcpp::export]]
 void wsClose(SEXP ws_xptr) {
-  xptrGetWs(ws_xptr)->close();
-  // TODO Need to free XPtr and delete WebSocket
+  WebSocket *ws = xptrGetWs(ws_xptr);
+  ws->close();
+}
+
+// [[Rcpp::export]]
+std::string wsState(SEXP ws_xptr) {
+  WebSocket *ws = xptrGetWs(ws_xptr);
+  ws->poll();
+  WebSocket::readyStateValues state = ws->getReadyState();
+  switch(state) {
+    case WebSocket::readyStateValues::CLOSED: return "CLOSED";
+    case WebSocket::readyStateValues::CLOSING: return "CLOSING";
+    case WebSocket::readyStateValues::CONNECTING: return "CONNECTING";
+    case WebSocket::readyStateValues::OPEN: return "OPEN";
+  }
 }

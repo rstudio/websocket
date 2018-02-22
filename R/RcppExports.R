@@ -9,15 +9,15 @@ wsSend <- function(ws_xptr, msg) {
     invisible(.Call(`_websocketClient_wsSend`, ws_xptr, msg))
 }
 
-wsPoll <- function(ws_xptr) {
-    invisible(.Call(`_websocketClient_wsPoll`, ws_xptr))
-}
-
 wsReceive <- function(ws_xptr, onMessage) {
     invisible(.Call(`_websocketClient_wsReceive`, ws_xptr, onMessage))
 }
 
 wsClose <- function(ws_xptr) {
     invisible(.Call(`_websocketClient_wsClose`, ws_xptr))
+}
+
+wsState <- function(ws_xptr) {
+    .Call(`_websocketClient_wsState`, ws_xptr)
 }
 

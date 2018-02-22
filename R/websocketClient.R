@@ -14,18 +14,10 @@ WebsocketClient <- R6::R6Class("WebsocketClient",
     connect = function() {
       private$wsObj <- wsCreate(private$url)
       private$isOpen <- TRUE
-
-      handleIncoming <- function() {
-        if (private$isOpen) {
-          wsReceive(private$wsObj, private$onMessage)
-          later::later(handleIncoming, 0.01)
-        }
-      }
-      handleIncoming()
+      private$handleIncoming()
     },
     send = function(msg) {
       wsSend(private$wsObj, msg)
-      wsPoll(private$wsObj)
     },
     close = function() {
       wsClose(private$wsObj)
@@ -33,6 +25,17 @@ WebsocketClient <- R6::R6Class("WebsocketClient",
     }
   ),
   private = list(
+    handleIncoming = function() {
+      state <- wsState(private$wsObj)
+      if (state == "CLOSED") {
+        private$onDisconnected()
+        return()
+      } else if (state == "OPEN") {
+        wsReceive(private$wsObj, private$onMessage)
+      }
+      # If the state is CONNECTING or CLOSING the only thing we do is recur.
+      later::later(private$handleIncoming, 0.01)
+    },
     url = NULL,
     onMessage = NULL,
     onDisconnected = NULL,

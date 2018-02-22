@@ -1,7 +1,10 @@
-
 ws <- WebsocketClient$new("ws://localhost:8080/",
-  onMessage = function(msg) cat(msg),
-  onDisconnected = function() "you're disconnected"
+  onMessage = function(msg) {
+    cat("Client got msg: ", msg, "\n")
+  },
+  onDisconnected = function() {
+    cat("Client disconnected\n")
+  }
 )
 
 ws$connect()
