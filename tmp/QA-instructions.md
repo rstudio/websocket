@@ -40,8 +40,8 @@ Then, you can send an arbitrary number of messages like so:
 ws$send("hello")
 ```
 
-For each message `msg` you send, you’ll receive another message: “Client
-got msg: `msg`”.
+For each message `msg` you send, the following should be printed to the
+R console: “Client got msg: `msg`”.
 
 Closing the websocket
 ---------------------
@@ -51,3 +51,6 @@ Finally, when you’re done, close the websocket:
 ``` r
 ws$close()
 ```
+
+When you do this, the following should be printed to the R console:
+“Client disconnected”
