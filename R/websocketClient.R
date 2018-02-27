@@ -46,6 +46,9 @@ WebsocketClient <- R6::R6Class("WebsocketClient",
       private$wsObj <- wsCreate(private$url)
       private$handleIncoming()
     },
+    getState = function() {
+      wsState(private$wsObj)
+    },
     send = function(msg) {
       wsSend(private$wsObj, msg)
     },
@@ -55,7 +58,7 @@ WebsocketClient <- R6::R6Class("WebsocketClient",
   ),
   private = list(
     handleIncoming = function() {
-      state <- wsState(private$wsObj)
+      state <- self$getState()
       if (state == "CLOSED") {
         private$onDisconnected()
         return()
