@@ -13,7 +13,6 @@ WebSocket* xptrGetWs(SEXP ws_xptr) {
 void websocket_deleter(SEXP ws_xptr) {
   delete xptrGetWs(ws_xptr);
   R_ClearExternalPtr(ws_xptr);
-  Rprintf("Deleted the websocket\n");
 }
 
 // [[Rcpp::export]]
