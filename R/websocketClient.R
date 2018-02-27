@@ -39,7 +39,7 @@ NULL
 #' @export
 WebsocketClient <- R6::R6Class("WebsocketClient",
   public = list(
-    initialize = function(url, onMessage = identity, onDisconnected = identity) {
+    initialize = function(url, onMessage = identity, onDisconnected = function() {}) {
       private$url <- url
       private$onMessage <- onMessage
       private$onDisconnected <- onDisconnected
