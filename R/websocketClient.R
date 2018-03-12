@@ -40,6 +40,8 @@ NULL
 WebsocketClient <- R6::R6Class("WebsocketClient",
   public = list(
     initialize = function(url, onMessage = identity, onDisconnected = function() {}) {
+      # TODO Determine conclusively if this should be 1023 because in C++ the string is NUL-terminated.
+      if (nchar(url) > 1024) stop("url size limit exceeded, must be <= 1024 chars")
       private$url <- url
       private$onMessage <- onMessage
       private$onDisconnected <- onDisconnected
