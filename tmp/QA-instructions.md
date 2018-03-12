@@ -1,9 +1,11 @@
 Set up
 ------
 
+Because this repo is private, you need to supply an `auth_token` argument to the `install_github` function in order to download this package from R. Before running the code below you must first create a personal access token with "repo" permissions at this URL: [https://github.com/settings/tokens](https://github.com/settings/tokens)
+
 ``` r
 install.packages("remotes")
-remotes::install_github("rstudio/websocketClient")
+remotes::install_github("rstudio/websocketClient", auth_token = "YOUR_GITHUB_PERSONAL_ACCESS_TOKEN")
 ```
 
 Creating a websocket
