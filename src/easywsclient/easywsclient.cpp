@@ -429,13 +429,11 @@ class _RealWebSocket : public easywsclient::WebSocket
 
 
 easywsclient::WebSocket::pointer from_url(const std::string& url, bool useMask, const std::string& origin) {
-    char host[1024];
+    std::vector<char> host_vec(url.size());
+    std::vector<char> path_vec(url.size());
+    char *host = &host_vec[0];
+    char *path = &path_vec[0];
     int port;
-    char path[1024];
-    if (url.size() >= 1024) {
-      fprintf(stderr, "ERROR: url size limit exceeded: %s\n", url.c_str());
-      return NULL;
-    }
     if (origin.size() >= 200) {
       fprintf(stderr, "ERROR: origin size limit exceeded: %s\n", origin.c_str());
       return NULL;
