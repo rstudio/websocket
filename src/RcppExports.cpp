@@ -59,6 +59,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// wsppTest
+void wsppTest(std::string uri);
+RcppExport SEXP _websocketClient_wsppTest(SEXP uriSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type uri(uriSEXP);
+    wsppTest(uri);
+    return R_NilValue;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_websocketClient_wsCreate", (DL_FUNC) &_websocketClient_wsCreate, 1},
@@ -66,6 +76,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_websocketClient_wsReceive", (DL_FUNC) &_websocketClient_wsReceive, 2},
     {"_websocketClient_wsClose", (DL_FUNC) &_websocketClient_wsClose, 1},
     {"_websocketClient_wsState", (DL_FUNC) &_websocketClient_wsState, 1},
+    {"_websocketClient_wsppTest", (DL_FUNC) &_websocketClient_wsppTest, 1},
     {NULL, NULL, 0}
 };
 

@@ -21,3 +21,7 @@ wsState <- function(ws_xptr) {
     .Call(`_websocketClient_wsState`, ws_xptr)
 }
 
+wsppTest <- function(uri) {
+    invisible(.Call(`_websocketClient_wsppTest`, uri))
+}
+

@@ -9,7 +9,8 @@ LazyData: true
 ByteCompile: true
 Imports: Rcpp,
     R6
-LinkingTo: Rcpp
+LinkingTo: Rcpp, BH
+SystemRequirements: OpenSSL >= 1.0.1
 RoxygenNote: 6.0.1
 Collate:
     'RcppExports.R'
