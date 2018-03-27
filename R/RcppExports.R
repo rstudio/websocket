@@ -21,7 +21,15 @@ wsState <- function(ws_xptr) {
     .Call(`_websocketClient_wsState`, ws_xptr)
 }
 
-wsppTest <- function(uri) {
-    invisible(.Call(`_websocketClient_wsppTest`, uri))
+wssCreate <- function(uri, onMessage, onClose) {
+    .Call(`_websocketClient_wssCreate`, uri, onMessage, onClose)
+}
+
+runOne <- function(client_xptr) {
+    invisible(.Call(`_websocketClient_runOne`, client_xptr))
+}
+
+wssSend <- function(client_xptr, msg) {
+    invisible(.Call(`_websocketClient_wssSend`, client_xptr, msg))
 }
 
