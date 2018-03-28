@@ -9,7 +9,7 @@ LazyData: true
 ByteCompile: true
 Imports: Rcpp,
     R6
-LinkingTo: Rcpp, BH
+LinkingTo: Rcpp, BH, AsioHeaders
 SystemRequirements: OpenSSL >= 1.0.1
 RoxygenNote: 6.0.1
 Collate:

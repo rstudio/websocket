@@ -14,7 +14,7 @@ ifeq ($(UNAME), OpenBSD)
 PKG_LIBS += -lkvm
 endif
 
-PKG_CPPFLAGS = -I./websocketpp -I./asio -I./easywsclient $(C_VISIBILITY)
+PKG_CPPFLAGS = -I./websocketpp -I./easywsclient $(C_VISIBILITY)
 
 PKG_CPPFLAGS += @cflags@
 PKG_LIBS += @libs@

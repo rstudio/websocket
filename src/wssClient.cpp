@@ -63,39 +63,42 @@ void on_open(client* c, websocketpp::connection_hdl hdl) {
 
 // [[Rcpp::export]]
 SEXP wssCreate(std::string uri, Rcpp::Function onMessage, Rcpp::Function onClose) {
-  boost::shared_ptr<WSSConnection> wssc = boost::make_shared<WSSConnection>();
+  boost::shared_ptr<WSSConnection> wssPtr = boost::make_shared<WSSConnection>();
 
-  wssc->client.set_access_channels(websocketpp::log::alevel::all);
-  wssc->client.clear_access_channels(websocketpp::log::alevel::frame_payload);
-  wssc->client.init_asio();
-  wssc->client.set_tls_init_handler(bind(&on_tls_init));
+  wssPtr->client.set_access_channels(websocketpp::log::alevel::all);
+  wssPtr->client.clear_access_channels(websocketpp::log::alevel::frame_payload);
+  wssPtr->client.init_asio();
+  wssPtr->client.set_tls_init_handler(bind(&on_tls_init));
 
   message_handler message_callback(bind(handleMessage, onMessage, ::_1, ::_2));
-  wssc->client.set_message_handler(message_callback);
+  wssPtr->client.set_message_handler(message_callback);
 
   close_handler close_callback(bind(handleClose, onClose, ::_1));
-  wssc->client.set_close_handler(close_callback);
+  wssPtr->client.set_close_handler(close_callback);
 
   websocketpp::lib::error_code ec;
-  wssc->con = wssc->client.get_connection(uri, ec);
+  wssPtr->con = wssPtr->client.get_connection(uri, ec);
   if (ec) {
     stop("Could not create connection because: " + ec.message());
   }
 
-  wssc->client.connect(wssc->con);
-  //wssc->client.run();
-
-  boost::shared_ptr<WSSConnection> *wsscPtr = new boost::shared_ptr<WSSConnection>(wssc);
-  SEXP client_xptr = PROTECT(R_MakeExternalPtr(wsscPtr, R_NilValue, R_NilValue));
+  boost::shared_ptr<WSSConnection> *extWssPtr = new boost::shared_ptr<WSSConnection>(wssPtr);
+  SEXP client_xptr = PROTECT(R_MakeExternalPtr(extWssPtr, R_NilValue, R_NilValue));
   R_RegisterCFinalizerEx(client_xptr, client_deleter, TRUE);
   UNPROTECT(1);
   return client_xptr;
 }
 
 // [[Rcpp::export]]
-void runOne(SEXP client_xptr) {
+void wssConnect(SEXP client_xptr) {
   boost::shared_ptr<WSSConnection> wssPtr = xptrGetClient(client_xptr);
-  wssPtr->client.run_one();
+  wssPtr->client.connect(wssPtr->con);
+}
+
+// [[Rcpp::export]]
+void wssPoll(SEXP client_xptr) {
+  boost::shared_ptr<WSSConnection> wssPtr = xptrGetClient(client_xptr);
+  wssPtr->client.poll();
 }
 
 // [[Rcpp::export]]

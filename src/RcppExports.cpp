@@ -72,13 +72,23 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// runOne
-void runOne(SEXP client_xptr);
-RcppExport SEXP _websocketClient_runOne(SEXP client_xptrSEXP) {
+// wssConnect
+void wssConnect(SEXP client_xptr);
+RcppExport SEXP _websocketClient_wssConnect(SEXP client_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
-    runOne(client_xptr);
+    wssConnect(client_xptr);
+    return R_NilValue;
+END_RCPP
+}
+// wssPoll
+void wssPoll(SEXP client_xptr);
+RcppExport SEXP _websocketClient_wssPoll(SEXP client_xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
+    wssPoll(client_xptr);
     return R_NilValue;
 END_RCPP
 }
@@ -101,7 +111,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_websocketClient_wsClose", (DL_FUNC) &_websocketClient_wsClose, 1},
     {"_websocketClient_wsState", (DL_FUNC) &_websocketClient_wsState, 1},
     {"_websocketClient_wssCreate", (DL_FUNC) &_websocketClient_wssCreate, 3},
-    {"_websocketClient_runOne", (DL_FUNC) &_websocketClient_runOne, 1},
+    {"_websocketClient_wssConnect", (DL_FUNC) &_websocketClient_wssConnect, 1},
+    {"_websocketClient_wssPoll", (DL_FUNC) &_websocketClient_wssPoll, 1},
     {"_websocketClient_wssSend", (DL_FUNC) &_websocketClient_wssSend, 2},
     {NULL, NULL, 0}
 };
