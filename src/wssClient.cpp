@@ -31,6 +31,8 @@ static context_ptr on_tls_init() {
 }
 
 struct WSSConnection {
+  enum STATE { INIT, OPEN, CLOSED, FAILED };
+  STATE state = INIT;
   client client;
   client::connection_ptr con;
 };
@@ -52,33 +54,38 @@ void handleMessage(Rcpp::Function onMessage, websocketpp::connection_hdl, messag
   onMessage(payload);
 }
 
-void handleClose(Rcpp::Function onClose, websocketpp::connection_hdl) {
+void handleClose(boost::shared_ptr<WSSConnection> wssPtr, Rcpp::Function onClose, websocketpp::connection_hdl) {
+  wssPtr->state = WSSConnection::STATE::CLOSED;
   onClose();
 }
 
-void on_open(client* c, websocketpp::connection_hdl hdl) {
-  std::cout << "connection ready" << std::endl;
-  c->send(hdl, "ping", websocketpp::frame::opcode::text);
+void handleOpen(boost::shared_ptr<WSSConnection> wssPtr, Rcpp::Function onOpen, websocketpp::connection_hdl) {
+  wssPtr->state = WSSConnection::STATE::OPEN;
+  onOpen();
+}
+
+void handleFail(boost::shared_ptr<WSSConnection> wssPtr, Rcpp::Function onFail, websocketpp::connection_hdl) {
+  wssPtr->state = WSSConnection::STATE::FAILED;
+  onFail();
 }
 
 // [[Rcpp::export]]
-SEXP wssCreate(std::string uri, Rcpp::Function onMessage, Rcpp::Function onClose) {
+SEXP wssCreate(std::string uri, Rcpp::Function onMessage, Rcpp::Function onOpen, Rcpp::Function onClose, Rcpp::Function onFail) {
   boost::shared_ptr<WSSConnection> wssPtr = boost::make_shared<WSSConnection>();
 
   wssPtr->client.set_access_channels(websocketpp::log::alevel::all);
   wssPtr->client.clear_access_channels(websocketpp::log::alevel::frame_payload);
   wssPtr->client.init_asio();
   wssPtr->client.set_tls_init_handler(bind(&on_tls_init));
-
-  message_handler message_callback(bind(handleMessage, onMessage, ::_1, ::_2));
-  wssPtr->client.set_message_handler(message_callback);
-
-  close_handler close_callback(bind(handleClose, onClose, ::_1));
-  wssPtr->client.set_close_handler(close_callback);
+  wssPtr->client.set_open_handler(bind(handleOpen, wssPtr, onOpen, ::_1));
+  wssPtr->client.set_message_handler(bind(handleMessage, onMessage, ::_1, ::_2));
+  wssPtr->client.set_close_handler(bind(handleClose, wssPtr, onClose, ::_1));
+  wssPtr->client.set_fail_handler(bind(handleFail, wssPtr, onFail, ::_1));
 
   websocketpp::lib::error_code ec;
   wssPtr->con = wssPtr->client.get_connection(uri, ec);
   if (ec) {
+    // TODO Should we call onFail here?
     stop("Could not create connection because: " + ec.message());
   }
 
@@ -93,16 +100,52 @@ SEXP wssCreate(std::string uri, Rcpp::Function onMessage, Rcpp::Function onClose
 void wssConnect(SEXP client_xptr) {
   boost::shared_ptr<WSSConnection> wssPtr = xptrGetClient(client_xptr);
   wssPtr->client.connect(wssPtr->con);
+  // Block until the connection is either open, closed, or the attempt to connect has failed.
+  while (wssPtr->state == WSSConnection::STATE::INIT) wssPtr->client.run_one();
+  if (wssPtr->client.stopped()) {
+    printf("stopped\n");
+  } else {
+    printf("not stopped");
+  }
 }
 
 // [[Rcpp::export]]
-void wssPoll(SEXP client_xptr) {
+void wssPollOne(SEXP client_xptr) {
   boost::shared_ptr<WSSConnection> wssPtr = xptrGetClient(client_xptr);
-  wssPtr->client.poll();
+  wssPtr->client.poll_one();
 }
 
 // [[Rcpp::export]]
 void wssSend(SEXP client_xptr, std::string msg) {
   boost::shared_ptr<WSSConnection> wssPtr = xptrGetClient(client_xptr);
   wssPtr->client.send(wssPtr->con, msg, websocketpp::frame::opcode::text);
+}
+
+// [[Rcpp::export]]
+void wssReset(SEXP client_xptr) {
+  boost::shared_ptr<WSSConnection> wssPtr = xptrGetClient(client_xptr);
+  wssPtr->client.reset();
+}
+
+// [[Rcpp::export]]
+void wssClose(SEXP client_xptr) {
+  boost::shared_ptr<WSSConnection> wssPtr = xptrGetClient(client_xptr);
+  wssPtr->client.close(wssPtr->con, websocketpp::close::status::normal, "closing normally");
+}
+
+// [[Rcpp::export]]
+bool wssStopped(SEXP client_xptr) {
+  boost::shared_ptr<WSSConnection> wssPtr = xptrGetClient(client_xptr);
+  return wssPtr->client.stopped();
+}
+
+// [[Rcpp::export]]
+std::string wssState(SEXP client_xptr) {
+  boost::shared_ptr<WSSConnection> wssPtr = xptrGetClient(client_xptr);
+  switch(wssPtr->state) {
+    case WSSConnection::STATE::INIT: return "INIT";
+    case WSSConnection::STATE::OPEN: return "OPEN";
+    case WSSConnection::STATE::CLOSED: return "CLOSED";
+    case WSSConnection::STATE::FAILED: return "FAILED";
+  }
 }

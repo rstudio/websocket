@@ -21,19 +21,31 @@ wsState <- function(ws_xptr) {
     .Call(`_websocketClient_wsState`, ws_xptr)
 }
 
-wssCreate <- function(uri, onMessage, onClose) {
-    .Call(`_websocketClient_wssCreate`, uri, onMessage, onClose)
+wssCreate <- function(uri, onMessage, onOpen, onClose, onFail) {
+    .Call(`_websocketClient_wssCreate`, uri, onMessage, onOpen, onClose, onFail)
 }
 
 wssConnect <- function(client_xptr) {
     invisible(.Call(`_websocketClient_wssConnect`, client_xptr))
 }
 
-wssPoll <- function(client_xptr) {
-    invisible(.Call(`_websocketClient_wssPoll`, client_xptr))
+wssPollOne <- function(client_xptr) {
+    invisible(.Call(`_websocketClient_wssPollOne`, client_xptr))
 }
 
 wssSend <- function(client_xptr, msg) {
     invisible(.Call(`_websocketClient_wssSend`, client_xptr, msg))
+}
+
+wssReset <- function(client_xptr) {
+    invisible(.Call(`_websocketClient_wssReset`, client_xptr))
+}
+
+wssStopped <- function(client_xptr) {
+    .Call(`_websocketClient_wssStopped`, client_xptr)
+}
+
+wssState <- function(client_xptr) {
+    .Call(`_websocketClient_wssState`, client_xptr)
 }
 
