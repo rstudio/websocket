@@ -101,18 +101,23 @@ void wssConnect(SEXP client_xptr) {
   boost::shared_ptr<WSSConnection> wssPtr = xptrGetClient(client_xptr);
   wssPtr->client.connect(wssPtr->con);
   // Block until the connection is either open, closed, or the attempt to connect has failed.
-  while (wssPtr->state == WSSConnection::STATE::INIT) wssPtr->client.run_one();
-  if (wssPtr->client.stopped()) {
-    printf("stopped\n");
-  } else {
-    printf("not stopped");
+  // wssPtr->client.run() would block indefinitely, so we use run_one() instead.
+  // We don't need to call restart() here because the underlying io_context is never out of work between invocations.
+  while (wssPtr->state == WSSConnection::STATE::INIT) {
+    wssPtr->client.run_one();
   }
 }
 
 // [[Rcpp::export]]
-void wssPollOne(SEXP client_xptr) {
+void wssRestart(SEXP client_xptr) {
   boost::shared_ptr<WSSConnection> wssPtr = xptrGetClient(client_xptr);
-  wssPtr->client.poll_one();
+  wssPtr->client.get_io_service().restart();
+}
+
+// [[Rcpp::export]]
+void wssPoll(SEXP client_xptr) {
+  boost::shared_ptr<WSSConnection> wssPtr = xptrGetClient(client_xptr);
+  wssPtr->client.poll();
 }
 
 // [[Rcpp::export]]

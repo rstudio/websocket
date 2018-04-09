@@ -12,6 +12,7 @@ Imports: Rcpp,
 LinkingTo: Rcpp, BH, AsioHeaders
 SystemRequirements: OpenSSL >= 1.0.1
 RoxygenNote: 6.0.1
-Collate:
+Collate: 
     'RcppExports.R'
     'websocketClient.R'
+    'wssClient.R'

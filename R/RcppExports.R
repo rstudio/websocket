@@ -29,8 +29,12 @@ wssConnect <- function(client_xptr) {
     invisible(.Call(`_websocketClient_wssConnect`, client_xptr))
 }
 
-wssPollOne <- function(client_xptr) {
-    invisible(.Call(`_websocketClient_wssPollOne`, client_xptr))
+wssRestart <- function(client_xptr) {
+    invisible(.Call(`_websocketClient_wssRestart`, client_xptr))
+}
+
+wssPoll <- function(client_xptr) {
+    invisible(.Call(`_websocketClient_wssPoll`, client_xptr))
 }
 
 wssSend <- function(client_xptr, msg) {
@@ -39,6 +43,10 @@ wssSend <- function(client_xptr, msg) {
 
 wssReset <- function(client_xptr) {
     invisible(.Call(`_websocketClient_wssReset`, client_xptr))
+}
+
+wssClose <- function(client_xptr) {
+    invisible(.Call(`_websocketClient_wssClose`, client_xptr))
 }
 
 wssStopped <- function(client_xptr) {
