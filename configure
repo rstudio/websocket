@@ -87,7 +87,10 @@ esac
 
 # Test if versioned linking works
 ${CC} ${PKG_CFLAGS} src/tests/main.c ${PKG_LIBS_VERSIONED} -o src/main.exe 2>/dev/null
-if [ $? -eq 0 ]; then PKG_LIBS="${PKG_LIBS_VERSIONED}"; fi
+if [ $? -eq 0 ]; then
+  rm -f src/main.exe
+  PKG_LIBS="${PKG_LIBS_VERSIONED}"
+fi
 fi #SONAME
 fi #AUTOBREW
 
