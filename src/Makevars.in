@@ -3,7 +3,6 @@ CXX_STD=CXX11
 
 UNAME := $(shell uname)
 
-PKG_LIBS = ./easywsclient/easywsclient.o
 ifeq ($(UNAME), SunOS)
 PKG_LIBS += -lkstat -lsendfile -lsocket
 endif
@@ -14,12 +13,8 @@ ifeq ($(UNAME), OpenBSD)
 PKG_LIBS += -lkvm
 endif
 
-PKG_CPPFLAGS = -I./websocketpp -I./easywsclient $(C_VISIBILITY)
+PKG_CPPFLAGS = -I./websocketpp $(C_VISIBILITY)
 
 PKG_CPPFLAGS += @cflags@
 PKG_LIBS += @libs@
 
-$(SHLIB): easywsclient/easywsclient.o
-
-easywsclient/easywsclient.o: easywsclient/easywsclient.cpp easywsclient/easywsclient.hpp
-#$(CC) -I easywsclient/ -o easywsclient/easywsclient.o easywsclient/easywsclient.cpp

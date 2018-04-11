@@ -6,62 +6,8 @@
 using namespace Rcpp;
 
 // wsCreate
-SEXP wsCreate(std::string url);
-RcppExport SEXP _websocketClient_wsCreate(SEXP urlSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type url(urlSEXP);
-    rcpp_result_gen = Rcpp::wrap(wsCreate(url));
-    return rcpp_result_gen;
-END_RCPP
-}
-// wsSend
-void wsSend(SEXP ws_xptr, std::string msg);
-RcppExport SEXP _websocketClient_wsSend(SEXP ws_xptrSEXP, SEXP msgSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type ws_xptr(ws_xptrSEXP);
-    Rcpp::traits::input_parameter< std::string >::type msg(msgSEXP);
-    wsSend(ws_xptr, msg);
-    return R_NilValue;
-END_RCPP
-}
-// wsReceive
-void wsReceive(SEXP ws_xptr, Rcpp::Function onMessage);
-RcppExport SEXP _websocketClient_wsReceive(SEXP ws_xptrSEXP, SEXP onMessageSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type ws_xptr(ws_xptrSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Function >::type onMessage(onMessageSEXP);
-    wsReceive(ws_xptr, onMessage);
-    return R_NilValue;
-END_RCPP
-}
-// wsClose
-void wsClose(SEXP ws_xptr);
-RcppExport SEXP _websocketClient_wsClose(SEXP ws_xptrSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type ws_xptr(ws_xptrSEXP);
-    wsClose(ws_xptr);
-    return R_NilValue;
-END_RCPP
-}
-// wsState
-std::string wsState(SEXP ws_xptr);
-RcppExport SEXP _websocketClient_wsState(SEXP ws_xptrSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type ws_xptr(ws_xptrSEXP);
-    rcpp_result_gen = Rcpp::wrap(wsState(ws_xptr));
-    return rcpp_result_gen;
-END_RCPP
-}
-// wssCreate
-SEXP wssCreate(std::string uri, Rcpp::Function onMessage, Rcpp::Function onOpen, Rcpp::Function onClose, Rcpp::Function onFail);
-RcppExport SEXP _websocketClient_wssCreate(SEXP uriSEXP, SEXP onMessageSEXP, SEXP onOpenSEXP, SEXP onCloseSEXP, SEXP onFailSEXP) {
+SEXP wsCreate(std::string uri, Rcpp::Function onMessage, Rcpp::Function onOpen, Rcpp::Function onClose, Rcpp::Function onFail);
+RcppExport SEXP _websocketClient_wsCreate(SEXP uriSEXP, SEXP onMessageSEXP, SEXP onOpenSEXP, SEXP onCloseSEXP, SEXP onFailSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -70,109 +16,104 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Function >::type onOpen(onOpenSEXP);
     Rcpp::traits::input_parameter< Rcpp::Function >::type onClose(onCloseSEXP);
     Rcpp::traits::input_parameter< Rcpp::Function >::type onFail(onFailSEXP);
-    rcpp_result_gen = Rcpp::wrap(wssCreate(uri, onMessage, onOpen, onClose, onFail));
+    rcpp_result_gen = Rcpp::wrap(wsCreate(uri, onMessage, onOpen, onClose, onFail));
     return rcpp_result_gen;
 END_RCPP
 }
-// wssConnect
-void wssConnect(SEXP client_xptr);
-RcppExport SEXP _websocketClient_wssConnect(SEXP client_xptrSEXP) {
+// wsConnect
+void wsConnect(SEXP client_xptr);
+RcppExport SEXP _websocketClient_wsConnect(SEXP client_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
-    wssConnect(client_xptr);
+    wsConnect(client_xptr);
     return R_NilValue;
 END_RCPP
 }
-// wssRestart
-void wssRestart(SEXP client_xptr);
-RcppExport SEXP _websocketClient_wssRestart(SEXP client_xptrSEXP) {
+// wsRestart
+void wsRestart(SEXP client_xptr);
+RcppExport SEXP _websocketClient_wsRestart(SEXP client_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
-    wssRestart(client_xptr);
+    wsRestart(client_xptr);
     return R_NilValue;
 END_RCPP
 }
-// wssPoll
-void wssPoll(SEXP client_xptr);
-RcppExport SEXP _websocketClient_wssPoll(SEXP client_xptrSEXP) {
+// wsPoll
+void wsPoll(SEXP client_xptr);
+RcppExport SEXP _websocketClient_wsPoll(SEXP client_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
-    wssPoll(client_xptr);
+    wsPoll(client_xptr);
     return R_NilValue;
 END_RCPP
 }
-// wssSend
-void wssSend(SEXP client_xptr, std::string msg);
-RcppExport SEXP _websocketClient_wssSend(SEXP client_xptrSEXP, SEXP msgSEXP) {
+// wsSend
+void wsSend(SEXP client_xptr, std::string msg);
+RcppExport SEXP _websocketClient_wsSend(SEXP client_xptrSEXP, SEXP msgSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
     Rcpp::traits::input_parameter< std::string >::type msg(msgSEXP);
-    wssSend(client_xptr, msg);
+    wsSend(client_xptr, msg);
     return R_NilValue;
 END_RCPP
 }
-// wssReset
-void wssReset(SEXP client_xptr);
-RcppExport SEXP _websocketClient_wssReset(SEXP client_xptrSEXP) {
+// wsReset
+void wsReset(SEXP client_xptr);
+RcppExport SEXP _websocketClient_wsReset(SEXP client_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
-    wssReset(client_xptr);
+    wsReset(client_xptr);
     return R_NilValue;
 END_RCPP
 }
-// wssClose
-void wssClose(SEXP client_xptr);
-RcppExport SEXP _websocketClient_wssClose(SEXP client_xptrSEXP) {
+// wsClose
+void wsClose(SEXP client_xptr);
+RcppExport SEXP _websocketClient_wsClose(SEXP client_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
-    wssClose(client_xptr);
+    wsClose(client_xptr);
     return R_NilValue;
 END_RCPP
 }
-// wssStopped
-bool wssStopped(SEXP client_xptr);
-RcppExport SEXP _websocketClient_wssStopped(SEXP client_xptrSEXP) {
+// wsStopped
+bool wsStopped(SEXP client_xptr);
+RcppExport SEXP _websocketClient_wsStopped(SEXP client_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
-    rcpp_result_gen = Rcpp::wrap(wssStopped(client_xptr));
+    rcpp_result_gen = Rcpp::wrap(wsStopped(client_xptr));
     return rcpp_result_gen;
 END_RCPP
 }
-// wssState
-std::string wssState(SEXP client_xptr);
-RcppExport SEXP _websocketClient_wssState(SEXP client_xptrSEXP) {
+// wsState
+std::string wsState(SEXP client_xptr);
+RcppExport SEXP _websocketClient_wsState(SEXP client_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
-    rcpp_result_gen = Rcpp::wrap(wssState(client_xptr));
+    rcpp_result_gen = Rcpp::wrap(wsState(client_xptr));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_websocketClient_wsCreate", (DL_FUNC) &_websocketClient_wsCreate, 1},
+    {"_websocketClient_wsCreate", (DL_FUNC) &_websocketClient_wsCreate, 5},
+    {"_websocketClient_wsConnect", (DL_FUNC) &_websocketClient_wsConnect, 1},
+    {"_websocketClient_wsRestart", (DL_FUNC) &_websocketClient_wsRestart, 1},
+    {"_websocketClient_wsPoll", (DL_FUNC) &_websocketClient_wsPoll, 1},
     {"_websocketClient_wsSend", (DL_FUNC) &_websocketClient_wsSend, 2},
-    {"_websocketClient_wsReceive", (DL_FUNC) &_websocketClient_wsReceive, 2},
+    {"_websocketClient_wsReset", (DL_FUNC) &_websocketClient_wsReset, 1},
     {"_websocketClient_wsClose", (DL_FUNC) &_websocketClient_wsClose, 1},
+    {"_websocketClient_wsStopped", (DL_FUNC) &_websocketClient_wsStopped, 1},
     {"_websocketClient_wsState", (DL_FUNC) &_websocketClient_wsState, 1},
-    {"_websocketClient_wssCreate", (DL_FUNC) &_websocketClient_wssCreate, 5},
-    {"_websocketClient_wssConnect", (DL_FUNC) &_websocketClient_wssConnect, 1},
-    {"_websocketClient_wssRestart", (DL_FUNC) &_websocketClient_wssRestart, 1},
-    {"_websocketClient_wssPoll", (DL_FUNC) &_websocketClient_wssPoll, 1},
-    {"_websocketClient_wssSend", (DL_FUNC) &_websocketClient_wssSend, 2},
-    {"_websocketClient_wssReset", (DL_FUNC) &_websocketClient_wssReset, 1},
-    {"_websocketClient_wssClose", (DL_FUNC) &_websocketClient_wssClose, 1},
-    {"_websocketClient_wssStopped", (DL_FUNC) &_websocketClient_wssStopped, 1},
-    {"_websocketClient_wssState", (DL_FUNC) &_websocketClient_wssState, 1},
     {NULL, NULL, 0}
 };
 
