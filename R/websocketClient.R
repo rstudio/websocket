@@ -6,13 +6,21 @@ NULL
 #' Create a websocket client
 #'
 #' @section Usage:
-#' \preformatted{WebsocketClient$new(url, onMessage = identity, onClose = function() {})}
+#' \preformatted{WebsocketClient$$new(url, onMessage,
+#'                      onOpen = function() {},
+#'                      onClose = function() {},
+#'                      onFail = function() {})
+#' }
 #'
 #' @param url The websocket URL.
 #' @param onMessage A function called for each message received from the server.
 #'   Must take a single argument, the message string.
+#' @param onOpen A function called with no arguments when the connection is
+#'   established.
 #' @param onClose A function called with no arguments when either the client or
 #'   the server disconnect.
+#' @param onFail A function called with no arguments when the connection fails
+#'   while the handshake is bring processed.
 #'
 #' @return a WebsocketClient instance
 #'
@@ -35,11 +43,13 @@ NULL
 #' # Close the websocket after we're done with it
 #' ws$close()
 #'
+NULL
+
 #' @export
 WebsocketClient <- R6::R6Class("WebsocketClient",
   public = list(
     initialize = function(url,
-      onMessage = identity,
+      onMessage = NULL,
       onOpen = function() {},
       onClose = function() {},
       onFail = function() {}
@@ -49,10 +59,10 @@ WebsocketClient <- R6::R6Class("WebsocketClient",
       private$handleIncoming()
     },
     getState = function() {
-      wstate(private$wsObj)
+      wsState(private$wsObj)
     },
     send = function(msg) {
-      wsend(private$wsObj, msg)
+      wsSend(private$wsObj, msg)
       # TODO Call wsPoll here?
     },
     close = function() {
