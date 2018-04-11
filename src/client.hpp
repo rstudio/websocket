@@ -9,8 +9,19 @@
 typedef websocketpp::config::asio_client::message_type::ptr message_ptr;
 typedef websocketpp::lib::function<void(websocketpp::connection_hdl, message_ptr)> message_handler;
 typedef websocketpp::lib::function<void(websocketpp::connection_hdl)> close_handler;
+typedef websocketpp::client<websocketpp::config::asio_client> ws_client;
 typedef websocketpp::client<websocketpp::config::asio_tls_client> wss_client;
-typedef websocketpp::client<websocketpp::config::asio_client>     ws_client;
+
+// The Client interface is mostly a thin wrapper for the
+// websocketpp::client<T> class that is typedefed above to ws_client and
+// wss_client. Client in turn has derived template class ClientImpl<T>, which
+// can take ws_client/wss_client classes.
+//
+// One important difference between the ClientImpl<T> class and the ws_client/
+// wss_client classes is that ClientImpl<T> stores the T::connection_ptr
+// object, so that it doesn't have to be passed to some of the methods like
+// connect(). This is so that all instances of the template class can use the
+// same Client interface.
 
 class Client {
 public:
@@ -37,11 +48,8 @@ public:
 
 template <class T>
 class ClientImpl : public Client {
-  // struct Trait { typedef
 
 public:
-  ClientImpl<T> () {};
-
   void set_access_channels(websocketpp::log::level channels) {
     client.set_access_channels(channels);
   };
