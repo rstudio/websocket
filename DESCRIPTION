@@ -1,16 +1,20 @@
 Package: websocketClient
 Version: 0.0.0.9000
-Title: What the Package Does (one line, title case)
-Description: What the package does (one paragraph).
-Authors@R: person("First", "Last", , "first.last@example.com", c("aut", "cre"))
-License: What license it uses
+Title: WebSocket Client Library
+Description: Provides a WebSocket Client.
+Authors@R: c(
+    person("Dipert", "Alan", , "alan@rstudio.com", c("aut", "cre")),
+    person("Barbara", "Borges", , "barbara@rstudio.com", c("aut")),
+    person("Chang", "Winston", , "winston@rstudio.com", c("aut")))
+License: GPL (>= 2) | file LICENSE
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
 Imports: Rcpp,
-    R6
+    R6,
+    later
 LinkingTo: Rcpp, BH, AsioHeaders
-SystemRequirements: OpenSSL >= 1.0.1
+SystemRequirements: GNU make, OpenSSL >= 1.0.1
 RoxygenNote: 6.0.1.9000
 Collate: 
     'RcppExports.R'
