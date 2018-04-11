@@ -1,2 +1,0 @@
-* reinterpret_cast
-* http://www.hep.by/gnu/r-patched/r-exts/R-exts_122.html
