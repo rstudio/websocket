@@ -112,11 +112,11 @@ private:
 template <>
 void ClientImpl<wss_client>::set_tls_init_handler(websocketpp::transport::asio::tls_socket::tls_init_handler h) {
   client.set_tls_init_handler(h);
-};
+}
 
 template <>
 void ClientImpl<ws_client>::set_tls_init_handler(websocketpp::transport::asio::tls_socket::tls_init_handler h) {
   throw std::runtime_error("Can't set TLS init handler for ws:// connection.");
-};
+}
 
 #endif
