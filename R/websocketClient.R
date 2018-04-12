@@ -5,6 +5,17 @@ NULL
 
 #' Create a websocket client
 #'
+#' @details
+#'
+#' A WebsocketClient object has the following methods:
+#'
+#' \describe{
+#'   \item{\code{send(msg)}}{Sends a message to the server.}
+#'   \item{\code{close()}}{Closes the connection.}
+#'   \item{\code{getState()}}{Returns a string representing the state of the
+#'     connection. One of "INIT", "OPEN", "CLOSED", "FAILED".}
+#' }
+#'
 #' @section Usage:
 #' \preformatted{WebsocketClient$new(url, onMessage,
 #'                      onOpen = function() {},
@@ -27,7 +38,6 @@ NULL
 #' @param headers A named list or character vector representing keys and values
 #'   of headers in the initial HTTP request.
 #'
-#' @return a WebsocketClient instance
 #'
 #' @name WebsocketClient
 #'

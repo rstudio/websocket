@@ -24,11 +24,18 @@ while the handshake is bring processed.}
 \item{headers}{A named list or character vector representing keys and values
 of headers in the initial HTTP request.}
 }
-\value{
-a WebsocketClient instance
-}
 \description{
 Create a websocket client
+}
+\details{
+A WebsocketClient object has the following methods:
+
+\describe{
+  \item{\code{send(msg)}}{Sends a message to the server.}
+  \item{\code{close()}}{Closes the connection.}
+  \item{\code{getState()}}{Returns a string representing the state of the
+    connection. One of "INIT", "OPEN", "CLOSED", "FAILED".}
+}
 }
 \section{Usage}{
 
