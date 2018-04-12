@@ -7,7 +7,10 @@
 \item{url}{The websocket URL.}
 
 \item{onMessage}{A function called for each message received from the server.
-Must take a single argument, the message string.}
+Must take a single argument, the message content. If the message is text,
+the \code{onMessage} function will be passed a one-element character vector;
+if the message is binary, the \code{onMessage} function will be passed a raw
+vector.}
 
 \item{onOpen}{A function called with no arguments when the connection is
 established.}

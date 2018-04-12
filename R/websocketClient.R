@@ -14,7 +14,10 @@ NULL
 #'
 #' @param url The websocket URL.
 #' @param onMessage A function called for each message received from the server.
-#'   Must take a single argument, the message string.
+#'   Must take a single argument, the message content. If the message is text,
+#'   the \code{onMessage} function will be passed a one-element character vector;
+#'   if the message is binary, the \code{onMessage} function will be passed a raw
+#'   vector.
 #' @param onOpen A function called with no arguments when the connection is
 #'   established.
 #' @param onClose A function called with no arguments when either the client or

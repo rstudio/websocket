@@ -57,8 +57,17 @@ void client_deleter(SEXP client_xptr) {
 }
 
 void handleMessage(Rcpp::Function onMessage, websocketpp::connection_hdl, message_ptr msg) {
-  const std::string payload = msg->get_payload();
-  onMessage(payload);
+  websocketpp::frame::opcode::value opcode = msg->get_opcode();
+  if (opcode == websocketpp::frame::opcode::value::text) {
+    onMessage(msg->get_payload());
+
+  } else if (opcode == websocketpp::frame::opcode::value::binary) {
+    const std::string msg_str = msg->get_payload();
+    onMessage(std::vector<uint8_t>(msg_str.begin(), msg_str.end()));
+
+  } else {
+    stop("Unknown opcode for message (not text or binary).");
+  }
 }
 
 void handleClose(shared_ptr<WSConnection> wsPtr, Rcpp::Function onClose, websocketpp::connection_hdl) {
