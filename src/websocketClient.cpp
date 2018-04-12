@@ -144,9 +144,23 @@ void wsPoll(SEXP client_xptr) {
 }
 
 // [[Rcpp::export]]
-void wsSend(SEXP client_xptr, std::string msg) {
+void wsSend(SEXP client_xptr, SEXP msg) {
   shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
-  wsPtr->client->send(msg, websocketpp::frame::opcode::text);
+
+  if (TYPEOF(msg) == STRSXP &&
+      Rf_length(msg) == 1 &&
+      STRING_ELT(msg, 0) != NA_STRING)
+  {
+    const char* msg_ptr = CHAR(STRING_ELT(msg, 0));
+    int len = R_nchar(STRING_ELT(msg, 0), Bytes, FALSE, FALSE, "wsSend");
+    wsPtr->client->send(msg_ptr, len, websocketpp::frame::opcode::text);
+
+  } else if (TYPEOF(msg) == RAWSXP) {
+    wsPtr->client->send(RAW(msg), Rf_length(msg), websocketpp::frame::opcode::binary);
+
+  } else {
+    stop("msg must be a one-element character vector or a raw vector.");
+  }
 }
 
 // [[Rcpp::export]]

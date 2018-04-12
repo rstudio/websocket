@@ -39,7 +39,10 @@ public:
   virtual std::size_t run_one() = 0;
   virtual websocketpp::lib::asio::io_service& get_io_service() = 0;
   virtual std::size_t poll() = 0;
-  virtual void send(std::string const& payload, websocketpp::frame::opcode::value op) = 0;
+  virtual void send(std::string const& payload,
+                    websocketpp::frame::opcode::value op = websocketpp::frame::opcode::text) = 0;
+  virtual void send(void const * payload, size_t len,
+                    websocketpp::frame::opcode::value op = websocketpp::frame::opcode::binary) = 0;
   virtual void reset() = 0;
   virtual void close(websocketpp::close::status::value const code, std::string const & reason) = 0;
   virtual bool stopped() = 0;
@@ -90,6 +93,9 @@ public:
   };
   void send(std::string const& payload, websocketpp::frame::opcode::value op) {
     client.send(this->con, payload, op);
+  };
+  void send(void const* payload, size_t len, websocketpp::frame::opcode::value op) {
+    client.send(this->con, payload, len, op);
   };
   void reset() {
     client.reset();

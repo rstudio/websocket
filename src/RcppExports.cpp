@@ -51,12 +51,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // wsSend
-void wsSend(SEXP client_xptr, std::string msg);
+void wsSend(SEXP client_xptr, SEXP msg);
 RcppExport SEXP _websocketClient_wsSend(SEXP client_xptrSEXP, SEXP msgSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
-    Rcpp::traits::input_parameter< std::string >::type msg(msgSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type msg(msgSEXP);
     wsSend(client_xptr, msg);
     return R_NilValue;
 END_RCPP
