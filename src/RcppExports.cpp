@@ -20,6 +20,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// wsAppendHeader
+void wsAppendHeader(SEXP client_xptr, std::string key, std::string value);
+RcppExport SEXP _websocketClient_wsAppendHeader(SEXP client_xptrSEXP, SEXP keySEXP, SEXP valueSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
+    Rcpp::traits::input_parameter< std::string >::type key(keySEXP);
+    Rcpp::traits::input_parameter< std::string >::type value(valueSEXP);
+    wsAppendHeader(client_xptr, key, value);
+    return R_NilValue;
+END_RCPP
+}
 // wsConnect
 void wsConnect(SEXP client_xptr);
 RcppExport SEXP _websocketClient_wsConnect(SEXP client_xptrSEXP) {
@@ -106,6 +118,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_websocketClient_wsCreate", (DL_FUNC) &_websocketClient_wsCreate, 5},
+    {"_websocketClient_wsAppendHeader", (DL_FUNC) &_websocketClient_wsAppendHeader, 3},
     {"_websocketClient_wsConnect", (DL_FUNC) &_websocketClient_wsConnect, 1},
     {"_websocketClient_wsRestart", (DL_FUNC) &_websocketClient_wsRestart, 1},
     {"_websocketClient_wsPoll", (DL_FUNC) &_websocketClient_wsPoll, 1},

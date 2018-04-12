@@ -20,6 +20,9 @@ the server disconnect.}
 
 \item{onFail}{A function called with no arguments when the connection fails
 while the handshake is bring processed.}
+
+\item{headers}{A named list or character vector representing keys and values
+of headers in the initial HTTP request.}
 }
 \value{
 a WebsocketClient instance
@@ -29,7 +32,7 @@ Create a websocket client
 }
 \section{Usage}{
 
-\preformatted{WebsocketClient$$new(url, onMessage,
+\preformatted{WebsocketClient$new(url, onMessage,
                      onOpen = function() {},
                      onClose = function() {},
                      onFail = function() {})

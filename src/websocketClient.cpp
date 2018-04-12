@@ -129,6 +129,12 @@ SEXP wsCreate(std::string uri, Rcpp::Function onMessage, Rcpp::Function onOpen, 
 }
 
 // [[Rcpp::export]]
+void wsAppendHeader(SEXP client_xptr, std::string key, std::string value) {
+  shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
+  wsPtr->client->append_header(key, value);
+}
+
+// [[Rcpp::export]]
 void wsConnect(SEXP client_xptr) {
   shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
   wsPtr->client->connect();

@@ -35,7 +35,9 @@ public:
   virtual void set_fail_handler(websocketpp::fail_handler h) = 0;
 
   virtual void setup_connection(std::string location, websocketpp::lib::error_code &ec) = 0;
+  virtual void append_header(std::string key, std::string value) = 0;
   virtual void connect() = 0;
+
   virtual std::size_t run_one() = 0;
   virtual websocketpp::lib::asio::io_service& get_io_service() = 0;
   virtual std::size_t poll() = 0;
@@ -79,9 +81,13 @@ public:
   void setup_connection(std::string location, websocketpp::lib::error_code &ec) {
     this->con = client.get_connection(location, ec);
   };
+  void append_header(std::string key, std::string value) {
+    this->con->append_header(key, value);
+  }
   void connect() {
     client.connect(this->con);
   };
+
   std::size_t run_one() {
     return client.run_one();
   };

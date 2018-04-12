@@ -6,7 +6,7 @@ NULL
 #' Create a websocket client
 #'
 #' @section Usage:
-#' \preformatted{WebsocketClient$$new(url, onMessage,
+#' \preformatted{WebsocketClient$new(url, onMessage,
 #'                      onOpen = function() {},
 #'                      onClose = function() {},
 #'                      onFail = function() {})
@@ -24,6 +24,8 @@ NULL
 #'   the server disconnect.
 #' @param onFail A function called with no arguments when the connection fails
 #'   while the handshake is bring processed.
+#' @param headers A named list or character vector representing keys and values
+#'   of headers in the initial HTTP request.
 #'
 #' @return a WebsocketClient instance
 #'
@@ -55,9 +57,15 @@ WebsocketClient <- R6::R6Class("WebsocketClient",
       onMessage = NULL,
       onOpen = function() {},
       onClose = function() {},
-      onFail = function() {}
+      onFail = function() {},
+      headers = NULL
     ) {
       private$wsObj <- wsCreate(url, onMessage, onOpen, onClose, onFail)
+
+      mapply(names(headers), headers, FUN = function(key, value) {
+        wsAppendHeader(private$wsObj, key, value)
+      })
+
       wsConnect(private$wsObj)
       private$handleIncoming()
     },

@@ -5,6 +5,10 @@ wsCreate <- function(uri, onMessage, onOpen, onClose, onFail) {
     .Call(`_websocketClient_wsCreate`, uri, onMessage, onOpen, onClose, onFail)
 }
 
+wsAppendHeader <- function(client_xptr, key, value) {
+    invisible(.Call(`_websocketClient_wsAppendHeader`, client_xptr, key, value))
+}
+
 wsConnect <- function(client_xptr) {
     invisible(.Call(`_websocketClient_wsConnect`, client_xptr))
 }
