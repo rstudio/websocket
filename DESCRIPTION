@@ -19,3 +19,5 @@ RoxygenNote: 6.0.1.9000
 Collate: 
     'RcppExports.R'
     'websocketClient.R'
+Suggests:
+    testthat
