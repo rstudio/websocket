@@ -1,6 +1,35 @@
-# websocketClient
+websocketClient
+===============
 
 This is an R WebSocket client library backed by the [websocketpp](https://github.com/zaphoyd/websocketpp) C++ library.
+
+## Usage examples
+
+You may need to step through the `$send()` commands because there will be a small amount of time before the response is received. The `onMessage()` callback is invoked asynchronously (using the [later](https://github.com/r-lib/later) package) when a response arrives.
+ 
+```R
+library(websocketClient)
+
+ws <- WebsocketClient$new("ws://echo.websocket.org/",
+  onOpen = function() {
+    cat("Connection opened\n")
+  },
+  onMessage = function(msg) {
+    cat("Client got msg: ", msg, "\n")
+  },
+  onClose = function() {
+    cat("Client disconnected\n")
+  }
+)
+
+ws$send("hello")
+
+ws$send( charToRaw("hello") )
+
+ws$close()
+```
+
+websocketClient supports ws:// and wss:// URLs.
 
 ## Development setup
 
@@ -8,14 +37,44 @@ Currently we do local development by running a simple httpuv-backed WebSocket se
 
 To run it, you need to install the Github version of `httpuv`.
 
-### Running testing server on macOS
+### Running testing WebSocket server on macOS
 
 > Note: If you want httpuv to build faster, you can create a file at ~/.Renviron with the following content: `MAKEFLAGS=-j4`
 
-Next run `remotes::install_github("rstudio/httpuv")`
+To install the development version of httpuv, run:
 
-Then run `R -e 'source("tmp/websocketServer.R");httpuv::service(Inf)'`
+```R
+remotes::install_github("rstudio/httpuv")`
+```
 
-## Usage examples
+Then to run the WebSocket server, run this in a terminal:
 
-TODO
+```
+R -e 'source("tmp/websocketServer.R"); httpuv::service(Inf)'
+```
+
+Finally, to test the WebSocket client, run this in R.
+
+```R
+library(websocketClient)
+
+ws <- WebsocketClient$new("ws://127.0.0.1:8080/",
+  headers = list(Cookie = "Xyz"),
+  onOpen = function() {
+    cat("Connection opened.\n")
+  },
+  onMessage = function(msg) {
+    cat("Client received message: ", msg, "\n")
+  },
+  onClose = function() {
+    cat("Connection closed.\n")
+  }
+)
+
+ws$send("hello")
+
+ws$send( charToRaw("hello") )
+
+ws$close()
+```
+

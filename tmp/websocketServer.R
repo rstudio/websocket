@@ -4,32 +4,19 @@ library(httpuv)
 cat("Starting server on port 8080...\n")
 startServer("0.0.0.0", 8080,
   list(
+    onHeaders = function(req) {
+      # Print connection headers
+      cat(capture.output(str(as.list(req))), sep = "\n")
+    },
     onWSOpen = function(ws) {
-      cat("onWSOpen\n")
+      cat("Connection opened.\n")
 
       ws$onMessage(function(binary, message) {
-        cat("server received message:", message, "\n")
+        cat("Server received message:", message, "\n")
+        ws$send(message)
       })
-
-      is_open <- TRUE
-      count <- 0
-      send_func <- function() {
-        if (is_open) {
-          count <<- count + 1
-          ws$send(count)
-
-          if (count == 5) {
-            cat("Closing connection in 1 second\n")
-            later::later(ws$close, 1)
-          } else {
-            later::later(send_func, 1)
-          }
-        }
-      }
-      send_func()
-
       ws$onClose(function() {
-        is_open <<- FALSE
+        cat("Connection closed.\n")
       })
 
     }
