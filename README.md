@@ -1,5 +1,5 @@
-websocketClient
-===============
+websocket
+=========
 
 This is an R WebSocket client library backed by the [websocketpp](https://github.com/zaphoyd/websocketpp) C++ library.
 
@@ -8,7 +8,7 @@ This is an R WebSocket client library backed by the [websocketpp](https://github
 You may need to step through the `$send()` commands because there will be a small amount of time before the response is received. The `onMessage()` callback is invoked asynchronously (using the [later](https://github.com/r-lib/later) package) when a response arrives.
  
 ```R
-library(websocketClient)
+library(websocket)
 
 ws <- WebsocketClient$new("ws://echo.websocket.org/",
   onOpen = function() {
@@ -29,7 +29,7 @@ ws$send( charToRaw("hello") )
 ws$close()
 ```
 
-websocketClient supports ws:// and wss:// URLs.
+websocket supports ws:// and wss:// URLs.
 
 ## Development setup
 
@@ -56,7 +56,7 @@ R -e 'source("tmp/websocketServer.R"); httpuv::service(Inf)'
 Finally, to test the WebSocket client, run this in R.
 
 ```R
-library(websocketClient)
+library(websocket)
 
 ws <- WebsocketClient$new("ws://127.0.0.1:8080/",
   headers = list(Cookie = "Xyz"),

@@ -1,6 +1,6 @@
 library(curl)
 library(httpuv)
-library(websocketClient)
+library(websocket)
 
 req_rook_to_curl <- function(req, host) {
   # browser()

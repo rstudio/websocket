@@ -1,4 +1,4 @@
-#' @useDynLib websocketClient, .registration = TRUE
+#' @useDynLib websocket, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 #' @include RcppExports.R
 NULL

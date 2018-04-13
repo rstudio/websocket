@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // wsCreate
 SEXP wsCreate(std::string uri, Rcpp::Function onMessage, Rcpp::Function onOpen, Rcpp::Function onClose, Rcpp::Function onFail);
-RcppExport SEXP _websocketClient_wsCreate(SEXP uriSEXP, SEXP onMessageSEXP, SEXP onOpenSEXP, SEXP onCloseSEXP, SEXP onFailSEXP) {
+RcppExport SEXP _websocket_wsCreate(SEXP uriSEXP, SEXP onMessageSEXP, SEXP onOpenSEXP, SEXP onCloseSEXP, SEXP onFailSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -22,7 +22,7 @@ END_RCPP
 }
 // wsAppendHeader
 void wsAppendHeader(SEXP client_xptr, std::string key, std::string value);
-RcppExport SEXP _websocketClient_wsAppendHeader(SEXP client_xptrSEXP, SEXP keySEXP, SEXP valueSEXP) {
+RcppExport SEXP _websocket_wsAppendHeader(SEXP client_xptrSEXP, SEXP keySEXP, SEXP valueSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
@@ -34,7 +34,7 @@ END_RCPP
 }
 // wsConnect
 void wsConnect(SEXP client_xptr);
-RcppExport SEXP _websocketClient_wsConnect(SEXP client_xptrSEXP) {
+RcppExport SEXP _websocket_wsConnect(SEXP client_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
@@ -44,7 +44,7 @@ END_RCPP
 }
 // wsRestart
 void wsRestart(SEXP client_xptr);
-RcppExport SEXP _websocketClient_wsRestart(SEXP client_xptrSEXP) {
+RcppExport SEXP _websocket_wsRestart(SEXP client_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
@@ -54,7 +54,7 @@ END_RCPP
 }
 // wsPoll
 void wsPoll(SEXP client_xptr);
-RcppExport SEXP _websocketClient_wsPoll(SEXP client_xptrSEXP) {
+RcppExport SEXP _websocket_wsPoll(SEXP client_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
@@ -64,7 +64,7 @@ END_RCPP
 }
 // wsSend
 void wsSend(SEXP client_xptr, SEXP msg);
-RcppExport SEXP _websocketClient_wsSend(SEXP client_xptrSEXP, SEXP msgSEXP) {
+RcppExport SEXP _websocket_wsSend(SEXP client_xptrSEXP, SEXP msgSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
@@ -75,7 +75,7 @@ END_RCPP
 }
 // wsReset
 void wsReset(SEXP client_xptr);
-RcppExport SEXP _websocketClient_wsReset(SEXP client_xptrSEXP) {
+RcppExport SEXP _websocket_wsReset(SEXP client_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
@@ -85,7 +85,7 @@ END_RCPP
 }
 // wsClose
 void wsClose(SEXP client_xptr);
-RcppExport SEXP _websocketClient_wsClose(SEXP client_xptrSEXP) {
+RcppExport SEXP _websocket_wsClose(SEXP client_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
@@ -95,7 +95,7 @@ END_RCPP
 }
 // wsStopped
 bool wsStopped(SEXP client_xptr);
-RcppExport SEXP _websocketClient_wsStopped(SEXP client_xptrSEXP) {
+RcppExport SEXP _websocket_wsStopped(SEXP client_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -106,7 +106,7 @@ END_RCPP
 }
 // wsState
 std::string wsState(SEXP client_xptr);
-RcppExport SEXP _websocketClient_wsState(SEXP client_xptrSEXP) {
+RcppExport SEXP _websocket_wsState(SEXP client_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -117,20 +117,20 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_websocketClient_wsCreate", (DL_FUNC) &_websocketClient_wsCreate, 5},
-    {"_websocketClient_wsAppendHeader", (DL_FUNC) &_websocketClient_wsAppendHeader, 3},
-    {"_websocketClient_wsConnect", (DL_FUNC) &_websocketClient_wsConnect, 1},
-    {"_websocketClient_wsRestart", (DL_FUNC) &_websocketClient_wsRestart, 1},
-    {"_websocketClient_wsPoll", (DL_FUNC) &_websocketClient_wsPoll, 1},
-    {"_websocketClient_wsSend", (DL_FUNC) &_websocketClient_wsSend, 2},
-    {"_websocketClient_wsReset", (DL_FUNC) &_websocketClient_wsReset, 1},
-    {"_websocketClient_wsClose", (DL_FUNC) &_websocketClient_wsClose, 1},
-    {"_websocketClient_wsStopped", (DL_FUNC) &_websocketClient_wsStopped, 1},
-    {"_websocketClient_wsState", (DL_FUNC) &_websocketClient_wsState, 1},
+    {"_websocket_wsCreate", (DL_FUNC) &_websocket_wsCreate, 5},
+    {"_websocket_wsAppendHeader", (DL_FUNC) &_websocket_wsAppendHeader, 3},
+    {"_websocket_wsConnect", (DL_FUNC) &_websocket_wsConnect, 1},
+    {"_websocket_wsRestart", (DL_FUNC) &_websocket_wsRestart, 1},
+    {"_websocket_wsPoll", (DL_FUNC) &_websocket_wsPoll, 1},
+    {"_websocket_wsSend", (DL_FUNC) &_websocket_wsSend, 2},
+    {"_websocket_wsReset", (DL_FUNC) &_websocket_wsReset, 1},
+    {"_websocket_wsClose", (DL_FUNC) &_websocket_wsClose, 1},
+    {"_websocket_wsStopped", (DL_FUNC) &_websocket_wsStopped, 1},
+    {"_websocket_wsState", (DL_FUNC) &_websocket_wsState, 1},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_websocketClient(DllInfo *dll) {
+RcppExport void R_init_websocket(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

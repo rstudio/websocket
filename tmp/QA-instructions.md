@@ -5,7 +5,7 @@ Because this repo is private, you need to supply an `auth_token` argument to the
 
 ``` r
 install.packages("remotes")
-remotes::install_github("rstudio/websocketClient", auth_token = "YOUR_GITHUB_PERSONAL_ACCESS_TOKEN")
+remotes::install_github("rstudio/websocket", auth_token = "YOUR_GITHUB_PERSONAL_ACCESS_TOKEN")
 ```
 
 Creating a websocket
@@ -15,7 +15,7 @@ First, create a websocket client by running:
 
 ``` r
 # Create a websocket using the websocket.org test server
-ws <- websocketClient::WebsocketClient$new("ws://echo.websocket.org/",
+ws <- websocket::WebsocketClient$new("ws://echo.websocket.org/",
   onMessage = function(msg) {
     cat("Client got msg: ", msg, "\n")
   },

@@ -2,8 +2,8 @@ This package is provided you under the terms of the GNU General Public License
 version 2 or any later version.
 
 Included below is license and copyright information for externally maintained
-libraries used by websocketClient. All other code in websocketClient is
-copyright RStudio, Inc.
+libraries used by websocket. All other code in websocket is copyright RStudio,
+Inc.
 
 
 websocketpp is licensed for use as follows:

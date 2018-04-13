@@ -1,4 +1,4 @@
 library(testthat)
-library(websocketClient)
+library(websocket)
 
-test_check("websocketClient")
+test_check("websocket")

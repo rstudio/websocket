@@ -2,4 +2,4 @@
 
 export(WebsocketClient)
 importFrom(Rcpp,sourceCpp)
-useDynLib(websocketClient, .registration = TRUE)
+useDynLib(websocket, .registration = TRUE)

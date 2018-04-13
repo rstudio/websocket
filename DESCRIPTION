@@ -1,7 +1,7 @@
-Package: websocketClient
+Package: websocket
 Version: 0.0.0.9000
 Title: WebSocket Client Library
-Description: Provides a WebSocket Client.
+Description: Provides a WebSocket client interface for R.
 Authors@R: c(
     person("Dipert", "Alan", , "alan@rstudio.com", c("aut", "cre")),
     person("Barbara", "Borges", , "barbara@rstudio.com", "aut"),
@@ -18,6 +18,6 @@ SystemRequirements: GNU make, OpenSSL >= 1.0.1
 RoxygenNote: 6.0.1.9000
 Collate: 
     'RcppExports.R'
-    'websocketClient.R'
+    'websocket.R'
 Suggests:
     testthat

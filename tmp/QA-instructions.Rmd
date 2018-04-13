@@ -10,7 +10,7 @@ output:
 
 ```{r setup, eval=FALSE}
 install.packages("remotes")
-remotes::install_github("rstudio/websocketClient")
+remotes::install_github("rstudio/websocket")
 ```
 
 ## Creating a websocket
@@ -18,7 +18,7 @@ First, create a websocket client by running:
 
 ```{r createWS}
 # Create a websocket using the websocket.org test server
-ws <- websocketClient::WebsocketClient$new("ws://echo.websocket.org/",
+ws <- websocket::WebsocketClient$new("ws://echo.websocket.org/",
   onMessage = function(msg) {
     cat("Client got msg: ", msg, "\n")
   },
