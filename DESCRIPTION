@@ -4,8 +4,8 @@ Title: WebSocket Client Library
 Description: Provides a WebSocket Client.
 Authors@R: c(
     person("Dipert", "Alan", , "alan@rstudio.com", c("aut", "cre")),
-    person("Barbara", "Borges", , "barbara@rstudio.com", c("aut")),
-    person("Chang", "Winston", , "winston@rstudio.com", c("aut")))
+    person("Barbara", "Borges", , "barbara@rstudio.com", "aut"),
+    person("Chang", "Winston", , "winston@rstudio.com", "aut"))
 License: GPL (>= 2) | file LICENSE
 Encoding: UTF-8
 LazyData: true
