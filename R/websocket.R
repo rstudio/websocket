@@ -17,7 +17,8 @@ NULL
 #' }
 #'
 #' @section Usage:
-#' \preformatted{WebsocketClient$new(url, onMessage,
+#' \preformatted{WebsocketClient$new(url,
+#'                      onMessage = function(msg) {},
 #'                      onOpen = function() {},
 #'                      onClose = function() {},
 #'                      onFail = function() {})
@@ -64,7 +65,7 @@ NULL
 WebsocketClient <- R6::R6Class("WebsocketClient",
   public = list(
     initialize = function(url,
-      onMessage = NULL,
+      onMessage = function(msg) {},
       onOpen = function() {},
       onClose = function() {},
       onFail = function() {},

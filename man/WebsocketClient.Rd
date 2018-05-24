@@ -39,7 +39,8 @@ A WebsocketClient object has the following methods:
 }
 \section{Usage}{
 
-\preformatted{WebsocketClient$new(url, onMessage,
+\preformatted{WebsocketClient$new(url,
+                     onMessage = function(msg) {},
                      onOpen = function() {},
                      onClose = function() {},
                      onFail = function() {})
