@@ -31,7 +31,7 @@
 #include <websocketpp/common/functional.hpp>
 #include <websocketpp/common/system_error.hpp>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 /// Transport policies provide network connectivity and timers
 /**
  * ### Endpoint Interface
@@ -72,6 +72,6 @@ typedef lib::function<void(lib::error_code const &)> accept_handler;
 typedef lib::function<void(lib::error_code const &)> connect_handler;
 
 } // namespace transport
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_TRANSPORT_BASE_HPP

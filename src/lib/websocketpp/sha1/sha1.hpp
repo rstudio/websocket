@@ -36,7 +36,7 @@ under the same license as the original, which is listed below.
 #ifndef SHA1_DEFINED
 #define SHA1_DEFINED
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace sha1 {
 
 namespace { // local
@@ -184,6 +184,6 @@ inline void calc(void const * src, size_t bytelength, unsigned char * hash) {
 }
 
 } // namespace sha1
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // SHA1_DEFINED

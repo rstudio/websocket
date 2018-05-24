@@ -34,7 +34,7 @@
 #include <string>
 #include <locale>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 /// Generic non-websocket specific utility functions and data structures
 namespace utility {
 
@@ -175,7 +175,7 @@ std::string to_hex(uint8_t const * input, size_t length);
 std::string to_hex(char const * input, size_t length);
 
 } // namespace utility
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #include <websocketpp/impl/utilities_impl.hpp>
 

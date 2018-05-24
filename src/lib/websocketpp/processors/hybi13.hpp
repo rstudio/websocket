@@ -46,7 +46,7 @@
 #include <vector>
 #include <utility>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace processor {
 
 /// Processor for Hybi version 13 (RFC6455)
@@ -1051,6 +1051,6 @@ protected:
 };
 
 } // namespace processor
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif //WEBSOCKETPP_PROCESSOR_HYBI13_HPP

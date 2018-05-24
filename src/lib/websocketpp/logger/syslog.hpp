@@ -38,7 +38,7 @@
 #include <websocketpp/common/cpp11.hpp>
 #include <websocketpp/logger/levels.hpp>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace log {
 
 /// Basic logger that outputs to syslog

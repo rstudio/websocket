@@ -30,7 +30,7 @@
 
 #include <websocketpp/config/minimal_server.hpp>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace config {
 
 /// Client config with minimal dependencies
@@ -67,6 +67,6 @@ namespace config {
 typedef minimal_server minimal_client;
 
 } // namespace config
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_CONFIG_MINIMAL_CLIENT_HPP

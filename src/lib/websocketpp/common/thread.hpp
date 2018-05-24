@@ -61,7 +61,7 @@
     #include <boost/thread/condition_variable.hpp>
 #endif
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace lib {
 
 #ifdef _WEBSOCKETPP_CPP11_THREAD_
@@ -79,6 +79,6 @@ namespace lib {
 #endif
 
 } // namespace lib
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_COMMON_THREAD_HPP

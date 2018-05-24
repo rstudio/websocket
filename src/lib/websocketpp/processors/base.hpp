@@ -37,7 +37,7 @@
 
 #include <string>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace processor {
 
 /// Constants related to processing WebSocket connections
@@ -287,10 +287,10 @@ inline close::status::value to_ws(lib::error_code ec) {
 
 } // namespace error
 } // namespace processor
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 _WEBSOCKETPP_ERROR_CODE_ENUM_NS_START_
-template<> struct is_error_code_enum<websocketpp::processor::error::processor_errors>
+template<> struct is_error_code_enum<ws_websocketpp::processor::error::processor_errors>
 {
     static bool const value = true;
 };

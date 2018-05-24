@@ -43,7 +43,7 @@
 #include <string>
 #include <vector>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace processor {
 
 /// Processor for Hybi Draft version 00
@@ -264,7 +264,7 @@ public:
                     m_msg_ptr = m_msg_manager->get_message(frame::opcode::text,1);
 
                     if (!m_msg_ptr) {
-                        ec = make_error_code(websocketpp::error::no_incoming_buffers);
+                        ec = make_error_code(ws_websocketpp::error::no_incoming_buffers);
                         m_state = FATAL_ERROR;
                     } else {
                         m_state = PAYLOAD;
@@ -457,6 +457,6 @@ private:
 };
 
 } // namespace processor
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif //WEBSOCKETPP_PROCESSOR_HYBI00_HPP

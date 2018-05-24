@@ -51,7 +51,7 @@
 #include <iomanip>
 #include <string>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace log {
 
 /// Basic logger that outputs to an ostream

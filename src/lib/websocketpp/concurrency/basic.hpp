@@ -30,7 +30,7 @@
 
 #include <websocketpp/common/thread.hpp>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace concurrency {
 
 /// Concurrency policy that uses std::mutex / boost::mutex
@@ -41,6 +41,6 @@ public:
 };
 
 } // namespace concurrency
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_CONCURRENCY_BASIC_HPP

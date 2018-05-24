@@ -36,7 +36,7 @@
 #include <websocketpp/utilities.hpp>
 #include <websocketpp/http/constants.hpp>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace http {
 namespace parser {
 
@@ -612,7 +612,7 @@ protected:
 
 } // namespace parser
 } // namespace http
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #include <websocketpp/http/impl/parser.hpp>
 

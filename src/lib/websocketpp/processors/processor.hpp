@@ -40,7 +40,7 @@
 #include <utility>
 #include <vector>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 /// Processors encapsulate the protocol rules specific to each WebSocket version
 /**
  * The processors namespace includes a number of free functions that operate on
@@ -402,6 +402,6 @@ protected:
 };
 
 } // namespace processor
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif //WEBSOCKETPP_PROCESSOR_HPP

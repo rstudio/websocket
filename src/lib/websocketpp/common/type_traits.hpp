@@ -48,7 +48,7 @@
 
 
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace lib {
 
 #ifdef _WEBSOCKETPP_CPP11_TYPE_TRAITS_
@@ -60,6 +60,6 @@ namespace lib {
 #endif
 
 } // namespace lib
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_COMMON_TYPE_TRAITS_HPP

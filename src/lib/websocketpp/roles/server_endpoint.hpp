@@ -34,7 +34,7 @@
 
 #include <websocketpp/common/system_error.hpp>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 
 /// Server endpoint role based on the given config
 /**
@@ -185,6 +185,6 @@ public:
     }
 };
 
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif //WEBSOCKETPP_SERVER_ENDPOINT_HPP

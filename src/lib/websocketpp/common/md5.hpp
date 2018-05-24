@@ -71,7 +71,7 @@
 #include <string>
 #include <cstring>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 /// Provides MD5 hashing functionality
 namespace md5 {
 

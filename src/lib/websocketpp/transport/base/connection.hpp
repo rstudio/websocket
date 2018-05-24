@@ -35,7 +35,7 @@
 
 #include <string>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 /// Transport policies provide network connectivity and timers
 /**
  * ### Connection Interface
@@ -227,9 +227,9 @@ inline lib::error_code make_error_code(error::value e) {
 
 } // namespace error
 } // namespace transport
-} // namespace websocketpp
+} // namespace ws_websocketpp
 _WEBSOCKETPP_ERROR_CODE_ENUM_NS_START_
-template<> struct is_error_code_enum<websocketpp::transport::error::value>
+template<> struct is_error_code_enum<ws_websocketpp::transport::error::value>
 {
     static bool const value = true;
 };

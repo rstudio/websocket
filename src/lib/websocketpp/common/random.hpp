@@ -65,7 +65,7 @@
     #endif
 #endif
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace lib {
 
 #ifdef _WEBSOCKETPP_CPP11_RANDOM_DEVICE_
@@ -77,6 +77,6 @@ namespace lib {
 #endif
 
 } // namespace lib
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_COMMON_RANDOM_DEVICE_HPP

@@ -34,7 +34,7 @@
 #include <sstream>
 #include <string>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace http {
 namespace parser {
 
@@ -191,6 +191,6 @@ inline std::string parser::raw_headers() const {
 
 } // namespace parser
 } // namespace http
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // HTTP_PARSER_IMPL_HPP

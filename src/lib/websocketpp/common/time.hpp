@@ -30,7 +30,7 @@
 
 #include <ctime>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace lib {
 
 // Code in this header was inspired by the following article and includes some

@@ -34,7 +34,7 @@
 
 #include <websocketpp/http/parser.hpp>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace http {
 namespace parser {
 
@@ -186,6 +186,6 @@ inline void request::process(std::string::iterator begin, std::string::iterator
 
 } // namespace parser
 } // namespace http
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // HTTP_PARSER_REQUEST_IMPL_HPP

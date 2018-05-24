@@ -40,7 +40,7 @@
 #include <sstream>
 #include <string>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace transport {
 namespace asio {
 
@@ -182,8 +182,8 @@ public:
         if (m_state != UNINITIALIZED) {
             m_elog->write(log::elevel::library,
                 "asio::init_asio called from the wrong state");
-            using websocketpp::error::make_error_code;
-            ec = make_error_code(websocketpp::error::invalid_state);
+            using ws_websocketpp::error::make_error_code;
+            ec = make_error_code(ws_websocketpp::error::invalid_state);
             return;
         }
 
@@ -393,8 +393,8 @@ public:
         if (m_state != READY) {
             m_elog->write(log::elevel::library,
                 "asio::listen called from the wrong state");
-            using websocketpp::error::make_error_code;
-            ec = make_error_code(websocketpp::error::invalid_state);
+            using ws_websocketpp::error::make_error_code;
+            ec = make_error_code(ws_websocketpp::error::invalid_state);
             return;
         }
 
@@ -578,8 +578,8 @@ public:
         if (m_state != LISTENING) {
             m_elog->write(log::elevel::library,
                 "asio::listen called from the wrong state");
-            using websocketpp::error::make_error_code;
-            ec = make_error_code(websocketpp::error::invalid_state);
+            using ws_websocketpp::error::make_error_code;
+            ec = make_error_code(ws_websocketpp::error::invalid_state);
             return;
         }
 
@@ -744,8 +744,8 @@ public:
         lib::error_code & ec)
     {
         if (m_state != LISTENING) {
-            using websocketpp::error::make_error_code;
-            ec = make_error_code(websocketpp::error::async_accept_not_listening);
+            using ws_websocketpp::error::make_error_code;
+            ec = make_error_code(ws_websocketpp::error::async_accept_not_listening);
             return;
         }
 
@@ -809,7 +809,7 @@ protected:
 
         if (asio_ec) {
             if (asio_ec == lib::asio::errc::operation_canceled) {
-                ret_ec = make_error_code(websocketpp::error::operation_canceled);
+                ret_ec = make_error_code(ws_websocketpp::error::operation_canceled);
             } else {
                 log_err(log::elevel::info,"asio handle_accept",asio_ec);
                 ret_ec = make_error_code(error::pass_through);
@@ -1142,6 +1142,6 @@ private:
 
 } // namespace asio
 } // namespace transport
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_TRANSPORT_ASIO_HPP

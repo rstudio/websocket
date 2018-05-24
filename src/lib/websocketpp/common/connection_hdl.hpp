@@ -30,7 +30,7 @@
 
 #include <websocketpp/common/memory.hpp>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 
 /// A handle to uniquely identify a connection.
 /**
@@ -47,6 +47,6 @@ namespace websocketpp {
  */
 typedef lib::weak_ptr<void> connection_hdl;
 
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_COMMON_CONNECTION_HDL_HPP

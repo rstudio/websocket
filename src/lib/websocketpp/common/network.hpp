@@ -38,7 +38,7 @@
 
 #include <websocketpp/common/stdint.hpp>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace lib {
 namespace net {
 

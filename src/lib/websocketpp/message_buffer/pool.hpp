@@ -32,7 +32,7 @@
 
 #include <string>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace message_buffer {
 
 /* # message:
@@ -224,6 +224,6 @@ class endpoint_msg_manager {
 } // namespace pool
 
 } // namespace message_buffer
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_MESSAGE_BUFFER_ALLOC_HPP

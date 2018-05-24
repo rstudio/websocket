@@ -45,7 +45,7 @@
 #include <utility>
 #include <vector>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 
 namespace istate = session::internal_state;
 
@@ -2367,6 +2367,6 @@ void connection<config>::log_http_result() {
     m_alog.write(log::alevel::http,s.str());
 }
 
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_CONNECTION_IMPL_HPP

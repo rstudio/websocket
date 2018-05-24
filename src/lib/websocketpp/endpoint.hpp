@@ -35,7 +35,7 @@
 
 #include <string>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 
 /// Creates and manages connections associated with a WebSocket endpoint
 template <typename connection, typename config>
@@ -91,7 +91,7 @@ public:
     explicit endpoint(bool p_is_server)
       : m_alog(config::alog_level, log::channel_type_hint::access)
       , m_elog(config::elog_level, log::channel_type_hint::error)
-      , m_user_agent(::websocketpp::user_agent)
+      , m_user_agent(::ws_websocketpp::user_agent)
       , m_open_handshake_timeout_dur(config::timeout_open_handshake)
       , m_close_handshake_timeout_dur(config::timeout_close_handshake)
       , m_pong_timeout_dur(config::timeout_pong)
@@ -162,7 +162,7 @@ public:
      * Returns the user agent string that this endpoint will use when creating
      * new connections.
      *
-     * The default value for this version is stored in websocketpp::user_agent
+     * The default value for this version is stored in ws_websocketpp::user_agent
      *
      * @return The user agent string.
      */
@@ -185,7 +185,7 @@ public:
      *
      * For best results set this before accepting or opening connections.
      *
-     * The default value for this version is stored in websocketpp::user_agent
+     * The default value for this version is stored in ws_websocketpp::user_agent
      *
      * This can be overridden on an individual connection basis by setting a
      * custom "Server" header during the validate handler or "User-Agent"
@@ -693,7 +693,7 @@ private:
     mutable mutex_type          m_mutex;
 };
 
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #include <websocketpp/impl/endpoint_impl.hpp>
 

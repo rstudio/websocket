@@ -37,7 +37,7 @@
 
 #include <string>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 
 /// Client endpoint role based on the given config
 /**
@@ -168,6 +168,6 @@ private:
     }
 };
 
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif //WEBSOCKETPP_CLIENT_ENDPOINT_HPP

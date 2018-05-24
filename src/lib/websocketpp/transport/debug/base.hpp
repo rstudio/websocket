@@ -33,7 +33,7 @@
 
 #include <string>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace transport {
 /// Debug transport policy that is used for various mocking and stubbing duties
 /// in unit tests.
@@ -93,9 +93,9 @@ inline lib::error_code make_error_code(error::value e) {
 } // namespace error
 } // namespace debug
 } // namespace transport
-} // namespace websocketpp
+} // namespace ws_websocketpp
 _WEBSOCKETPP_ERROR_CODE_ENUM_NS_START_
-template<> struct is_error_code_enum<websocketpp::transport::debug::error::value>
+template<> struct is_error_code_enum<ws_websocketpp::transport::debug::error::value>
 {
     static bool const value = true;
 };

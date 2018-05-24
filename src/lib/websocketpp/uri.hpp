@@ -36,7 +36,7 @@
 #include <sstream>
 #include <string>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 
 // TODO: figure out why this fixes horrible linking errors.
 
@@ -350,6 +350,6 @@ private:
 /// Pointer to a URI
 typedef lib::shared_ptr<uri> uri_ptr;
 
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_URI_HPP

@@ -31,7 +31,7 @@
 #include <websocketpp/config/debug.hpp>
 #include <websocketpp/transport/asio/endpoint.hpp>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace config {
 
 /// Client/Server debug config with asio transport and TLS disabled
@@ -59,15 +59,15 @@ struct debug_asio : public debug_core {
         typedef type::elog_type elog_type;
         typedef type::request_type request_type;
         typedef type::response_type response_type;
-        typedef websocketpp::transport::asio::basic_socket::endpoint
+        typedef ws_websocketpp::transport::asio::basic_socket::endpoint
             socket_type;
     };
 
-    typedef websocketpp::transport::asio::endpoint<transport_config>
+    typedef ws_websocketpp::transport::asio::endpoint<transport_config>
         transport_type;
 };
 
 } // namespace config
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_CONFIG_ASIO_DEBUG_HPP

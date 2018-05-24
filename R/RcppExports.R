@@ -2,42 +2,42 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 wsCreate <- function(uri, onMessage, onOpen, onClose, onFail) {
-    .Call('_websocket_wsCreate', PACKAGE = 'websocket', uri, onMessage, onOpen, onClose, onFail)
+    .Call(`_websocket_wsCreate`, uri, onMessage, onOpen, onClose, onFail)
 }
 
 wsAppendHeader <- function(client_xptr, key, value) {
-    invisible(.Call('_websocket_wsAppendHeader', PACKAGE = 'websocket', client_xptr, key, value))
+    invisible(.Call(`_websocket_wsAppendHeader`, client_xptr, key, value))
 }
 
 wsConnect <- function(client_xptr) {
-    invisible(.Call('_websocket_wsConnect', PACKAGE = 'websocket', client_xptr))
+    invisible(.Call(`_websocket_wsConnect`, client_xptr))
 }
 
 wsRestart <- function(client_xptr) {
-    invisible(.Call('_websocket_wsRestart', PACKAGE = 'websocket', client_xptr))
+    invisible(.Call(`_websocket_wsRestart`, client_xptr))
 }
 
 wsPoll <- function(client_xptr) {
-    invisible(.Call('_websocket_wsPoll', PACKAGE = 'websocket', client_xptr))
+    invisible(.Call(`_websocket_wsPoll`, client_xptr))
 }
 
 wsSend <- function(client_xptr, msg) {
-    invisible(.Call('_websocket_wsSend', PACKAGE = 'websocket', client_xptr, msg))
+    invisible(.Call(`_websocket_wsSend`, client_xptr, msg))
 }
 
 wsReset <- function(client_xptr) {
-    invisible(.Call('_websocket_wsReset', PACKAGE = 'websocket', client_xptr))
+    invisible(.Call(`_websocket_wsReset`, client_xptr))
 }
 
 wsClose <- function(client_xptr) {
-    invisible(.Call('_websocket_wsClose', PACKAGE = 'websocket', client_xptr))
+    invisible(.Call(`_websocket_wsClose`, client_xptr))
 }
 
 wsStopped <- function(client_xptr) {
-    .Call('_websocket_wsStopped', PACKAGE = 'websocket', client_xptr)
+    .Call(`_websocket_wsStopped`, client_xptr)
 }
 
 wsState <- function(client_xptr) {
-    .Call('_websocket_wsState', PACKAGE = 'websocket', client_xptr)
+    .Call(`_websocket_wsState`, client_xptr)
 }
 

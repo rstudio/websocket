@@ -34,7 +34,7 @@
 #include <vector>
 #include <utility>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 /// HTTP handling support
 namespace http {
     /// The type of an HTTP attribute list

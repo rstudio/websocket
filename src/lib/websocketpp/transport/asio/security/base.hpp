@@ -59,7 +59,7 @@
 // pre_init(init_handler);
 // post_init(init_handler);
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace transport {
 namespace asio {
 namespace socket {
@@ -154,6 +154,6 @@ typedef lib::function<void(const lib::error_code&)> init_handler;
 } // namespace socket
 } // namespace asio
 } // namespace transport
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_TRANSPORT_ASIO_SOCKET_BASE_HPP

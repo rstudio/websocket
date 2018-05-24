@@ -43,7 +43,7 @@
 #include <string>
 #include <vector>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace extensions {
 
 /// Implementation of the draft permessage-deflate WebSocket extension
@@ -161,16 +161,16 @@ inline lib::error_code make_error_code(error::value e) {
 } // namespace error
 } // namespace permessage_deflate
 } // namespace extensions
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 _WEBSOCKETPP_ERROR_CODE_ENUM_NS_START_
 template<> struct is_error_code_enum
-    <websocketpp::extensions::permessage_deflate::error::value>
+    <ws_websocketpp::extensions::permessage_deflate::error::value>
 {
     static bool const value = true;
 };
 _WEBSOCKETPP_ERROR_CODE_ENUM_NS_END_
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace extensions {
 namespace permessage_deflate {
 
@@ -747,6 +747,6 @@ private:
 
 } // namespace permessage_deflate
 } // namespace extensions
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_PROCESSOR_EXTENSION_PERMESSAGEDEFLATE_HPP

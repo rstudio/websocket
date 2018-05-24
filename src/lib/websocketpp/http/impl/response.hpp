@@ -35,7 +35,7 @@
 
 #include <websocketpp/http/parser.hpp>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace http {
 namespace parser {
 
@@ -261,6 +261,6 @@ inline size_t response::process_body(char const * buf, size_t len) {
 
 } // namespace parser
 } // namespace http
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // HTTP_PARSER_RESPONSE_IMPL_HPP

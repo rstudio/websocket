@@ -34,7 +34,7 @@
 #include <websocketpp/transport/base/endpoint.hpp>
 #include <websocketpp/transport/stub/connection.hpp>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace transport {
 namespace stub {
 
@@ -135,6 +135,6 @@ private:
 
 } // namespace stub
 } // namespace transport
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_TRANSPORT_STUB_HPP

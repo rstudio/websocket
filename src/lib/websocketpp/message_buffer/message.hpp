@@ -33,7 +33,7 @@
 
 #include <string>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace message_buffer {
 
 /* # message:
@@ -335,6 +335,6 @@ private:
 };
 
 } // namespace message_buffer
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_MESSAGE_BUFFER_MESSAGE_HPP

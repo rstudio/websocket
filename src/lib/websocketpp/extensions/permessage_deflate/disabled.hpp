@@ -38,7 +38,7 @@
 #include <string>
 #include <utility>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace extensions {
 namespace permessage_deflate {
 
@@ -123,6 +123,6 @@ public:
 
 } // namespace permessage_deflate
 } // namespace extensions
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_EXTENSION_PERMESSAGE_DEFLATE_DISABLED_HPP

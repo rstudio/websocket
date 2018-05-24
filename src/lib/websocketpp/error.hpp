@@ -35,7 +35,7 @@
 #include <websocketpp/common/cpp11.hpp>
 #include <websocketpp/common/system_error.hpp>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 
 /// Combination error code / string type for returning two values
 typedef std::pair<lib::error_code,std::string> err_str_pair;
@@ -237,16 +237,16 @@ inline lib::error_code make_error_code(error::value e) {
 }
 
 } // namespace error
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 _WEBSOCKETPP_ERROR_CODE_ENUM_NS_START_
-template<> struct is_error_code_enum<websocketpp::error::value>
+template<> struct is_error_code_enum<ws_websocketpp::error::value>
 {
     static bool const value = true;
 };
 _WEBSOCKETPP_ERROR_CODE_ENUM_NS_END_
 
-namespace websocketpp {
+namespace ws_websocketpp {
 
 class exception : public std::exception {
 public:
@@ -272,6 +272,6 @@ public:
     lib::error_code m_code;
 };
 
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_ERROR_HPP

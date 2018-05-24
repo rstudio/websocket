@@ -31,7 +31,7 @@
 #include <algorithm>
 #include <string>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace utility {
 
 inline std::string to_lower(std::string const & in) {
@@ -82,6 +82,6 @@ inline std::string string_replace_all(std::string subject, std::string const &
 }
 
 } // namespace utility
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_UTILITIES_IMPL_HPP

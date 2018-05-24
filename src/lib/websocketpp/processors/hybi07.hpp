@@ -33,7 +33,7 @@
 #include <string>
 #include <vector>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace processor {
 
 /// Processor for Hybi Draft version 07
@@ -73,6 +73,6 @@ private:
 };
 
 } // namespace processor
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif //WEBSOCKETPP_PROCESSOR_HYBI07_HPP

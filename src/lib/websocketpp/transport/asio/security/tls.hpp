@@ -41,7 +41,7 @@
 #include <sstream>
 #include <string>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace transport {
 namespace asio {
 /// A socket policy for the asio transport that implements a TLS encrypted
@@ -479,6 +479,6 @@ private:
 } // namespace tls_socket
 } // namespace asio
 } // namespace transport
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_TRANSPORT_SECURITY_TLS_HPP

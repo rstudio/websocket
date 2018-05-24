@@ -46,7 +46,7 @@
 #include <string>
 #include <vector>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace transport {
 namespace iostream {
 
@@ -368,9 +368,9 @@ public:
      * will be made to the standard write handler.
      *
      * The signature of the handler is
-     * `lib::error_code (connection_hdl, std::vector<websocketpp::transport::buffer>
+     * `lib::error_code (connection_hdl, std::vector<ws_websocketpp::transport::buffer>
      * const & bufs)`. The code returned will be reported and logged by the core
-     * library. The `websocketpp::transport::buffer` type is a struct with two
+     * library. The `ws_websocketpp::transport::buffer` type is a struct with two
      * data members. buf (char const *) and len (size_t).
      *
      * @since 0.6.0
@@ -709,6 +709,6 @@ private:
 
 } // namespace iostream
 } // namespace transport
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_TRANSPORT_IOSTREAM_CON_HPP

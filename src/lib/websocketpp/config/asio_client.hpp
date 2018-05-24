@@ -36,7 +36,7 @@
 #include <websocketpp/config/asio_no_tls_client.hpp>
 
 // Define TLS config
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace config {
 
 /// Client config with asio transport and TLS enabled
@@ -64,14 +64,14 @@ struct asio_tls_client : public core_client {
         typedef type::elog_type elog_type;
         typedef type::request_type request_type;
         typedef type::response_type response_type;
-        typedef websocketpp::transport::asio::tls_socket::endpoint socket_type;
+        typedef ws_websocketpp::transport::asio::tls_socket::endpoint socket_type;
     };
 
-    typedef websocketpp::transport::asio::endpoint<transport_config>
+    typedef ws_websocketpp::transport::asio::endpoint<transport_config>
         transport_type;
 };
 
 } // namespace config
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_CONFIG_ASIO_TLS_CLIENT_HPP

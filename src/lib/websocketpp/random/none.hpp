@@ -28,7 +28,7 @@
 #ifndef WEBSOCKETPP_RANDOM_NONE_HPP
 #define WEBSOCKETPP_RANDOM_NONE_HPP
 
-namespace websocketpp {
+namespace ws_websocketpp {
 /// Random number generation policies
 namespace random {
 /// Stub RNG policy that always returns 0
@@ -55,6 +55,6 @@ class int_generator {
 
 } // namespace none
 } // namespace random
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif //WEBSOCKETPP_RANDOM_NONE_HPP

@@ -61,7 +61,7 @@
 // Extensions
 #include <websocketpp/extensions/permessage_deflate/disabled.hpp>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace config {
 
 /// Client/Server debug config with iostream transport
@@ -69,7 +69,7 @@ struct debug_core {
     typedef debug_core type;
 
     // Concurrency policy
-    typedef websocketpp::concurrency::basic concurrency_type;
+    typedef ws_websocketpp::concurrency::basic concurrency_type;
 
     // HTTP Parser Policies
     typedef http::parser::request request_type;
@@ -84,13 +84,13 @@ struct debug_core {
         endpoint_msg_manager_type;
 
     /// Logging policies
-    typedef websocketpp::log::basic<concurrency_type,
-        websocketpp::log::elevel> elog_type;
-    typedef websocketpp::log::basic<concurrency_type,
-        websocketpp::log::alevel> alog_type;
+    typedef ws_websocketpp::log::basic<concurrency_type,
+        ws_websocketpp::log::elevel> elog_type;
+    typedef ws_websocketpp::log::basic<concurrency_type,
+        ws_websocketpp::log::alevel> alog_type;
 
     /// RNG policies
-    typedef websocketpp::random::none::int_generator<uint32_t> rng_type;
+    typedef ws_websocketpp::random::none::int_generator<uint32_t> rng_type;
 
     /// Controls compile time enabling/disabling of thread syncronization
     /// code Disabling can provide a minor performance improvement to single
@@ -138,13 +138,13 @@ struct debug_core {
     };
 
     /// Transport Endpoint Component
-    typedef websocketpp::transport::iostream::endpoint<transport_config>
+    typedef ws_websocketpp::transport::iostream::endpoint<transport_config>
         transport_type;
 
     /// User overridable Endpoint base class
-    typedef websocketpp::endpoint_base endpoint_base;
+    typedef ws_websocketpp::endpoint_base endpoint_base;
     /// User overridable Connection base class
-    typedef websocketpp::connection_base connection_base;
+    typedef ws_websocketpp::connection_base connection_base;
 
     /// Default timer values (in ms)
 
@@ -173,8 +173,8 @@ struct debug_core {
      *
      * Default is all except for development/debug level errors
      */
-    static const websocketpp::log::level elog_level =
-        websocketpp::log::elevel::all;
+    static const ws_websocketpp::log::level elog_level =
+        ws_websocketpp::log::elevel::all;
 
     /// Default static access logging channels
     /**
@@ -186,8 +186,8 @@ struct debug_core {
      *
      * Default is all except for development/debug level access messages
      */
-    static const websocketpp::log::level alog_level =
-        websocketpp::log::alevel::all;
+    static const ws_websocketpp::log::level alog_level =
+        ws_websocketpp::log::alevel::all;
 
     ///
     static const size_t connection_read_buffer_size = 16384;
@@ -261,7 +261,7 @@ struct debug_core {
         static const uint8_t minimum_outgoing_window_bits = 8;
     };
 
-    typedef websocketpp::extensions::permessage_deflate::disabled
+    typedef ws_websocketpp::extensions::permessage_deflate::disabled
         <permessage_deflate_config> permessage_deflate_type;
 
     /// Autonegotiate permessage-deflate
@@ -281,6 +281,6 @@ struct debug_core {
 };
 
 } // namespace config
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_CONFIG_CORE_HPP

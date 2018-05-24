@@ -51,7 +51,7 @@
 #include <string>
 #include <vector>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace transport {
 namespace asio {
 
@@ -218,7 +218,7 @@ public:
         password, lib::error_code & ec)
     {
         if (!m_proxy_data) {
-            ec = make_error_code(websocketpp::error::invalid_state);
+            ec = make_error_code(ws_websocketpp::error::invalid_state);
             return;
         }
 
@@ -249,7 +249,7 @@ public:
      */
     void set_proxy_timeout(long duration, lib::error_code & ec) {
         if (!m_proxy_data) {
-            ec = make_error_code(websocketpp::error::invalid_state);
+            ec = make_error_code(ws_websocketpp::error::invalid_state);
             return;
         }
 
@@ -435,8 +435,8 @@ protected:
      */
     lib::error_code proxy_init(std::string const & authority) {
         if (!m_proxy_data) {
-            return websocketpp::error::make_error_code(
-                websocketpp::error::invalid_state);
+            return ws_websocketpp::error::make_error_code(
+                ws_websocketpp::error::invalid_state);
         }
         m_proxy_data->req.set_version("HTTP/1.1");
         m_proxy_data->req.set_method("CONNECT");
@@ -1199,6 +1199,6 @@ private:
 
 } // namespace asio
 } // namespace transport
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_TRANSPORT_ASIO_CON_HPP

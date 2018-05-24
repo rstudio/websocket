@@ -28,7 +28,7 @@
 #ifndef WEBSOCKETPP_CONCURRENCY_NONE_HPP
 #define WEBSOCKETPP_CONCURRENCY_NONE_HPP
 
-namespace websocketpp {
+namespace ws_websocketpp {
 
 /// Concurrency handling support
 namespace concurrency {
@@ -75,6 +75,6 @@ public:
 };
 
 } // namespace concurrency
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_CONCURRENCY_ASYNC_HPP

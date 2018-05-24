@@ -29,7 +29,7 @@
 #define WEBSOCKETPP_VERSION_HPP
 
 /// Namespace for the WebSocket++ project
-namespace websocketpp {
+namespace ws_websocketpp {
 
 /*
  other places where version information is kept
@@ -56,6 +56,6 @@ static char const prerelease_flag[] = "";
 /// Default user agent string
 static char const user_agent[] = "WebSocket++/0.7.0";
 
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_VERSION_HPP

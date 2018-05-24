@@ -30,7 +30,7 @@
 
 #include <websocketpp/common/random.hpp>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace random {
 /// RNG policy based on std::random_device or boost::random_device
 namespace random_device {
@@ -44,7 +44,7 @@ namespace random_device {
  * Thread-safety is provided via locking based on the concurrency template
  * parameter.
  *
- * Non-deterministic RNG is provided via websocketpp::lib which uses either
+ * Non-deterministic RNG is provided via ws_websocketpp::lib which uses either
  * C++11 or Boost 1.47+'s random_device class.
  *
  * Call operator() to generate the next number
@@ -75,6 +75,6 @@ class int_generator {
 
 } // namespace random_device
 } // namespace random
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif //WEBSOCKETPP_RANDOM_RANDOM_DEVICE_HPP

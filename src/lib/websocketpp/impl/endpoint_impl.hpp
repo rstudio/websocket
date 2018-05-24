@@ -30,7 +30,7 @@
 
 #include <string>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 
 template <typename connection, typename config>
 typename endpoint<connection,config>::connection_ptr
@@ -264,6 +264,6 @@ void endpoint<connection,config>::pong(connection_hdl hdl, std::string const & p
     if (ec) { throw exception(ec); }
 }
 
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_ENDPOINT_IMPL_HPP

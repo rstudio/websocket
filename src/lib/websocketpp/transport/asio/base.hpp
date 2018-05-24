@@ -36,7 +36,7 @@
 
 #include <string>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace transport {
 /// Transport policy that uses asio
 /**
@@ -221,10 +221,10 @@ inline lib::error_code make_error_code(error::value e) {
 } // namespace error
 } // namespace asio
 } // namespace transport
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 _WEBSOCKETPP_ERROR_CODE_ENUM_NS_START_
-template<> struct is_error_code_enum<websocketpp::transport::asio::error::value>
+template<> struct is_error_code_enum<ws_websocketpp::transport::asio::error::value>
 {
     static bool const value = true;
 };

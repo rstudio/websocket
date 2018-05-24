@@ -31,7 +31,7 @@
 #include <websocketpp/common/memory.hpp>
 #include <websocketpp/frame.hpp>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace message_buffer {
 namespace alloc {
 
@@ -100,6 +100,6 @@ public:
 
 } // namespace alloc
 } // namespace message_buffer
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_MESSAGE_BUFFER_ALLOC_HPP

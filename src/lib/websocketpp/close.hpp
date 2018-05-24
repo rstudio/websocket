@@ -40,7 +40,7 @@
 
 #include <string>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 /// A package of types and methods for manipulating WebSocket close codes.
 namespace close {
 /// A package of types and methods for manipulating WebSocket close status'
@@ -329,7 +329,7 @@ inline std::string extract_reason(std::string const & payload, lib::error_code
         reason.append(payload.begin()+2,payload.end());
     }
 
-    if (!websocketpp::utf8_validator::validate(reason)) {
+    if (!ws_websocketpp::utf8_validator::validate(reason)) {
         ec = make_error_code(error::invalid_utf8);
     }
 
@@ -337,6 +337,6 @@ inline std::string extract_reason(std::string const & payload, lib::error_code
 }
 
 } // namespace close
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_CLOSE_HPP

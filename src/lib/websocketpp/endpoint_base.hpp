@@ -28,11 +28,11 @@
 #ifndef WEBSOCKETPP_ENDPOINT_BASE_HPP
 #define WEBSOCKETPP_ENDPOINT_BASE_HPP
 
-namespace websocketpp {
+namespace ws_websocketpp {
 
 /// Stub for user supplied base class.
 class endpoint_base {};
 
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_ENDPOINT_BASE_HPP

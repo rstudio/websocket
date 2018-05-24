@@ -33,7 +33,7 @@
 #include <websocketpp/common/memory.hpp>
 #include <websocketpp/http/parser.hpp>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace http {
 namespace parser {
 
@@ -117,7 +117,7 @@ private:
 
 } // namespace parser
 } // namespace http
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #include <websocketpp/http/impl/request.hpp>
 

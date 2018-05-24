@@ -36,7 +36,7 @@
 
 #include <websocketpp/utilities.hpp>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 /// Data structures and utility functions for manipulating WebSocket frames
 /**
  * namespace frame provides a number of data structures and utility functions
@@ -856,6 +856,6 @@ inline size_t byte_mask_circ(uint8_t* data, size_t length, size_t prepared_key){
 }
 
 } // namespace frame
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif //WEBSOCKETPP_FRAME_HPP

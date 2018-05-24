@@ -38,7 +38,7 @@
 
 #include <ostream>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace transport {
 namespace iostream {
 
@@ -217,6 +217,6 @@ private:
 
 } // namespace iostream
 } // namespace transport
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_TRANSPORT_IOSTREAM_HPP

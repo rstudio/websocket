@@ -40,7 +40,7 @@
     #include <boost/regex.hpp>
 #endif
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace lib {
 
 #ifdef _WEBSOCKETPP_CPP11_REGEX_
@@ -54,6 +54,6 @@ namespace lib {
 #endif
 
 } // namespace lib
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_COMMON_REGEX_HPP

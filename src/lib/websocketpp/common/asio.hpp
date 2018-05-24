@@ -66,7 +66,7 @@
     #include <boost/system/error_code.hpp>
 #endif
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace lib {
 
 #ifdef ASIO_STANDALONE
@@ -126,6 +126,6 @@ namespace lib {
 
 
 } // namespace lib
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_COMMON_ASIO_HPP

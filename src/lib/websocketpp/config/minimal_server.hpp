@@ -60,7 +60,7 @@
 // Extensions
 #include <websocketpp/extensions/permessage_deflate/disabled.hpp>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace config {
 
 /// Server config with minimal dependencies
@@ -97,7 +97,7 @@ struct minimal_server {
     typedef minimal_server type;
 
     // Concurrency policy
-    typedef websocketpp::concurrency::none concurrency_type;
+    typedef ws_websocketpp::concurrency::none concurrency_type;
 
     // HTTP Parser Policies
     typedef http::parser::request request_type;
@@ -112,11 +112,11 @@ struct minimal_server {
         endpoint_msg_manager_type;
 
     /// Logging policies
-    typedef websocketpp::log::stub elog_type;
-    typedef websocketpp::log::stub alog_type;
+    typedef ws_websocketpp::log::stub elog_type;
+    typedef ws_websocketpp::log::stub alog_type;
 
     /// RNG policies
-    typedef websocketpp::random::none::int_generator<uint32_t> rng_type;
+    typedef ws_websocketpp::random::none::int_generator<uint32_t> rng_type;
 
     /// Controls compile time enabling/disabling of thread syncronization
     /// code Disabling can provide a minor performance improvement to single
@@ -164,13 +164,13 @@ struct minimal_server {
     };
 
     /// Transport Endpoint Component
-    typedef websocketpp::transport::stub::endpoint<transport_config>
+    typedef ws_websocketpp::transport::stub::endpoint<transport_config>
         transport_type;
 
     /// User overridable Endpoint base class
-    typedef websocketpp::endpoint_base endpoint_base;
+    typedef ws_websocketpp::endpoint_base endpoint_base;
     /// User overridable Connection base class
-    typedef websocketpp::connection_base connection_base;
+    typedef ws_websocketpp::connection_base connection_base;
 
     /// Default timer values (in ms)
 
@@ -199,8 +199,8 @@ struct minimal_server {
      *
      * Default is all except for development/debug level errors
      */
-    static const websocketpp::log::level elog_level =
-        websocketpp::log::elevel::none;
+    static const ws_websocketpp::log::level elog_level =
+        ws_websocketpp::log::elevel::none;
 
     /// Default static access logging channels
     /**
@@ -212,8 +212,8 @@ struct minimal_server {
      *
      * Default is all except for development/debug level access messages
      */
-    static const websocketpp::log::level alog_level =
-        websocketpp::log::alevel::none;
+    static const ws_websocketpp::log::level alog_level =
+        ws_websocketpp::log::alevel::none;
 
     ///
     static const size_t connection_read_buffer_size = 16384;
@@ -287,7 +287,7 @@ struct minimal_server {
         static const uint8_t minimum_outgoing_window_bits = 8;
     };
 
-    typedef websocketpp::extensions::permessage_deflate::disabled
+    typedef ws_websocketpp::extensions::permessage_deflate::disabled
         <permessage_deflate_config> permessage_deflate_type;
 
     /// Autonegotiate permessage-deflate
@@ -307,6 +307,6 @@ struct minimal_server {
 };
 
 } // namespace config
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // WEBSOCKETPP_CONFIG_MINIMAL_HPP

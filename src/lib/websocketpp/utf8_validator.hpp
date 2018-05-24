@@ -33,7 +33,7 @@
 
 #include <string>
 
-namespace websocketpp {
+namespace ws_websocketpp {
 namespace utf8_validator {
 
 /// State that represents a valid utf8 input sequence
@@ -149,6 +149,6 @@ inline bool validate(std::string const & s) {
 }
 
 } // namespace utf8_validator
-} // namespace websocketpp
+} // namespace ws_websocketpp
 
 #endif // UTF8_VALIDATOR_HPP
