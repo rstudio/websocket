@@ -1,13 +1,14 @@
 VERSION=1.1.0f
-PKG_CPPFLAGS=-I./lib -I../windows/openssl-$(VERSION)/include
-PKG_LIBS= $(WIN32FIX) -L../windows/openssl-$(VERSION)/lib${R_ARCH} -lssl -lcrypto
+# Some settings from https://github.com/zaphoyd/websocketpp/issues/478
+PKG_CPPFLAGS=-I./lib -I../windows/openssl-$(VERSION)/include -D_WEBSOCKETPP_CPP11_THREAD_
+PKG_LIBS= -L../windows/openssl-$(VERSION)/lib${R_ARCH} -lssl -lcrypto -lws2_32
 
 CXX_STD=CXX11
 
-all: clean winlibs $(WIN32FIX)
+all: clean winlibs
 
 clean:
-	rm -f $(SHLIB) $(OBJECTS) $(WIN32FIX)
+	rm -f $(SHLIB) $(OBJECTS)
 
 winlibs:
 	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "../tools/winlibs.R" $(VERSION)
