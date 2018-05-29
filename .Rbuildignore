@@ -1,3 +1,4 @@
 ^websocket\.Rproj$
 ^\.Rproj\.user$
 ^/tmp$
+^/windows$
