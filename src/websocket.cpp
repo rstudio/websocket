@@ -224,4 +224,8 @@ std::string wsState(SEXP client_xptr) {
     case WSConnection::STATE::CLOSED: return "CLOSED";
     case WSConnection::STATE::FAILED: return "FAILED";
   }
+
+  // Shouldn't be possible to get here, but some compilers still complain
+  // about reaching end of a non-void function.
+  return "UNKNOWN";
 }
