@@ -1,7 +1,7 @@
-VERSION=1.1.0f
+VERSION=1.0.2h
 # Some settings from https://github.com/zaphoyd/websocketpp/issues/478
 PKG_CPPFLAGS=-I./lib -I../windows/openssl-$(VERSION)/include -D_WEBSOCKETPP_CPP11_THREAD_
-PKG_LIBS= -L../windows/openssl-$(VERSION)/lib${R_ARCH} -lssl -lcrypto -lws2_32
+PKG_LIBS= -L../windows/openssl-$(VERSION)/lib${R_ARCH} -lssl -lcrypto -lws2_32 -lgdi32
 
 CXX_STD=CXX11
 

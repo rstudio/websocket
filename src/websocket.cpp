@@ -1,11 +1,22 @@
 #include <Rcpp.h>
 
-// https://stackoverflow.com/a/11593943/412655
+#ifdef _WIN32
 // Taken from http://tolstoy.newcastle.edu.au/R/e2/devel/06/11/1242.html
 // Undefine the Realloc macro, which is defined by both R and by Windows stuff
 #undef Realloc
 // Also need to undefine the Free macro
 #undef Free
+
+#include <winsock2.h>
+#include <windows.h>
+
+// These are defined by windows.h but we have to undefine them so that the
+// typedef enum Rboolean will be used later on.
+#undef TRUE
+#undef FALSE
+
+#endif // _WIN32
+
 
 #define ASIO_STANDALONE
 #include <iostream>
