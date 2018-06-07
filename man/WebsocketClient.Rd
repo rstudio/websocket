@@ -48,6 +48,8 @@ A WebsocketClient object has the following methods:
 }
 
 \examples{
+if (interactive()) {
+
 # Create a websocket using the websocket.org test server
 ws <- WebsocketClient$new("ws://echo.websocket.org/",
   onMessage = function(msg) {
@@ -63,5 +65,5 @@ ws$send("hello")
 
 # Close the websocket after we're done with it
 ws$close()
-
+}
 }
