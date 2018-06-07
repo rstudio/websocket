@@ -48,6 +48,7 @@ A WebsocketClient object has the following methods:
 }
 
 \examples{
+## Only run this example in interactive R sessions
 if (interactive()) {
 
 # Create a websocket using the websocket.org test server
