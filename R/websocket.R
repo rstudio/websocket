@@ -43,6 +43,9 @@ NULL
 #' @name WebsocketClient
 #'
 #' @examples
+#' ## Only run this example in interactive R sessions
+#' if (interactive()) {
+#'
 #' # Create a websocket using the websocket.org test server
 #' ws <- WebsocketClient$new("ws://echo.websocket.org/",
 #'   onMessage = function(msg) {
@@ -58,7 +61,7 @@ NULL
 #'
 #' # Close the websocket after we're done with it
 #' ws$close()
-#'
+#' }
 NULL
 
 #' @export
