@@ -21,7 +21,10 @@ NULL
 #'                      onMessage = function(msg) {},
 #'                      onOpen = function() {},
 #'                      onClose = function() {},
-#'                      onFail = function() {})
+#'                      onFail = function() {},
+#'                      headers = NULL,
+#'                      accessLogChannels = "none",
+#'                      errorLogChannels = NULL)
 #' }
 #'
 #' @param url The websocket URL.
@@ -38,6 +41,13 @@ NULL
 #'   while the handshake is bring processed.
 #' @param headers A named list or character vector representing keys and values
 #'   of headers in the initial HTTP request.
+#' @param accessLogChannels A character vector of access log channels that should
+#'   be enabled.  Defaults to \code{"none"}, which displays no normal, websocketpp logging activity.
+#'   Setting \code{accessLogChannels = NULL} will use default websocketpp behavior.
+#'   See \url{https://www.zaphoyd.com/websocketpp/manual/reference/logging} for further explanation.
+#' @param errorLogChannels A character vector of error log channels that should
+#'   be displayed.  The default value is \code{NULL}, which will use default websocketpp behavior.
+#'   See \url{https://www.zaphoyd.com/websocketpp/manual/reference/logging} for further explanation.
 #'
 #'
 #' @name WebsocketClient
@@ -72,9 +82,16 @@ WebsocketClient <- R6::R6Class("WebsocketClient",
       onOpen = function() {},
       onClose = function() {},
       onFail = function() {},
-      headers = NULL
+      headers = NULL,
+      accessLogChannels = c("none"),
+      errorLogChannels = NULL
     ) {
-      private$wsObj <- wsCreate(url, onMessage, onOpen, onClose, onFail)
+      private$wsObj <- wsCreate(
+        url,
+        onMessage, onOpen, onClose, onFail,
+        private$accessLogChannels(accessLogChannels, "none"),
+        private$errorLogChannels(errorLogChannels, "none")
+      )
 
       mapply(names(headers), headers, FUN = function(key, value) {
         wsAppendHeader(private$wsObj, key, value)
@@ -93,9 +110,29 @@ WebsocketClient <- R6::R6Class("WebsocketClient",
     close = function() {
       wsClose(private$wsObj)
       # TODO Call wsPoll here?
+    },
+    setAccessLogChannels = function(channels = c("all")) {
+      wsUpdateLogChannels(private$wsObj, "access", "set", private$accessLogChannels(channels, "none"))
+    },
+    setErrorLogChannels = function(channels = c("all")) {
+      wsUpdateLogChannels(private$wsObj, "error", "set", private$errorLogChannels(channels, "none"))
+    },
+    clearAccessLogChannels = function(channels = c("all")) {
+      wsUpdateLogChannels(private$wsObj, "access", "clear", private$accessLogChannels(channels, "all"))
+    },
+    clearErrorLogChannels = function(channels = c("all")) {
+      wsUpdateLogChannels(private$wsObj, "error", "clear", private$errorLogChannels(channels, "all"))
+    },
+    finalize = function() {
+      if (!(self$getState() %in% c("CLOSED", "CLOSING"))) {
+        self$close()
+        # wait for it to completely close
+        wsPoll(private$wsObj)
+      }
     }
   ),
   private = list(
+    wsObj = NULL,
     handleIncoming = function() {
       if (self$getState() %in% c("CLOSED", "FAILED")) {
         return()
@@ -104,6 +141,17 @@ WebsocketClient <- R6::R6Class("WebsocketClient",
         later::later(private$handleIncoming, 0.01)
       }
     },
-    wsObj = NULL
+    accessLogChannelValues = c("none", "connect", "disconnect", "control", "frame_header", "frame_payload", "message_header", "message_payload", "endpoint", "debug_handshake", "debug_close", "devel", "app", "http", "fail", "access_core", "all"),
+    errorLogChannelValues = c("none", "devel", "library", "info", "warn", "rerror", "fatal", "all"),
+    accessLogChannels = function(channels, keepIfContainsChannel) {
+      channels <- match.arg(channels, private$accessLogChannelValues, several.ok = TRUE)
+      if (keepIfContainsChannel %in% channels) channels <- keepIfContainsChannel
+      channels
+    },
+    errorLogChannels = function(channels, keepIfContainsChannel) {
+      channels <- match.arg(channels, private$errorLogChannelValues, several.ok = TRUE)
+      if (keepIfContainsChannel %in% channels) channels <- keepIfContainsChannel
+      channels
+    }
   )
 )

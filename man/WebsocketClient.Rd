@@ -23,6 +23,15 @@ while the handshake is bring processed.}
 
 \item{headers}{A named list or character vector representing keys and values
 of headers in the initial HTTP request.}
+
+\item{accessLogChannels}{A character vector of access log channels that should
+be enabled.  Defaults to \code{"none"}, which displays no normal, websocketpp logging activity.
+Setting \code{accessLogChannels = NULL} will use default websocketpp behavior.
+See \url{https://www.zaphoyd.com/websocketpp/manual/reference/logging} for further explanation.}
+
+\item{errorLogChannels}{A character vector of error log channels that should
+be displayed.  The default value is \code{NULL}, which will use default websocketpp behavior.
+See \url{https://www.zaphoyd.com/websocketpp/manual/reference/logging} for further explanation.}
 }
 \description{
 Create a websocket client
@@ -43,7 +52,10 @@ A WebsocketClient object has the following methods:
                      onMessage = function(msg) {},
                      onOpen = function() {},
                      onClose = function() {},
-                     onFail = function() {})
+                     onFail = function() {},
+                     headers = NULL,
+                     accessLogChannels = "none",
+                     errorLogChannels = NULL)
 }
 }
 
