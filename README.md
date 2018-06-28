@@ -6,7 +6,7 @@ This is an R WebSocket client library backed by the [websocketpp](https://github
 ## Usage examples
 
 You may need to step through the `$send()` commands because there will be a small amount of time before the response is received. The `onMessage()` callback is invoked asynchronously (using the [later](https://github.com/r-lib/later) package) when a response arrives.
- 
+
 ```R
 library(websocket)
 
@@ -68,7 +68,8 @@ ws <- WebsocketClient$new("ws://127.0.0.1:8080/",
   },
   onClose = function() {
     cat("Connection closed.\n")
-  }
+  },
+  accessLogChannels = "all" # enable all websocketpp logging
 )
 
 ws$send("hello")
@@ -77,4 +78,3 @@ ws$send( charToRaw("hello") )
 
 ws$close()
 ```
-
