@@ -111,9 +111,6 @@ WebsocketClient <- R6::R6Class("WebsocketClient",
       wsClose(private$wsObj)
       # TODO Call wsPoll here?
     },
-    poll = function() {
-      wsPoll(private$wsObj)
-    },
     setAccessLogChannels = function(channels = c("all")) {
       wsUpdateLogChannels(private$wsObj, "access", "set", private$accessLogChannels(channels, "none"))
     },
@@ -133,7 +130,7 @@ WebsocketClient <- R6::R6Class("WebsocketClient",
       if (self$getState() %in% c("CLOSED", "FAILED")) {
         return()
       } else {
-        self$poll()
+        wsPoll(private$wsObj)
         later::later(private$handleIncoming, 0.01)
       }
     },
