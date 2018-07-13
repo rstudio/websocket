@@ -137,16 +137,20 @@ WebsocketClient <- R6::R6Class("WebsocketClient",
         later::later(private$handleIncoming, 0.01)
       }
     },
-    accessLogChannelValues = c("none", "connect", "disconnect", "control", "frame_header", "frame_payload", "message_header", "message_payload", "endpoint", "debug_handshake", "debug_close", "devel", "app", "http", "fail", "access_core", "all"),
+    accessLogChannelValues = c(
+      "none", "connect", "disconnect", "control", "frame_header", "frame_payload",
+      "message_header", "message_payload", "endpoint", "debug_handshake", "debug_close", "devel",
+      "app", "http", "fail", "access_core", "all"
+    ),
     errorLogChannelValues = c("none", "devel", "library", "info", "warn", "rerror", "fatal", "all"),
-    accessLogChannels = function(channels, keepIfContainsChannel) {
+    accessLogChannels = function(channels, stompValue) {
       channels <- match.arg(channels, private$accessLogChannelValues, several.ok = TRUE)
-      if (keepIfContainsChannel %in% channels) channels <- keepIfContainsChannel
+      if (stompValue %in% channels) channels <- stompValue
       channels
     },
-    errorLogChannels = function(channels, keepIfContainsChannel) {
+    errorLogChannels = function(channels, stompValue) {
       channels <- match.arg(channels, private$errorLogChannelValues, several.ok = TRUE)
-      if (keepIfContainsChannel %in% channels) channels <- keepIfContainsChannel
+      if (stompValue %in% channels) channels <- stompValue
       channels
     }
   )
