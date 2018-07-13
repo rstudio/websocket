@@ -1,11 +1,47 @@
-context("client")
 
-test_that("Basic websocket communication", {
+check_later <- function(
+  # debugging name
+  name,
+  # checks for validity
+  is_valid_fn,
+  # ran on valid situation
+  on_success_fn,
+  # ~ 30 seconds total
+  counter = round(30 / sleepTime),
+  # check every 0.01 seconds
+  sleepTime = 0.01
+) {
+
+  found <- FALSE
+  check_fn <- function() {
+    counter <<- counter - 1
+    Sys.sleep(sleepTime)
+    if (is_valid_fn()) {
+      found <<- TRUE
+    }
+  }
+
+  while(counter > 0 && (!found)) {
+    later::later(check_fn)
+    later::run_now(5)
+  }
+
+  if (found) {
+    on_success_fn()
+    return(1)
+  } else {
+    fail(paste0("Ran out of attempts at checking: ", name))
+    return(0)
+  }
+}
+
+
+check_ws <- function(wsUrl) {
   state <- NULL
   last <- NULL
   found <- 0
 
-  ws <- WebsocketClient$new("ws://echo.websocket.org/",
+  ws <- WebsocketClient$new(wsUrl,
     onMessage = function(msg) last  <<- msg,
     onOpen    = function()    state <<- "open",
     onClose   = function()    state <<- "closed",
@@ -16,140 +52,43 @@ test_that("Basic websocket communication", {
   expect_identical(ws$getState(), "OPEN")
   expect_identical(state, "open")
 
-  hello_fn <- function() {
-    Sys.sleep(0.1)
-    if (!is.null(last)) {
-      counter <<- 0
-      expect_identical(last, "hello")
-      found <<- found + 1
-    } else {
-      counter <<- counter - 1
-    }
-  }
-  counter <- 20
   last <- NULL
   ws$send("hello")
-  while(counter > 0) {
-    later::later(hello_fn)
-    later::run_now(2)
-  }
+  found <- found + check_later("hello",
+    function() !is.null(last),
+    function() expect_identical(last, "hello")
+  )
 
 
-  hello_raw_fn <- function() {
-    Sys.sleep(0.1)
-    if (!is.null(last)) {
-      counter <<- 0
-      expect_identical(last, charToRaw("hello"))
-      found <<- found + 1
-    } else {
-      counter <<- counter - 1
-    }
-  }
-  counter <- 20
   last <- NULL
   ws$send(charToRaw("hello"))
-  while(counter > 0) {
-    later::later(hello_raw_fn)
-    later::run_now(2)
-  }
+  found <- found + check_later("hello_raw",
+    function() !is.null(last),
+    function() expect_identical(last, charToRaw("hello"))
+  )
 
-
-  close_fn <- function() {
-    Sys.sleep(0.1)
-    if (!is.null(state)) {
-      counter <<- 0
-      expect_identical(ws$getState(), "CLOSED")
-      expect_identical(state, "closed")
-      found <<- found + 2
-    } else {
-      counter <<- counter - 1
-    }
-  }
-  counter <- 20
   state <- NULL
   ws$close()
-  while(counter > 0) {
-    later::later(close_fn)
-    later::run_now(2)
-  }
+  found <- found + check_later("closing",
+    function() !is.null(state),
+    function() {
+      expect_identical(ws$getState(), "CLOSED")
+      expect_identical(state, "closed")
+    }
+  )
 
-  expect_identical(found, 4)
 
+  expect_identical(found, 3)
+}
+
+
+context("Basic WebSocket")
+test_that("Basic websocket communication", {
+  check_ws("ws://echo.websocket.org/")
 })
 
 
+context("Basic SSL WebSocket")
 test_that("Basic ssl websocket communication", {
-  state <- NULL
-  last <- NULL
-  found <- 0
-
-  ws <- WebsocketClient$new("wss://echo.websocket.org/",
-    onMessage = function(msg) last  <<- msg,
-    onOpen    = function()    state <<- "open",
-    onClose   = function()    state <<- "closed",
-    onFail    = function()    state <<- "failed"
-  )
-
-  # Make sure the internal state gets set, and the onOpen function gets called.
-  expect_identical(ws$getState(), "OPEN")
-  expect_identical(state, "open")
-
-  hello_fn <- function() {
-    Sys.sleep(0.1)
-    if (!is.null(last)) {
-      counter <<- 0
-      expect_identical(last, "hello")
-      found <<- found + 1
-    } else {
-      counter <<- counter - 1
-    }
-  }
-  counter <- 20
-  last <- NULL
-  ws$send("hello")
-  while(counter > 0) {
-    later::later(hello_fn)
-    later::run_now(2)
-  }
-
-
-  hello_raw_fn <- function() {
-    Sys.sleep(0.1)
-    if (!is.null(last)) {
-      counter <<- 0
-      expect_identical(last, charToRaw("hello"))
-      found <<- found + 1
-    } else {
-      counter <<- counter - 1
-    }
-  }
-  counter <- 20
-  last <- NULL
-  ws$send(charToRaw("hello"))
-  while(counter > 0) {
-    later::later(hello_raw_fn)
-    later::run_now(2)
-  }
-
-
-  close_fn <- function() {
-    Sys.sleep(0.1)
-    if (!is.null(state)) {
-      counter <<- 0
-      expect_identical(ws$getState(), "CLOSED")
-      expect_identical(state, "closed")
-      found <<- found + 2
-    } else {
-      counter <<- counter - 1
-    }
-  }
-  counter <- 20
-  state <- NULL
-  ws$close()
-  while(counter > 0) {
-    later::later(close_fn)
-    later::run_now(2)
-  }
-
-  expect_identical(found, 4)
+  check_ws("wss://echo.websocket.org/")
 })
