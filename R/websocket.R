@@ -44,10 +44,32 @@ NULL
 #' @param accessLogChannels A character vector of access log channels that should
 #'   be enabled.  Defaults to \code{"none"}, which displays no normal, websocketpp logging activity.
 #'   Setting \code{accessLogChannels = NULL} will use default websocketpp behavior.
-#'   See \url{https://www.zaphoyd.com/websocketpp/manual/reference/logging} for further explanation.
+#'   Multiple access logging levels may be passed in for them to be enabled.
+#'
+#'   A few commonly used access logging values are:
+#'   \describe{
+#'     \item{\code{"all"}}{Special aggregate value representing "all levels"}
+#'     \item{\code{"none"}}{Special aggregate value representing "no levels"}
+#'     \item{\code{"rerror"}}{Recoverable error. Recovery may mean cleanly closing the connection
+#'           with an appropriate error code to the remote endpoint.}
+#'     \item{\code{"fatal"}}{Unrecoverable error. This error will trigger immediate unclean
+#'           termination of the connection or endpoint.}
+#'   }
+#'
+#'   All logging levels are explained in more detail at \url{https://www.zaphoyd.com/websocketpp/manual/reference/logging}.
 #' @param errorLogChannels A character vector of error log channels that should
 #'   be displayed.  The default value is \code{NULL}, which will use default websocketpp behavior.
-#'   See \url{https://www.zaphoyd.com/websocketpp/manual/reference/logging} for further explanation.
+#'   Multiple error logging levels may be passed in for them to be enabled.
+#'
+#'   A few commonly used error logging values are:
+#'   \describe{
+#'     \item{\code{"all"}}{Special aggregate value representing "all levels"}
+#'     \item{\code{"none"}}{Special aggregate value representing "no levels"}
+#'     \item{\code{"connect"}}{One line for each new connection that is opened}
+#'     \item{\code{"disconnect"}}{One line for each new connection that is closed}
+#'   }
+#'
+#'   All logging levels are explained in more detail at \url{https://www.zaphoyd.com/websocketpp/manual/reference/logging}.
 #'
 #'
 #' @name WebsocketClient
