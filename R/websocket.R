@@ -23,7 +23,7 @@ NULL
 #'                      onClose = function() {},
 #'                      onFail = function() {},
 #'                      headers = NULL,
-#'                      accessLogChannels = "none",
+#'                      accessLogChannels = c("none"),
 #'                      errorLogChannels = NULL)
 #' }
 #'
