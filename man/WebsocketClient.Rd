@@ -66,6 +66,14 @@ A WebsocketClient object has the following methods:
   \item{\code{close()}}{Closes the connection.}
   \item{\code{getState()}}{Returns a string representing the state of the
     connection. One of "INIT", "OPEN", "CLOSED", "FAILED".}
+  \item{setAccessLogChannels(channels)}{Enable the websocket Access channels after the
+    websocket's creation.  A value of \code{NULL} will not enable any new Access channels.}
+  \item{setErrorLogChannels(channels)}{Enable the websocket Error channels after the
+    websocket's creation.  A value of \code{NULL} will not enable any new Error channels.}
+  \item{clearAccessLogChannels(channels)}{Disable the websocket Access channels after the
+    websocket's creation.  A value of \code{NULL} will not clear any existing Access channels.}
+  \item{clearErrorLogChannels(channels)}{Disable the websocket Error channels after the
+    websocket's creation.  A value of \code{NULL} will not clear any existing Error channels.}
 }
 }
 \section{Usage}{
