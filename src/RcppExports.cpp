@@ -6,7 +6,7 @@
 using namespace Rcpp;
 
 // wsCreate
-SEXP wsCreate(std::string uri, Rcpp::Function onMessage, Rcpp::Function onOpen, Rcpp::Function onClose, Rcpp::Function onFail, Rcpp::Nullable<Rcpp::CharacterVector> accessLogChannels, Rcpp::Nullable<Rcpp::CharacterVector> errorLogChannels);
+SEXP wsCreate(std::string uri, Rcpp::Function onMessage, Rcpp::Function onOpen, Rcpp::Function onClose, Rcpp::Function onFail, Rcpp::CharacterVector accessLogChannels, Rcpp::CharacterVector errorLogChannels);
 RcppExport SEXP _websocket_wsCreate(SEXP uriSEXP, SEXP onMessageSEXP, SEXP onOpenSEXP, SEXP onCloseSEXP, SEXP onFailSEXP, SEXP accessLogChannelsSEXP, SEXP errorLogChannelsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -16,8 +16,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Function >::type onOpen(onOpenSEXP);
     Rcpp::traits::input_parameter< Rcpp::Function >::type onClose(onCloseSEXP);
     Rcpp::traits::input_parameter< Rcpp::Function >::type onFail(onFailSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type accessLogChannels(accessLogChannelsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type errorLogChannels(errorLogChannelsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type accessLogChannels(accessLogChannelsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type errorLogChannels(errorLogChannelsSEXP);
     rcpp_result_gen = Rcpp::wrap(wsCreate(uri, onMessage, onOpen, onClose, onFail, accessLogChannels, errorLogChannels));
     return rcpp_result_gen;
 END_RCPP
@@ -118,14 +118,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // wsUpdateLogChannels
-void wsUpdateLogChannels(SEXP client_xptr, std::string accessOrError, std::string setOrClear, Rcpp::Nullable<Rcpp::CharacterVector> logChannels);
+void wsUpdateLogChannels(SEXP client_xptr, std::string accessOrError, std::string setOrClear, Rcpp::CharacterVector logChannels);
 RcppExport SEXP _websocket_wsUpdateLogChannels(SEXP client_xptrSEXP, SEXP accessOrErrorSEXP, SEXP setOrClearSEXP, SEXP logChannelsSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
     Rcpp::traits::input_parameter< std::string >::type accessOrError(accessOrErrorSEXP);
     Rcpp::traits::input_parameter< std::string >::type setOrClear(setOrClearSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type logChannels(logChannelsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type logChannels(logChannelsSEXP);
     wsUpdateLogChannels(client_xptr, accessOrError, setOrClear, logChannels);
     return R_NilValue;
 END_RCPP

@@ -29,7 +29,7 @@ public:
   virtual void clear_access_channels(ws_websocketpp::log::level channels) = 0;
   virtual void set_error_channels(ws_websocketpp::log::level channels) = 0;
   virtual void clear_error_channels(ws_websocketpp::log::level channels) = 0;
-  virtual void update_log_channels(std::string accessOrError, std::string setOrClear, Rcpp::Nullable<Rcpp::CharacterVector> logChannels) = 0;
+  virtual void update_log_channels(std::string accessOrError, std::string setOrClear, Rcpp::CharacterVector logChannels) = 0;
   virtual void init_asio() = 0;
   virtual void set_tls_init_handler(ws_websocketpp::transport::asio::tls_socket::tls_init_handler h) = 0;
   virtual void set_open_handler(ws_websocketpp::open_handler h) = 0;
@@ -70,22 +70,21 @@ public:
   void clear_error_channels(ws_websocketpp::log::level channels) {
     client.clear_error_channels(channels);
   };
-  void update_log_channels(std::string accessOrError, std::string setOrClear, Rcpp::Nullable<Rcpp::CharacterVector> logChannels) {
-    if (logChannels.isNull()) return;
-    Rcpp::CharacterVector logChannels_(logChannels);
+  void update_log_channels(std::string accessOrError, std::string setOrClear, Rcpp::CharacterVector logChannels) {
+    if (logChannels.size() == 0) return;
     ws_websocketpp::log::level channel;
     std::string fnName = accessOrError + "_" + setOrClear;
 
-    for (int i = 0; i < logChannels_.size(); i++) {
+    for (int i = 0; i < logChannels.size(); i++) {
       if (accessOrError == "access") {
-        channel = getAccessLogLevel(std::string(logChannels_[i]));
+        channel = getAccessLogLevel(std::string(logChannels[i]));
         if (setOrClear == "set")
           client.set_access_channels(channel);
         else if (setOrClear == "clear")
           client.clear_access_channels(channel);
 
       } else if (accessOrError == "error") {
-        channel = getErrorLogLevel(std::string(logChannels_[i]));
+        channel = getErrorLogLevel(std::string(logChannels[i]));
         if (setOrClear == "set")
           client.set_error_channels(channel);
         else if (setOrClear == "clear")

@@ -111,8 +111,8 @@ SEXP wsCreate(
   Rcpp::Function onOpen,
   Rcpp::Function onClose,
   Rcpp::Function onFail,
-  Rcpp::Nullable<Rcpp::CharacterVector> accessLogChannels,
-  Rcpp::Nullable<Rcpp::CharacterVector> errorLogChannels
+  Rcpp::CharacterVector accessLogChannels,
+  Rcpp::CharacterVector errorLogChannels
 ) {
   if (uri.size() < 6) {
     throw Rcpp::exception("Invalid websocket URI: too short");
@@ -246,7 +246,7 @@ void wsUpdateLogChannels(
   SEXP client_xptr,
   std::string accessOrError,
   std::string setOrClear,
-  Rcpp::Nullable<Rcpp::CharacterVector> logChannels
+  Rcpp::CharacterVector logChannels
 ) {
   shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
   wsPtr->client->update_log_channels(accessOrError, setOrClear, logChannels);

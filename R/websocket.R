@@ -163,11 +163,13 @@ WebsocketClient <- R6::R6Class("WebsocketClient",
     ),
     errorLogChannelValues = c("none", "devel", "library", "info", "warn", "rerror", "fatal", "all"),
     accessLogChannels = function(channels, stompValue) {
+      if (is.null(channels)) return(character(0))
       channels <- match.arg(channels, private$accessLogChannelValues, several.ok = TRUE)
       if (stompValue %in% channels) channels <- stompValue
       channels
     },
     errorLogChannels = function(channels, stompValue) {
+      if (is.null(channels)) return(character(0))
       channels <- match.arg(channels, private$errorLogChannelValues, several.ok = TRUE)
       if (stompValue %in% channels) channels <- stompValue
       channels
