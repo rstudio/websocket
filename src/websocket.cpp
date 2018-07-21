@@ -105,7 +105,15 @@ void handleFail(shared_ptr<WSConnection> wsPtr, Rcpp::Function onFail, ws_websoc
 }
 
 // [[Rcpp::export]]
-SEXP wsCreate(std::string uri, Rcpp::Function onMessage, Rcpp::Function onOpen, Rcpp::Function onClose, Rcpp::Function onFail) {
+SEXP wsCreate(
+  std::string uri,
+  Rcpp::Function onMessage,
+  Rcpp::Function onOpen,
+  Rcpp::Function onClose,
+  Rcpp::Function onFail,
+  Rcpp::CharacterVector accessLogChannels,
+  Rcpp::CharacterVector errorLogChannels
+) {
   if (uri.size() < 6) {
     throw Rcpp::exception("Invalid websocket URI: too short");
   }
@@ -125,8 +133,8 @@ SEXP wsCreate(std::string uri, Rcpp::Function onMessage, Rcpp::Function onOpen, 
     throw Rcpp::exception("Invalid websocket URI: must begin with ws:// or wss://");
   }
 
-  wsPtr->client->set_access_channels(ws_websocketpp::log::alevel::all);
-  wsPtr->client->clear_access_channels(ws_websocketpp::log::alevel::frame_payload);
+  wsPtr->client->update_log_channels("access", "set", accessLogChannels);
+  wsPtr->client->update_log_channels("error", "set", errorLogChannels);
   wsPtr->client->init_asio();
   wsPtr->client->set_open_handler(bind(handleOpen, wsPtr, onOpen, ::_1));
   wsPtr->client->set_message_handler(bind(handleMessage, onMessage, ::_1, ::_2));
@@ -228,4 +236,18 @@ std::string wsState(SEXP client_xptr) {
   // Shouldn't be possible to get here, but some compilers still complain
   // about reaching end of a non-void function.
   return "UNKNOWN";
+}
+
+
+
+
+// [[Rcpp::export]]
+void wsUpdateLogChannels(
+  SEXP client_xptr,
+  std::string accessOrError,
+  std::string setOrClear,
+  Rcpp::CharacterVector logChannels
+) {
+  shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
+  wsPtr->client->update_log_channels(accessOrError, setOrClear, logChannels);
 }

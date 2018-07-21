@@ -27,6 +27,9 @@ class Client {
 public:
   virtual void set_access_channels(ws_websocketpp::log::level channels) = 0;
   virtual void clear_access_channels(ws_websocketpp::log::level channels) = 0;
+  virtual void set_error_channels(ws_websocketpp::log::level channels) = 0;
+  virtual void clear_error_channels(ws_websocketpp::log::level channels) = 0;
+  virtual void update_log_channels(std::string accessOrError, std::string setOrClear, Rcpp::CharacterVector logChannels) = 0;
   virtual void init_asio() = 0;
   virtual void set_tls_init_handler(ws_websocketpp::transport::asio::tls_socket::tls_init_handler h) = 0;
   virtual void set_open_handler(ws_websocketpp::open_handler h) = 0;
@@ -61,6 +64,34 @@ public:
   void clear_access_channels(ws_websocketpp::log::level channels) {
     client.clear_access_channels(channels);
   };
+  void set_error_channels(ws_websocketpp::log::level channels) {
+    client.set_error_channels(channels);
+  };
+  void clear_error_channels(ws_websocketpp::log::level channels) {
+    client.clear_error_channels(channels);
+  };
+  void update_log_channels(std::string accessOrError, std::string setOrClear, Rcpp::CharacterVector logChannels) {
+    if (logChannels.size() == 0) return;
+    ws_websocketpp::log::level channel;
+    std::string fnName = accessOrError + "_" + setOrClear;
+
+    for (int i = 0; i < logChannels.size(); i++) {
+      if (accessOrError == "access") {
+        channel = getAccessLogLevel(std::string(logChannels[i]));
+        if (setOrClear == "set")
+          client.set_access_channels(channel);
+        else if (setOrClear == "clear")
+          client.clear_access_channels(channel);
+
+      } else if (accessOrError == "error") {
+        channel = getErrorLogLevel(std::string(logChannels[i]));
+        if (setOrClear == "set")
+          client.set_error_channels(channel);
+        else if (setOrClear == "clear")
+          client.clear_error_channels(channel);
+      }
+    }
+  }
   void init_asio() {
     client.init_asio();
   };
@@ -116,6 +147,42 @@ public:
 private:
   T client;
   typename T::connection_ptr con;
+
+  ws_websocketpp::log::level getAccessLogLevel(std::string logLevel) {
+    if      (logLevel == "none")            return ws_websocketpp::log::alevel::none;
+    else if (logLevel == "connect")         return ws_websocketpp::log::alevel::connect;
+    else if (logLevel == "disconnect")      return ws_websocketpp::log::alevel::disconnect;
+    else if (logLevel == "control")         return ws_websocketpp::log::alevel::control;
+    else if (logLevel == "frame_header")    return ws_websocketpp::log::alevel::frame_header;
+    else if (logLevel == "frame_payload")   return ws_websocketpp::log::alevel::frame_payload;
+    else if (logLevel == "message_header")  return ws_websocketpp::log::alevel::message_header;
+    else if (logLevel == "message_payload") return ws_websocketpp::log::alevel::message_payload;
+    else if (logLevel == "endpoint")        return ws_websocketpp::log::alevel::endpoint;
+    else if (logLevel == "debug_handshake") return ws_websocketpp::log::alevel::debug_handshake;
+    else if (logLevel == "debug_close")     return ws_websocketpp::log::alevel::debug_close;
+    else if (logLevel == "devel")           return ws_websocketpp::log::alevel::devel;
+    else if (logLevel == "app")             return ws_websocketpp::log::alevel::app;
+    else if (logLevel == "http")            return ws_websocketpp::log::alevel::http;
+    else if (logLevel == "fail")            return ws_websocketpp::log::alevel::fail;
+    else if (logLevel == "access_core")     return ws_websocketpp::log::alevel::access_core;
+    else if (logLevel == "all")             return ws_websocketpp::log::alevel::all;
+    else
+      Rcpp::stop("logLevel must be one of the access logging levels (alevel).  See https://www.zaphoyd.com/websocketpp/manual/reference/logging");
+  }
+
+  ws_websocketpp::log::level getErrorLogLevel(std::string logLevel) {
+    if      (logLevel == "none")    return ws_websocketpp::log::elevel::none;
+    else if (logLevel == "devel")   return ws_websocketpp::log::elevel::devel;
+    else if (logLevel == "library") return ws_websocketpp::log::elevel::library;
+    else if (logLevel == "info")    return ws_websocketpp::log::elevel::info;
+    else if (logLevel == "warn")    return ws_websocketpp::log::elevel::warn;
+    else if (logLevel == "rerror")  return ws_websocketpp::log::elevel::rerror;
+    else if (logLevel == "fatal")   return ws_websocketpp::log::elevel::fatal;
+    else if (logLevel == "all")     return ws_websocketpp::log::elevel::all;
+    else
+      Rcpp::stop("logLevel must be one of the error logging levels (elevel).  See https://www.zaphoyd.com/websocketpp/manual/reference/logging");
+  }
+
 };
 
 

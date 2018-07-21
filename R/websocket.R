@@ -14,6 +14,14 @@ NULL
 #'   \item{\code{close()}}{Closes the connection.}
 #'   \item{\code{getState()}}{Returns a string representing the state of the
 #'     connection. One of "INIT", "OPEN", "CLOSED", "FAILED".}
+#'   \item{setAccessLogChannels(channels)}{Enable the websocket Access channels after the
+#'     websocket's creation.  A value of \code{NULL} will not enable any new Access channels.}
+#'   \item{setErrorLogChannels(channels)}{Enable the websocket Error channels after the
+#'     websocket's creation.  A value of \code{NULL} will not enable any new Error channels.}
+#'   \item{clearAccessLogChannels(channels)}{Disable the websocket Access channels after the
+#'     websocket's creation.  A value of \code{NULL} will not clear any existing Access channels.}
+#'   \item{clearErrorLogChannels(channels)}{Disable the websocket Error channels after the
+#'     websocket's creation.  A value of \code{NULL} will not clear any existing Error channels.}
 #' }
 #'
 #' @section Usage:
@@ -21,7 +29,10 @@ NULL
 #'                      onMessage = function(msg) {},
 #'                      onOpen = function() {},
 #'                      onClose = function() {},
-#'                      onFail = function() {})
+#'                      onFail = function() {},
+#'                      headers = NULL,
+#'                      accessLogChannels = c("none"),
+#'                      errorLogChannels = NULL)
 #' }
 #'
 #' @param url The websocket URL.
@@ -38,6 +49,35 @@ NULL
 #'   while the handshake is bring processed.
 #' @param headers A named list or character vector representing keys and values
 #'   of headers in the initial HTTP request.
+#' @param accessLogChannels A character vector of access log channels that should
+#'   be enabled.  Defaults to \code{"none"}, which displays no normal, websocketpp logging activity.
+#'   Setting \code{accessLogChannels = NULL} will use default websocketpp behavior.
+#'   Multiple access logging levels may be passed in for them to be enabled.
+#'
+#'   A few commonly used access logging values are:
+#'   \describe{
+#'     \item{\code{"all"}}{Special aggregate value representing "all levels"}
+#'     \item{\code{"none"}}{Special aggregate value representing "no levels"}
+#'     \item{\code{"rerror"}}{Recoverable error. Recovery may mean cleanly closing the connection
+#'           with an appropriate error code to the remote endpoint.}
+#'     \item{\code{"fatal"}}{Unrecoverable error. This error will trigger immediate unclean
+#'           termination of the connection or endpoint.}
+#'   }
+#'
+#'   All logging levels are explained in more detail at \url{https://www.zaphoyd.com/websocketpp/manual/reference/logging}.
+#' @param errorLogChannels A character vector of error log channels that should
+#'   be displayed.  The default value is \code{NULL}, which will use default websocketpp behavior.
+#'   Multiple error logging levels may be passed in for them to be enabled.
+#'
+#'   A few commonly used error logging values are:
+#'   \describe{
+#'     \item{\code{"all"}}{Special aggregate value representing "all levels"}
+#'     \item{\code{"none"}}{Special aggregate value representing "no levels"}
+#'     \item{\code{"connect"}}{One line for each new connection that is opened}
+#'     \item{\code{"disconnect"}}{One line for each new connection that is closed}
+#'   }
+#'
+#'   All logging levels are explained in more detail at \url{https://www.zaphoyd.com/websocketpp/manual/reference/logging}.
 #'
 #'
 #' @name WebsocketClient
@@ -72,9 +112,16 @@ WebsocketClient <- R6::R6Class("WebsocketClient",
       onOpen = function() {},
       onClose = function() {},
       onFail = function() {},
-      headers = NULL
+      headers = NULL,
+      accessLogChannels = c("none"),
+      errorLogChannels = NULL
     ) {
-      private$wsObj <- wsCreate(url, onMessage, onOpen, onClose, onFail)
+      private$wsObj <- wsCreate(
+        url,
+        onMessage, onOpen, onClose, onFail,
+        private$accessLogChannels(accessLogChannels, "none"),
+        private$errorLogChannels(errorLogChannels, "none")
+      )
 
       mapply(names(headers), headers, FUN = function(key, value) {
         wsAppendHeader(private$wsObj, key, value)
@@ -93,9 +140,22 @@ WebsocketClient <- R6::R6Class("WebsocketClient",
     close = function() {
       wsClose(private$wsObj)
       # TODO Call wsPoll here?
+    },
+    setAccessLogChannels = function(channels = c("all")) {
+      wsUpdateLogChannels(private$wsObj, "access", "set", private$accessLogChannels(channels, "none"))
+    },
+    setErrorLogChannels = function(channels = c("all")) {
+      wsUpdateLogChannels(private$wsObj, "error", "set", private$errorLogChannels(channels, "none"))
+    },
+    clearAccessLogChannels = function(channels = c("all")) {
+      wsUpdateLogChannels(private$wsObj, "access", "clear", private$accessLogChannels(channels, "all"))
+    },
+    clearErrorLogChannels = function(channels = c("all")) {
+      wsUpdateLogChannels(private$wsObj, "error", "clear", private$errorLogChannels(channels, "all"))
     }
   ),
   private = list(
+    wsObj = NULL,
     handleIncoming = function() {
       if (self$getState() %in% c("CLOSED", "FAILED")) {
         return()
@@ -104,6 +164,23 @@ WebsocketClient <- R6::R6Class("WebsocketClient",
         later::later(private$handleIncoming, 0.01)
       }
     },
-    wsObj = NULL
+    accessLogChannelValues = c(
+      "none", "connect", "disconnect", "control", "frame_header", "frame_payload",
+      "message_header", "message_payload", "endpoint", "debug_handshake", "debug_close", "devel",
+      "app", "http", "fail", "access_core", "all"
+    ),
+    errorLogChannelValues = c("none", "devel", "library", "info", "warn", "rerror", "fatal", "all"),
+    accessLogChannels = function(channels, stompValue) {
+      if (is.null(channels)) return(character(0))
+      channels <- match.arg(channels, private$accessLogChannelValues, several.ok = TRUE)
+      if (stompValue %in% channels) channels <- stompValue
+      channels
+    },
+    errorLogChannels = function(channels, stompValue) {
+      if (is.null(channels)) return(character(0))
+      channels <- match.arg(channels, private$errorLogChannelValues, several.ok = TRUE)
+      if (stompValue %in% channels) channels <- stompValue
+      channels
+    }
   )
 )
