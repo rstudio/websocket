@@ -100,11 +100,25 @@ void handleMessage(weak_ptr<WSConnection> wsPtrWeak, ws_websocketpp::connection_
   }
 }
 
+void removeHandlers(shared_ptr<WSConnection> wsPtr) {
+  // Replace handler functions with `null_func` to break reference counting cycles
+  Rcpp::Environment websocket_namespace = Rcpp::Environment::namespace_env("websocket");
+  Rcpp::Function func(websocket_namespace.get("null_func"));
+  wsPtr->onOpen = func;
+  wsPtr->onMessage = func;
+  // Is it safe to clear out onFail/onClose here? Or do we need to wait for
+  // the server to respond with its own close() first?
+  wsPtr->onFail = func;
+  wsPtr->onClose = func;
+}
+
 void handleClose(weak_ptr<WSConnection> wsPtrWeak, ws_websocketpp::connection_hdl) {
   shared_ptr<WSConnection> wsPtr = wsPtrWeak.lock();
   if (wsPtr) {
     wsPtr->state = WSConnection::STATE::CLOSED;
-    wsPtr->onClose();
+    Rcpp::Function onClose = wsPtr->onClose;
+    removeHandlers(wsPtr);
+    onClose();
   }
 }
 
@@ -120,7 +134,9 @@ void handleFail(weak_ptr<WSConnection> wsPtrWeak, ws_websocketpp::connection_hdl
   shared_ptr<WSConnection> wsPtr = wsPtrWeak.lock();
   if (wsPtr) {
     wsPtr->state = WSConnection::STATE::FAILED;
-    wsPtr->onFail();
+    Rcpp::Function onFail = wsPtr->onFail;
+    removeHandlers(wsPtr);
+    onFail();
   }
 }
 
@@ -237,16 +253,6 @@ void wsClose(SEXP client_xptr) {
   shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
 
   wsPtr->client->close(ws_websocketpp::close::status::normal, "closing normally");
-
-  // Replace handler functions with `null_func` to break reference counting cycles
-  Rcpp::Environment websocket_namespace = Rcpp::Environment::namespace_env("websocket");
-  Rcpp::Function func(websocket_namespace.get("null_func"));
-  wsPtr->onOpen = func;
-  wsPtr->onMessage = func;
-  // Is it safe to clear out onFail/onClose here? Or do we need to wait for
-  // the server to respond with its own close() first?
-  wsPtr->onFail = func;
-  wsPtr->onClose = func;
 }
 
 // [[Rcpp::export]]
