@@ -203,12 +203,6 @@ void wsAppendHeader(SEXP client_xptr, std::string key, std::string value) {
 void wsConnect(SEXP client_xptr) {
   shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
   wsPtr->client->connect();
-  // Block until the connection is either open, closed, or the attempt to connect has failed.
-  // wsPtr->client->run() would block indefinitely, so we use run_one() instead.
-  // We don't need to call restart() here because the underlying io_context is never out of work between invocations.
-  while (wsPtr->state == WSConnection::STATE::INIT) {
-    wsPtr->client->run_one();
-  }
 }
 
 // [[Rcpp::export]]
