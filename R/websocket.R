@@ -3,6 +3,9 @@
 #' @include RcppExports.R
 NULL
 
+# Used to "null out" handler functions after a websocket client is closed
+null_func <- function(...) { }
+
 #' Create a websocket client
 #'
 #' @details
