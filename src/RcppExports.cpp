@@ -86,12 +86,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // wsClose
-void wsClose(SEXP client_xptr);
-RcppExport SEXP _websocket_wsClose(SEXP client_xptrSEXP) {
+void wsClose(SEXP client_xptr, uint16_t code, std::string reason);
+RcppExport SEXP _websocket_wsClose(SEXP client_xptrSEXP, SEXP codeSEXP, SEXP reasonSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
-    wsClose(client_xptr);
+    Rcpp::traits::input_parameter< uint16_t >::type code(codeSEXP);
+    Rcpp::traits::input_parameter< std::string >::type reason(reasonSEXP);
+    wsClose(client_xptr, code, reason);
     return R_NilValue;
 END_RCPP
 }
@@ -139,7 +141,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_websocket_wsPoll", (DL_FUNC) &_websocket_wsPoll, 1},
     {"_websocket_wsSend", (DL_FUNC) &_websocket_wsSend, 2},
     {"_websocket_wsReset", (DL_FUNC) &_websocket_wsReset, 1},
-    {"_websocket_wsClose", (DL_FUNC) &_websocket_wsClose, 1},
+    {"_websocket_wsClose", (DL_FUNC) &_websocket_wsClose, 3},
     {"_websocket_wsStopped", (DL_FUNC) &_websocket_wsStopped, 1},
     {"_websocket_wsState", (DL_FUNC) &_websocket_wsState, 1},
     {"_websocket_wsUpdateLogChannels", (DL_FUNC) &_websocket_wsUpdateLogChannels, 4},

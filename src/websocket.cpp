@@ -243,10 +243,10 @@ void wsReset(SEXP client_xptr) {
 }
 
 // [[Rcpp::export]]
-void wsClose(SEXP client_xptr) {
+void wsClose(SEXP client_xptr, uint16_t code, std::string reason) {
   shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
 
-  wsPtr->client->close(ws_websocketpp::close::status::normal, "closing normally");
+  wsPtr->client->close(code, reason);
 }
 
 // [[Rcpp::export]]

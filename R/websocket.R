@@ -138,11 +138,9 @@ WebsocketClient <- R6::R6Class("WebsocketClient",
     },
     send = function(msg) {
       wsSend(private$wsObj, msg)
-      # TODO Call wsPoll here?
     },
-    close = function() {
-      wsClose(private$wsObj)
-      # TODO Call wsPoll here?
+    close = function(code = 1000L, reason = "") {
+      wsClose(private$wsObj, code, reason)
     },
     setAccessLogChannels = function(channels = c("all")) {
       wsUpdateLogChannels(private$wsObj, "access", "set", private$accessLogChannels(channels, "none"))

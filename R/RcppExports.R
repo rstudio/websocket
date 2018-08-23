@@ -29,8 +29,8 @@ wsReset <- function(client_xptr) {
     invisible(.Call(`_websocket_wsReset`, client_xptr))
 }
 
-wsClose <- function(client_xptr) {
-    invisible(.Call(`_websocket_wsClose`, client_xptr))
+wsClose <- function(client_xptr, code, reason) {
+    invisible(.Call(`_websocket_wsClose`, client_xptr, code, reason))
 }
 
 wsStopped <- function(client_xptr) {
