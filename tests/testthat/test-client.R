@@ -48,6 +48,11 @@ check_ws <- function(wsUrl) {
     onFail    = function()    state <<- "failed"
   )
 
+  check_later("open",
+    function() !is.null(state),
+    function() identical(state, "open")
+  )
+
   # Make sure the internal state gets set, and the onOpen function gets called.
   expect_identical(ws$getState(), "OPEN")
   expect_identical(state, "open")
@@ -85,6 +90,27 @@ check_ws <- function(wsUrl) {
 context("Basic WebSocket")
 test_that("Basic websocket communication", {
   check_ws("ws://echo.websocket.org/")
+})
+
+test_that("WebSocket object can be garbage collected", {
+  collected <- FALSE
+  local({
+    ws <- WebsocketClient$new("ws://echo.websocket.org/",
+      onOpen = function() {
+        ws$close()
+      }
+    )
+    reg.finalizer(ws, function(obj) {
+      collected <<- TRUE
+    })
+  })
+  # Pump events until there are no more; only then can we be sure that the
+  # WebSocket is closed and can be garbage collected
+  while (!later::loop_empty()) {
+    later::run_now(1)
+  }
+  gc()
+  expect_true(collected)
 })
 
 
