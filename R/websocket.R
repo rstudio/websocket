@@ -10,7 +10,7 @@ null_func <- function(...) { }
 #'
 #' @details
 #'
-#' A WebsocketClient object has the following methods:
+#' A WebSocket object has the following methods:
 #'
 #' \describe{
 #'   \item{\code{send(msg)}}{Sends a message to the server.}
@@ -28,14 +28,14 @@ null_func <- function(...) { }
 #' }
 #'
 #' @section Usage:
-#' \preformatted{WebsocketClient$new(url,
-#'                      onMessage = function(msg) {},
-#'                      onOpen = function() {},
-#'                      onClose = function() {},
-#'                      onFail = function() {},
-#'                      headers = NULL,
-#'                      accessLogChannels = c("none"),
-#'                      errorLogChannels = NULL)
+#' \preformatted{WebSocket$new(url,
+#'   onMessage = function(msg) {},
+#'   onOpen = function() {},
+#'   onClose = function() {},
+#'   onFail = function() {},
+#'   headers = NULL,
+#'   accessLogChannels = c("none"),
+#'   errorLogChannels = NULL)
 #' }
 #'
 #' @param url The websocket URL.
@@ -83,14 +83,14 @@ null_func <- function(...) { }
 #'   All logging levels are explained in more detail at \url{https://www.zaphoyd.com/websocketpp/manual/reference/logging}.
 #'
 #'
-#' @name WebsocketClient
+#' @name WebSocket
 #'
 #' @examples
 #' ## Only run this example in interactive R sessions
 #' if (interactive()) {
 #'
 #' # Create a websocket using the websocket.org test server
-#' ws <- WebsocketClient$new("ws://echo.websocket.org/",
+#' ws <- WebSocket$new("ws://echo.websocket.org/",
 #'   onMessage = function(msg) {
 #'     cat("Client got msg: ", msg, "\n")
 #'   },
@@ -108,7 +108,7 @@ null_func <- function(...) { }
 NULL
 
 #' @export
-WebsocketClient <- R6::R6Class("WebsocketClient",
+WebSocket <- R6::R6Class("WebSocket",
   public = list(
     initialize = function(url,
       onMessage = function(msg) {},

@@ -41,7 +41,7 @@ check_ws <- function(wsUrl) {
   last <- NULL
   found <- 0
 
-  ws <- WebsocketClient$new(wsUrl,
+  ws <- WebSocket$new(wsUrl,
     onMessage = function(msg) last  <<- msg,
     onOpen    = function()    state <<- "open",
     onClose   = function()    state <<- "closed",
@@ -95,7 +95,7 @@ test_that("Basic websocket communication", {
 test_that("WebSocket object can be garbage collected", {
   collected <- FALSE
   local({
-    ws <- WebsocketClient$new("ws://echo.websocket.org/",
+    ws <- WebSocket$new("ws://echo.websocket.org/",
       onOpen = function() {
         ws$close()
       }
@@ -114,7 +114,7 @@ test_that("WebSocket object can be garbage collected", {
 })
 
 test_that("Open is async", {
-  ws <- WebsocketClient$new("ws://echo.websocket.org",
+  ws <- WebSocket$new("ws://echo.websocket.org",
     onOpen = function() {
       ws$close()
     })

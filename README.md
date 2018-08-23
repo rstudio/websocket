@@ -10,7 +10,7 @@ You may need to step through the `$send()` commands because there will be a smal
 ```R
 library(websocket)
 
-ws <- WebsocketClient$new("ws://echo.websocket.org/",
+ws <- WebSocket("ws://echo.websocket.org/",
   onOpen = function() {
     cat("Connection opened\n")
   },
@@ -58,7 +58,7 @@ Finally, to test the WebSocket client, run this in R.
 ```R
 library(websocket)
 
-ws <- WebsocketClient$new("ws://127.0.0.1:8080/",
+ws <- WebSocket$new("ws://127.0.0.1:8080/",
   headers = list(Cookie = "Xyz"),
   onOpen = function() {
     cat("Connection opened.\n")
