@@ -185,3 +185,21 @@ WebsocketClient <- R6::R6Class("WebsocketClient",
     }
   )
 )
+
+#' @export
+reactiveWebSocket <- function(url) {
+  rv <- reactiveVal()
+  err <- reactiveVal(FALSE)
+  ws <- WebsocketClient$new(url, onMessage = function(msg) {
+    rv(msg)
+  }, onFail = function() {
+    err(TRUE)
+  })
+  reactive({
+    if (err()) {
+      stop("WebSocket error")
+    } else {
+      rv()
+    }
+  })
+}
