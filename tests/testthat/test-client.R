@@ -113,6 +113,15 @@ test_that("WebSocket object can be garbage collected", {
   expect_true(collected)
 })
 
+test_that("Open is async", {
+  ws <- WebsocketClient$new("ws://echo.websocket.org",
+    onOpen = function() {
+      ws$close()
+    })
+  Sys.sleep(1)
+  expect_identical(ws$getState(), "INIT")
+})
+
 
 context("Basic SSL WebSocket")
 test_that("Basic ssl websocket communication", {
