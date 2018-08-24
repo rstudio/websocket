@@ -3,23 +3,19 @@
 \name{WebSocket}
 \alias{WebSocket}
 \title{Create a websocket client}
+\usage{
+\preformatted{WebSocket$new(url,
+  protocols = character(0),
+  headers = NULL,
+  accessLogChannels = c("none"),
+  errorLogChannels = NULL)
+}
+}
 \arguments{
-\item{url}{The websocket URL.}
+\item{url}{The WebSocket URL. Should begin with \code{ws://} or \code{wss://}.}
 
-\item{onMessage}{A function called for each message received from the server.
-Must take a single argument, the message content. If the message is text,
-the \code{onMessage} function will be passed a one-element character vector;
-if the message is binary, the \code{onMessage} function will be passed a raw
-vector.}
-
-\item{onOpen}{A function called with no arguments when the connection is
-established.}
-
-\item{onClose}{A function called with no arguments when either the client or
-the server disconnect.}
-
-\item{onFail}{A function called with no arguments when the connection fails
-while the handshake is bring processed.}
+\item{protocols}{Zero or more WebSocket sub-protocol names to offer to the server
+during the opening handshake.}
 
 \item{headers}{A named list or character vector representing keys and values
 of headers in the initial HTTP request.}
@@ -59,13 +55,38 @@ of headers in the initial HTTP request.}
 Create a websocket client
 }
 \details{
-A WebSocket object has the following methods:
+A WebSocket object has the following callback fields for you to assign your
+own functions to:
+
+\describe{
+  \item{\code{onMessage}}{A function called for each message received from the server.
+    Must take a single argument, the message content. If the message is text,
+    the \code{onMessage} function will be passed a one-element character vector;
+    if the message is binary, the \code{onMessage} function will be passed a raw
+    vector.}
+  \item{\code{onOpen}}{A function called with no arguments when the connection is
+    established.}
+  \item{\code{onClose}}{A function called with no arguments when either the client or
+    the server disconnect.}
+  \item{\code{onFail}}{A function called with no arguments when the connection fails
+    while the handshake is bring processed.}
+}
+
+It also has the following methods:
 
 \describe{
   \item{\code{send(msg)}}{Sends a message to the server.}
   \item{\code{close()}}{Closes the connection.}
-  \item{\code{getState()}}{Returns a string representing the state of the
-    connection. One of "INIT", "OPEN", "CLOSED", "FAILED".}
+  \item{\code{readyState()}}{Returns an integer representing the state of the
+    connection.
+    \describe{
+      \item{\code{0L}: Connecting}{The WebSocket has not yet established a
+      connection with the server.}
+      \item{\code{1L}: Open}{The WebSocket has connected and can send and
+      receive messages.}
+      \item{\code{2L}: Closing}{The WebSocket is in the process of closing.}
+      \item{\code{3L}: Closed}{The WebSocket has closed, or failed to open.}
+    }}
   \item{setAccessLogChannels(channels)}{Enable the websocket Access channels after the
     websocket's creation.  A value of \code{NULL} will not enable any new Access channels.}
   \item{setErrorLogChannels(channels)}{Enable the websocket Error channels after the
@@ -76,19 +97,6 @@ A WebSocket object has the following methods:
     websocket's creation.  A value of \code{NULL} will not clear any existing Error channels.}
 }
 }
-\section{Usage}{
-
-\preformatted{WebSocket$new(url,
-  onMessage = function(msg) {},
-  onOpen = function() {},
-  onClose = function() {},
-  onFail = function() {},
-  headers = NULL,
-  accessLogChannels = c("none"),
-  errorLogChannels = NULL)
-}
-}
-
 \examples{
 ## Only run this example in interactive R sessions
 if (interactive()) {

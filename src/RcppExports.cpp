@@ -6,19 +6,16 @@
 using namespace Rcpp;
 
 // wsCreate
-SEXP wsCreate(std::string uri, Rcpp::Function onMessage, Rcpp::Function onOpen, Rcpp::Function onClose, Rcpp::Function onFail, Rcpp::CharacterVector accessLogChannels, Rcpp::CharacterVector errorLogChannels);
-RcppExport SEXP _websocket_wsCreate(SEXP uriSEXP, SEXP onMessageSEXP, SEXP onOpenSEXP, SEXP onCloseSEXP, SEXP onFailSEXP, SEXP accessLogChannelsSEXP, SEXP errorLogChannelsSEXP) {
+SEXP wsCreate(std::string uri, Rcpp::Environment callbackEnv, Rcpp::CharacterVector accessLogChannels, Rcpp::CharacterVector errorLogChannels);
+RcppExport SEXP _websocket_wsCreate(SEXP uriSEXP, SEXP callbackEnvSEXP, SEXP accessLogChannelsSEXP, SEXP errorLogChannelsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type uri(uriSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Function >::type onMessage(onMessageSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Function >::type onOpen(onOpenSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Function >::type onClose(onCloseSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Function >::type onFail(onFailSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Environment >::type callbackEnv(callbackEnvSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type accessLogChannels(accessLogChannelsSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type errorLogChannels(errorLogChannelsSEXP);
-    rcpp_result_gen = Rcpp::wrap(wsCreate(uri, onMessage, onOpen, onClose, onFail, accessLogChannels, errorLogChannels));
+    rcpp_result_gen = Rcpp::wrap(wsCreate(uri, callbackEnv, accessLogChannels, errorLogChannels));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -31,6 +28,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type key(keySEXP);
     Rcpp::traits::input_parameter< std::string >::type value(valueSEXP);
     wsAppendHeader(client_xptr, key, value);
+    return R_NilValue;
+END_RCPP
+}
+// wsAddProtocols
+void wsAddProtocols(SEXP client_xptr, CharacterVector protocols);
+RcppExport SEXP _websocket_wsAddProtocols(SEXP client_xptrSEXP, SEXP protocolsSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
+    Rcpp::traits::input_parameter< CharacterVector >::type protocols(protocolsSEXP);
+    wsAddProtocols(client_xptr, protocols);
     return R_NilValue;
 END_RCPP
 }
@@ -108,6 +116,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// wsProtocol
+std::string wsProtocol(SEXP client_xptr);
+RcppExport SEXP _websocket_wsProtocol(SEXP client_xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(wsProtocol(client_xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
 // wsState
 std::string wsState(SEXP client_xptr);
 RcppExport SEXP _websocket_wsState(SEXP client_xptrSEXP) {
@@ -134,8 +153,9 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_websocket_wsCreate", (DL_FUNC) &_websocket_wsCreate, 7},
+    {"_websocket_wsCreate", (DL_FUNC) &_websocket_wsCreate, 4},
     {"_websocket_wsAppendHeader", (DL_FUNC) &_websocket_wsAppendHeader, 3},
+    {"_websocket_wsAddProtocols", (DL_FUNC) &_websocket_wsAddProtocols, 2},
     {"_websocket_wsConnect", (DL_FUNC) &_websocket_wsConnect, 1},
     {"_websocket_wsRestart", (DL_FUNC) &_websocket_wsRestart, 1},
     {"_websocket_wsPoll", (DL_FUNC) &_websocket_wsPoll, 1},
@@ -143,6 +163,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_websocket_wsReset", (DL_FUNC) &_websocket_wsReset, 1},
     {"_websocket_wsClose", (DL_FUNC) &_websocket_wsClose, 3},
     {"_websocket_wsStopped", (DL_FUNC) &_websocket_wsStopped, 1},
+    {"_websocket_wsProtocol", (DL_FUNC) &_websocket_wsProtocol, 1},
     {"_websocket_wsState", (DL_FUNC) &_websocket_wsState, 1},
     {"_websocket_wsUpdateLogChannels", (DL_FUNC) &_websocket_wsUpdateLogChannels, 4},
     {NULL, NULL, 0}

@@ -39,7 +39,10 @@ public:
 
   virtual void setup_connection(std::string location, ws_websocketpp::lib::error_code &ec) = 0;
   virtual void append_header(std::string key, std::string value) = 0;
+  virtual void add_subprotocol(std::string const & request) = 0;
   virtual void connect() = 0;
+
+  virtual std::string get_subprotocol() const = 0;
 
   virtual std::size_t run_one() = 0;
   virtual ws_websocketpp::lib::asio::io_service& get_io_service() = 0;
@@ -115,9 +118,20 @@ public:
   void append_header(std::string key, std::string value) {
     this->con->append_header(key, value);
   }
+  void add_subprotocol(std::string const & value) {
+    con->add_subprotocol(value);
+  };
   void connect() {
     client.connect(this->con);
   };
+
+  std::string get_subprotocol() const {
+    if (!con) {
+      return std::string();
+    } else {
+      return con->get_subprotocol();
+    }
+  }
 
   std::size_t run_one() {
     return client.run_one();

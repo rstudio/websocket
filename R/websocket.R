@@ -6,17 +6,42 @@ NULL
 # Used to "null out" handler functions after a websocket client is closed
 null_func <- function(...) { }
 
-#' Create a websocket client
+#' Create a WebSocket client
 #'
 #' @details
 #'
-#' A WebSocket object has the following methods:
+#' A WebSocket object has the following callback fields for you to assign your
+#' own functions to:
+#'
+#' \describe{
+#'   \item{\code{onMessage}}{A function called for each message received from the server.
+#'     Must take a single argument, the message content. If the message is text,
+#'     the \code{onMessage} function will be passed a one-element character vector;
+#'     if the message is binary, the \code{onMessage} function will be passed a raw
+#'     vector.}
+#'   \item{\code{onOpen}}{A function called with no arguments when the connection is
+#'     established.}
+#'   \item{\code{onClose}}{A function called with no arguments when either the client or
+#'     the server disconnect.}
+#'   \item{\code{onFail}}{A function called with no arguments when the connection fails
+#'     while the handshake is bring processed.}
+#' }
+#'
+#' It also has the following methods:
 #'
 #' \describe{
 #'   \item{\code{send(msg)}}{Sends a message to the server.}
 #'   \item{\code{close()}}{Closes the connection.}
-#'   \item{\code{getState()}}{Returns a string representing the state of the
-#'     connection. One of "INIT", "OPEN", "CLOSED", "FAILED".}
+#'   \item{\code{readyState()}}{Returns an integer representing the state of the
+#'     connection.
+#'     \describe{
+#'       \item{\code{0L}: Connecting}{The WebSocket has not yet established a
+#'       connection with the server.}
+#'       \item{\code{1L}: Open}{The WebSocket has connected and can send and
+#'       receive messages.}
+#'       \item{\code{2L}: Closing}{The WebSocket is in the process of closing.}
+#'       \item{\code{3L}: Closed}{The WebSocket has closed, or failed to open.}
+#'     }}
 #'   \item{setAccessLogChannels(channels)}{Enable the websocket Access channels after the
 #'     websocket's creation.  A value of \code{NULL} will not enable any new Access channels.}
 #'   \item{setErrorLogChannels(channels)}{Enable the websocket Error channels after the
@@ -27,29 +52,17 @@ null_func <- function(...) { }
 #'     websocket's creation.  A value of \code{NULL} will not clear any existing Error channels.}
 #' }
 #'
-#' @section Usage:
+#' @usage
 #' \preformatted{WebSocket$new(url,
-#'   onMessage = function(msg) {},
-#'   onOpen = function() {},
-#'   onClose = function() {},
-#'   onFail = function() {},
+#'   protocols = character(0),
 #'   headers = NULL,
 #'   accessLogChannels = c("none"),
 #'   errorLogChannels = NULL)
 #' }
 #'
-#' @param url The websocket URL.
-#' @param onMessage A function called for each message received from the server.
-#'   Must take a single argument, the message content. If the message is text,
-#'   the \code{onMessage} function will be passed a one-element character vector;
-#'   if the message is binary, the \code{onMessage} function will be passed a raw
-#'   vector.
-#' @param onOpen A function called with no arguments when the connection is
-#'   established.
-#' @param onClose A function called with no arguments when either the client or
-#'   the server disconnect.
-#' @param onFail A function called with no arguments when the connection fails
-#'   while the handshake is bring processed.
+#' @param url The WebSocket URL. Should begin with \code{ws://} or \code{wss://}.
+#' @param protocols Zero or more WebSocket sub-protocol names to offer to the server
+#'   during the opening handshake.
 #' @param headers A named list or character vector representing keys and values
 #'   of headers in the initial HTTP request.
 #' @param accessLogChannels A character vector of access log channels that should
@@ -110,18 +123,23 @@ NULL
 #' @export
 WebSocket <- R6::R6Class("WebSocket",
   public = list(
+    onMessage = NULL,
+    onOpen = NULL,
+    onClose = NULL,
+    onFail = NULL,
     initialize = function(url,
-      onMessage = function(msg) {},
-      onOpen = function() {},
-      onClose = function() {},
-      onFail = function() {},
+      protocols = character(0),
       headers = NULL,
       accessLogChannels = c("none"),
       errorLogChannels = NULL
     ) {
+      self$onOpen <- function() {}
+      self$onClose <- function() {}
+      self$onFail <- function() {}
+      self$onMessage <- function(msg) {}
+
       private$wsObj <- wsCreate(
-        url,
-        onMessage, onOpen, onClose, onFail,
+        url, self,
         private$accessLogChannels(accessLogChannels, "none"),
         private$errorLogChannels(errorLogChannels, "none")
       )
@@ -129,12 +147,23 @@ WebSocket <- R6::R6Class("WebSocket",
       mapply(names(headers), headers, FUN = function(key, value) {
         wsAppendHeader(private$wsObj, key, value)
       })
+      wsAddProtocols(private$wsObj, protocols)
 
       wsConnect(private$wsObj)
       private$handleIncoming()
     },
-    getState = function() {
-      wsState(private$wsObj)
+    readyState = function() {
+      switch(wsState(private$wsObj),
+        INIT = 0L,
+        OPEN = 1L,
+        CLOSING = 2L,
+        CLOSED = 3L,
+        FAILED = 3L,
+        stop("Unknown state ", wsState(private$wsObj))
+      )
+    },
+    protocol = function() {
+      wsProtocol(private$wsObj)
     },
     send = function(msg) {
       wsSend(private$wsObj, msg)
@@ -158,7 +187,7 @@ WebSocket <- R6::R6Class("WebSocket",
   private = list(
     wsObj = NULL,
     handleIncoming = function() {
-      if (self$getState() %in% c("CLOSED", "FAILED")) {
+      if (self$readyState() == 3L) {
         return()
       } else {
         wsPoll(private$wsObj)

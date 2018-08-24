@@ -54,7 +54,7 @@ check_ws <- function(wsUrl) {
   )
 
   # Make sure the internal state gets set, and the onOpen function gets called.
-  expect_identical(ws$getState(), "OPEN")
+  expect_identical(ws$readyState(), 1L)
   expect_identical(state, "open")
 
   last <- NULL
@@ -77,7 +77,7 @@ check_ws <- function(wsUrl) {
   found <- found + check_later("closing",
     function() !is.null(state),
     function() {
-      expect_identical(ws$getState(), "CLOSED")
+      expect_identical(ws$readyState(), 3L)
       expect_identical(state, "closed")
     }
   )
@@ -119,7 +119,7 @@ test_that("Open is async", {
       ws$close()
     })
   Sys.sleep(1)
-  expect_identical(ws$getState(), "INIT")
+  expect_identical(ws$readyState(), 0L)
 })
 
 
