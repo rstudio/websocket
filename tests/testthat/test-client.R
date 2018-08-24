@@ -41,12 +41,27 @@ check_ws <- function(wsUrl) {
   last <- NULL
   found <- 0
 
-  ws <- WebSocket$new(wsUrl,
-    onMessage = function(msg) last  <<- msg,
-    onOpen    = function()    state <<- "open",
-    onClose   = function()    state <<- "closed",
-    onFail    = function()    state <<- "failed"
-  )
+  ws <- WebSocket$new(wsUrl)
+  ws$onMessage = function(event) {
+    expect_identical(ws, event[["target"]])
+    expect_false(is.null(event[["data"]]))
+    last  <<- event$data
+  }
+  ws$onOpen = function(event) {
+    expect_identical(ws, event[["target"]])
+    state <<- "open"
+  }
+  ws$onClose = function(event) {
+    expect_identical(ws, event[["target"]])
+    expect_false(is.null(event[["code"]]))
+    expect_false(is.null(event[["reason"]]))
+    state <<- "closed"
+  }
+  ws$onError = function(event) {
+    expect_identical(ws, event[["target"]])
+    expect_true(is.character(event[["message"]]))
+    state <<- "failed"
+  }
 
   check_later("open",
     function() !is.null(state),
@@ -95,11 +110,10 @@ test_that("Basic websocket communication", {
 test_that("WebSocket object can be garbage collected", {
   collected <- FALSE
   local({
-    ws <- WebSocket$new("ws://echo.websocket.org/",
-      onOpen = function() {
-        ws$close()
-      }
-    )
+    ws <- WebSocket$new("ws://echo.websocket.org/")
+    ws$onOpen = function(event) {
+      ws$close()
+    }
     reg.finalizer(ws, function(obj) {
       collected <<- TRUE
     })
@@ -114,12 +128,27 @@ test_that("WebSocket object can be garbage collected", {
 })
 
 test_that("Open is async", {
-  ws <- WebSocket$new("ws://echo.websocket.org",
-    onOpen = function() {
-      ws$close()
-    })
+  ws <- WebSocket$new("ws://echo.websocket.org")
+  ws$onOpen = function(event) {
+    ws$close()
+  }
   Sys.sleep(1)
   expect_identical(ws$readyState(), 0L)
+})
+
+test_that("Connection errors are reported", {
+  error_reported <- FALSE
+  ws <- WebSocket$new("ws://example.com")
+  ws$onError = function(event) {
+    expect_identical(ws, event[["target"]])
+    expect_true(is.character(event[["message"]]))
+    expect_true(nzchar(event[["message"]]))
+    error_reported <<- TRUE
+  }
+  while (!later::loop_empty()) {
+    later::run_now(1)
+  }
+  expect_true(error_reported)
 })
 
 

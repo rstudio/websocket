@@ -2,7 +2,7 @@
 % Please edit documentation in R/websocket.R
 \name{WebSocket}
 \alias{WebSocket}
-\title{Create a websocket client}
+\title{Create a WebSocket client}
 \usage{
 \preformatted{WebSocket$new(url,
   protocols = character(0),
@@ -52,24 +52,28 @@ of headers in the initial HTTP request.}
   All logging levels are explained in more detail at \url{https://www.zaphoyd.com/websocketpp/manual/reference/logging}.}
 }
 \description{
-Create a websocket client
+Create a WebSocket client
 }
 \details{
 A WebSocket object has the following callback fields for you to assign your
-own functions to:
+own functions to. Each of these functions should take a single `event`
+argument. The `event` argument is a named list that always contains a
+`target` element that is the WebSocket object that originated the event, plus
+any other relevant data as detailed below.
 
 \describe{
-  \item{\code{onMessage}}{A function called for each message received from the server.
-    Must take a single argument, the message content. If the message is text,
-    the \code{onMessage} function will be passed a one-element character vector;
-    if the message is binary, the \code{onMessage} function will be passed a raw
-    vector.}
-  \item{\code{onOpen}}{A function called with no arguments when the connection is
-    established.}
-  \item{\code{onClose}}{A function called with no arguments when either the client or
-    the server disconnect.}
-  \item{\code{onFail}}{A function called with no arguments when the connection fails
-    while the handshake is bring processed.}
+  \item{\code{onMessage}}{A function called for each message received from
+    the server. The event will have a `data` element, which is the message
+    content. If the message is text, the `data` will be a one-element
+    character vector; if the message is binary, it will be a raw vector.}
+  \item{\code{onOpen}}{A function called when the connection is established.}
+  \item{\code{onClose}}{A function called when a previously-opened connection
+    is closed. The event will have `code` (integer) and `reason` (one-element
+    character) elements that describe the remote's reason for closing.}
+  \item{\code{onError}}{A function called when the connection fails while the
+    handshake is bring processed. The event will have an `message` element
+    that is a one-element character vector describing the reason for the
+    error.}
 }
 
 It also has the following methods:

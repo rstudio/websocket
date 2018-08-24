@@ -54,6 +54,10 @@ public:
   virtual void reset() = 0;
   virtual void close(ws_websocketpp::close::status::value const code, std::string const & reason) = 0;
   virtual bool stopped() = 0;
+
+  virtual ws_websocketpp::lib::error_code get_ec() const = 0;
+  virtual ws_websocketpp::close::status::value get_remote_close_code() const = 0;
+  virtual std::string const & get_remote_close_reason() const = 0;
 };
 
 
@@ -157,6 +161,17 @@ public:
   bool stopped() {
     return client.stopped();
   };
+
+  ws_websocketpp::lib::error_code get_ec() const {
+    return this->con->get_ec();
+  }
+  ws_websocketpp::close::status::value get_remote_close_code() const {
+    return this->con->get_remote_close_code();
+  }
+  std::string const & get_remote_close_reason() const {
+    return this->con->get_remote_close_reason();
+  }
+
 
 private:
   T client;

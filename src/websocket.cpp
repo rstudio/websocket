@@ -86,16 +86,20 @@ void handleMessage(weak_ptr<WSConnection> wsPtrWeak, ws_websocketpp::connection_
   shared_ptr<WSConnection> wsPtr = wsPtrWeak.lock();
   if (wsPtr) {
     ws_websocketpp::frame::opcode::value opcode = msg->get_opcode();
+    Rcpp::List event;
+    event["target"] = wsPtr->callbackEnv;
     if (opcode == ws_websocketpp::frame::opcode::value::text) {
-      wsPtr->getCallback("onMessage")(msg->get_payload());
+      event["data"] = msg->get_payload();
 
     } else if (opcode == ws_websocketpp::frame::opcode::value::binary) {
       const std::string msg_str = msg->get_payload();
-      wsPtr->getCallback("onMessage")(std::vector<uint8_t>(msg_str.begin(), msg_str.end()));
+      event["data"] = std::vector<uint8_t>(msg_str.begin(), msg_str.end());
 
     } else {
       stop("Unknown opcode for message (not text or binary).");
     }
+
+    wsPtr->getCallback("onMessage")(event);
   }
 }
 
@@ -108,8 +112,15 @@ void handleClose(weak_ptr<WSConnection> wsPtrWeak, ws_websocketpp::connection_hd
   if (wsPtr) {
     wsPtr->state = WSConnection::STATE::CLOSED;
     Rcpp::Function onClose = wsPtr->getCallback("onClose");
+    ws_websocketpp::close::status::value code = wsPtr->client->get_remote_close_code();
+    std::string reason = wsPtr->client->get_remote_close_reason();
+    Rcpp::List event;
+    event["target"] = wsPtr->callbackEnv;
+    event["code"] = code;
+    event["reason"] = reason;
+
     removeHandlers(wsPtr);
-    onClose();
+    onClose(event);
   }
 }
 
@@ -117,7 +128,9 @@ void handleOpen(weak_ptr<WSConnection> wsPtrWeak, ws_websocketpp::connection_hdl
   shared_ptr<WSConnection> wsPtr = wsPtrWeak.lock();
   if (wsPtr) {
     wsPtr->state = WSConnection::STATE::OPEN;
-    wsPtr->getCallback("onOpen")();
+    Rcpp::List event;
+    event["target"] = wsPtr->callbackEnv;
+    wsPtr->getCallback("onOpen")(event);
   }
 }
 
@@ -125,9 +138,16 @@ void handleFail(weak_ptr<WSConnection> wsPtrWeak, ws_websocketpp::connection_hdl
   shared_ptr<WSConnection> wsPtr = wsPtrWeak.lock();
   if (wsPtr) {
     wsPtr->state = WSConnection::STATE::FAILED;
-    Rcpp::Function onFail = wsPtr->getCallback("onFail");
+    Rcpp::Function onFail = wsPtr->getCallback("onError");
+    ws_websocketpp::lib::error_code ec = wsPtr->client->get_ec();
+    std::string errMessage = ec.message();
+
+    Rcpp::List event;
+    event["target"] = wsPtr->callbackEnv;
+    event["message"] = errMessage;
+
     removeHandlers(wsPtr);
-    onFail();
+    onFail(event);
   }
 }
 
