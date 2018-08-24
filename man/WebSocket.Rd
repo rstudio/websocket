@@ -20,6 +20,13 @@ during the opening handshake.}
 \item{headers}{A named list or character vector representing keys and values
 of headers in the initial HTTP request.}
 
+\item{autoConnect}{If set to `FALSE`, then constructing the WebSocket object
+will not automatically cause the connection to be established. This can be
+used if control will return to R before event handlers can be set on the
+WebSocket object (i.e. you are constructing a WebSocket object manually at
+an interactive R console); after you are done attaching event handlers, you
+must call `ws$connect()` to establish the WebSocket connection.}
+
 \item{accessLogChannels}{A character vector of access log channels that should
   be enabled.  Defaults to \code{"none"}, which displays no normal, websocketpp logging activity.
   Setting \code{accessLogChannels = NULL} will use default websocketpp behavior.

@@ -151,6 +151,40 @@ test_that("Connection errors are reported", {
   expect_true(error_reported)
 })
 
+test_that("Connect can be delayed", {
+  # With autoConnect = TRUE (the default), you can miss the onOpen event
+  connected <- FALSE
+  ws <- WebSocket$new("ws://echo.websocket.org")
+  for (i in 1:20)
+    later::run_now(0.1)
+  ws$onOpen <- function(event) {
+    connected <<- TRUE
+  }
+  for (i in 1:20)
+    later::run_now(0.1)
+  expect_false(connected)
+  ws$close()
+
+  # With autoConnect = FALSE, the open event is guaranteed not to fire
+  # until after connect() is called
+  connected <- FALSE
+  ws <- WebSocket$new("ws://echo.websocket.org", autoConnect = FALSE)
+  for (i in 1:20)
+    later::run_now(0.1)
+  ws$connect()
+  # It's OK even if onOpen is registered immediately after connect() (in the
+  # same tick though), the same guarantee (that connect is asynchronous)
+  # as autoConnect = TRUE applies.
+  ws$onOpen <- function(event) {
+    connected <<- TRUE
+  }
+  expect_false(connected)
+  for (i in 1:20)
+    later::run_now(0.1)
+  expect_true(connected)
+  ws$close()
+})
+
 
 context("Basic SSL WebSocket")
 test_that("Basic ssl websocket communication", {

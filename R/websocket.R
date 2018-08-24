@@ -69,6 +69,12 @@ null_func <- function(...) { }
 #'   during the opening handshake.
 #' @param headers A named list or character vector representing keys and values
 #'   of headers in the initial HTTP request.
+#' @param autoConnect If set to `FALSE`, then constructing the WebSocket object
+#'   will not automatically cause the connection to be established. This can be
+#'   used if control will return to R before event handlers can be set on the
+#'   WebSocket object (i.e. you are constructing a WebSocket object manually at
+#'   an interactive R console); after you are done attaching event handlers, you
+#'   must call `ws$connect()` to establish the WebSocket connection.
 #' @param accessLogChannels A character vector of access log channels that should
 #'   be enabled.  Defaults to \code{"none"}, which displays no normal, websocketpp logging activity.
 #'   Setting \code{accessLogChannels = NULL} will use default websocketpp behavior.
@@ -134,6 +140,7 @@ WebSocket <- R6::R6Class("WebSocket",
     initialize = function(url,
       protocols = character(0),
       headers = NULL,
+      autoConnect = TRUE,
       accessLogChannels = c("none"),
       errorLogChannels = c("none")
     ) {
@@ -154,10 +161,25 @@ WebSocket <- R6::R6Class("WebSocket",
       })
       wsAddProtocols(private$wsObj, protocols)
 
-      wsConnect(private$wsObj)
-      private$handleIncoming()
+      private$pendingConnect <- TRUE
+      if (autoConnect) {
+        self$connect()
+      }
+    },
+    connect = function() {
+      if (private$pendingConnect) {
+        private$pendingConnect <- FALSE
+        wsConnect(private$wsObj)
+        private$scheduleIncoming()
+      } else {
+        warning("Ignoring extraneous connect() call (did you mean to have autoConnect=FALSE in the constructor?)")
+      }
     },
     readyState = function() {
+      if (private$pendingConnect) {
+        return(-1)
+      }
+
       switch(wsState(private$wsObj),
         INIT = 0L,
         OPEN = 1L,
@@ -191,12 +213,16 @@ WebSocket <- R6::R6Class("WebSocket",
   ),
   private = list(
     wsObj = NULL,
+    pendingConnect = TRUE,
+    scheduleIncoming = function() {
+      later::later(private$handleIncoming, 0.01)
+    },
     handleIncoming = function() {
       if (self$readyState() == 3L) {
         return()
       } else {
         wsPoll(private$wsObj)
-        later::later(private$handleIncoming, 0.01)
+        private$scheduleIncoming()
       }
     },
     accessLogChannelValues = c(
