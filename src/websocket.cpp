@@ -67,6 +67,8 @@ public:
   Rcpp::Function getCallback(std::string name) {
     return callbackEnv.get(name);
   }
+
+  bool closeOnOpen = false;
 };
 
 
@@ -127,6 +129,12 @@ void handleClose(weak_ptr<WSConnection> wsPtrWeak, ws_websocketpp::connection_hd
 void handleOpen(weak_ptr<WSConnection> wsPtrWeak, ws_websocketpp::connection_hdl) {
   shared_ptr<WSConnection> wsPtr = wsPtrWeak.lock();
   if (wsPtr) {
+    if (wsPtr->closeOnOpen) {
+      wsPtr->state = WSConnection::STATE::CLOSING;
+      wsPtr->client->close(ws_websocketpp::close::status::normal, "");
+      return;
+    }
+
     wsPtr->state = WSConnection::STATE::OPEN;
     Rcpp::List event;
     event["target"] = wsPtr->callbackEnv;
@@ -264,6 +272,18 @@ void wsReset(SEXP client_xptr) {
 // [[Rcpp::export]]
 void wsClose(SEXP client_xptr, uint16_t code, std::string reason) {
   shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
+
+  switch (wsPtr->state) {
+  case WSConnection::STATE::INIT:
+    wsPtr->closeOnOpen = true;
+    return;
+  case WSConnection::STATE::OPEN:
+    break;
+  case WSConnection::STATE::CLOSING:
+  case WSConnection::STATE::CLOSED:
+  case WSConnection::STATE::FAILED:
+    return;
+  }
 
   wsPtr->state = WSConnection::STATE::CLOSING;
   wsPtr->client->close(code, reason);

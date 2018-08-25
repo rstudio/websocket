@@ -69,7 +69,7 @@ check_ws <- function(wsUrl) {
   )
 
   # Make sure the internal state gets set, and the onOpen function gets called.
-  expect_identical(ws$readyState(), 1L)
+  expect_equivalent(ws$readyState(), 1L)
   expect_identical(state, "open")
 
   last <- NULL
@@ -92,7 +92,7 @@ check_ws <- function(wsUrl) {
   found <- found + check_later("closing",
     function() !is.null(state),
     function() {
-      expect_identical(ws$readyState(), 3L)
+      expect_equivalent(ws$readyState(), 3L)
       expect_identical(state, "closed")
     }
   )
@@ -133,7 +133,7 @@ test_that("Open is async", {
     ws$close()
   }
   Sys.sleep(1)
-  expect_identical(ws$readyState(), 0L)
+  expect_equivalent(ws$readyState(), 0L)
 })
 
 test_that("Connection errors are reported", {
@@ -179,10 +179,24 @@ test_that("Connect can be delayed", {
     connected <<- TRUE
   }
   expect_false(connected)
-  for (i in 1:20)
-    later::run_now(0.1)
+  while (!connected && !later::loop_empty())
+    later::run_now()
   expect_true(connected)
   ws$close()
+})
+
+test_that("WebSocket can be closed before being opened or after being closed", {
+  onCloseCalled <- FALSE
+  ws <- WebSocket$new("ws://echo.websocket.org")
+  ws$close()
+  ws$onClose <- function(event) {
+    onCloseCalled <<- TRUE
+  }
+  while (!later::loop_empty())
+    later::run_now()
+  expect_equivalent(ws$readyState(), 3L)
+  ws$close()
+  expect_true(onCloseCalled)
 })
 
 

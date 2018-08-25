@@ -180,16 +180,20 @@ WebSocket <- R6::R6Class("WebSocket",
       }
     },
     readyState = function() {
+      code <- function(value, desc) {
+        structure(value, description = desc)
+      }
+
       if (private$pendingConnect) {
-        return(-1)
+        return(code(-1L, "Pre-connecting"))
       }
 
       switch(wsState(private$wsObj),
-        INIT = 0L,
-        OPEN = 1L,
-        CLOSING = 2L,
-        CLOSED = 3L,
-        FAILED = 3L,
+        INIT = code(0L, "Connecting"),
+        OPEN = code(1L, "Open"),
+        CLOSING = code(2L, "Closing"),
+        CLOSED = code(3L, "Closed"),
+        FAILED = code(3L, "Closed"),
         stop("Unknown state ", wsState(private$wsObj))
       )
     },
