@@ -1,31 +1,44 @@
 websocket
 =========
 
+[![Travis Build Status](https://travis-ci.org/rstudio/websocket.svg?branch=master)](https://travis-ci.org/rstudio/websocket)
+
 This is an R WebSocket client library backed by the [websocketpp](https://github.com/zaphoyd/websocketpp) C++ library.
 
 ## Usage examples
 
-You may need to step through the `$send()` commands because there will be a small amount of time before the response is received. The `onMessage()` callback is invoked asynchronously (using the [later](https://github.com/r-lib/later) package) when a response arrives.
-
 ```R
 library(websocket)
 
-ws <- WebSocket("ws://echo.websocket.org/",
-  onOpen = function() {
-    cat("Connection opened\n")
-  },
-  onMessage = function(msg) {
-    cat("Client got msg: ", msg, "\n")
-  },
-  onClose = function() {
-    cat("Client disconnected\n")
-  }
-)
+ws <- WebSocket$new("ws://echo.websocket.org/", autoConnect = FALSE)
+ws$onOpen <- function(event) {
+  cat("Connection opened\n")
+}
+ws$onMessage <- function(event) {
+  cat("Client got msg: ", event$data, "\n")
+}
+ws$onClose <- function(event) {
+  cat("Client disconnected with code ", event$code,
+    " and reason ", event$reason, "\n", sep = "")
+}
+ws$onError <- function(event) {
+  cat("Client failed to connect: ", event$message, "\n")
+}
+ws$connect()
+```
 
+(If you're not writing these commands at a console—for instance, if you're using a WebSocket as part of a Shiny app—you can leave off `autoConnect=FALSE` and `ws$connect()`. These are only necessary when the creation of the WebSocket object and the registering of the `onOpen`/`onMessage`/`onClose` handlers don't happen within the same function call, because in those cases the connection may open and/or messages received before the handlers are registered.)
+
+Once connected, you can send commands as follows:
+
+```R
+# Send text messages
 ws$send("hello")
 
+# Send binary messages
 ws$send( charToRaw("hello") )
 
+# Finish
 ws$close()
 ```
 

@@ -7,6 +7,7 @@
 \preformatted{WebSocket$new(url,
   protocols = character(0),
   headers = NULL,
+  autoConnect = TRUE,
   accessLogChannels = c("none"),
   errorLogChannels = NULL)
 }
@@ -86,6 +87,9 @@ any other relevant data as detailed below.
 It also has the following methods:
 
 \describe{
+  \item{\code{connect()}}{Initiates the connection to the server. (This does
+    not need to be called unless you have passed `autoConnect=FALSE` to the
+    constructor.)}
   \item{\code{send(msg)}}{Sends a message to the server.}
   \item{\code{close()}}{Closes the connection.}
   \item{\code{readyState()}}{Returns an integer representing the state of the
