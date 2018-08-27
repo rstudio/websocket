@@ -155,8 +155,12 @@ test_that("Connect can be delayed", {
   # With autoConnect = TRUE (the default), you can miss the onOpen event
   connected <- FALSE
   ws <- WebSocket$new("ws://echo.websocket.org")
-  for (i in 1:20)
+  for (i in 1:100) {
     later::run_now(0.1)
+    if (later::loop_empty() || ws$readyState() >= 1L) {
+      break()
+    }
+  }
   ws$onOpen(function(event) {
     connected <<- TRUE
   })
@@ -169,8 +173,12 @@ test_that("Connect can be delayed", {
   # until after connect() is called
   connected <- FALSE
   ws <- WebSocket$new("ws://echo.websocket.org", autoConnect = FALSE)
-  for (i in 1:20)
+  for (i in 1:100) {
     later::run_now(0.1)
+    if (later::loop_empty() || ws$readyState() >= 1L) {
+      break()
+    }
+  }
   ws$connect()
   # It's OK even if onOpen is registered immediately after connect() (in the
   # same tick though), the same guarantee (that connect is asynchronous)
