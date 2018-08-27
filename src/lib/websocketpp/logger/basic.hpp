@@ -62,7 +62,7 @@ public:
         channel_type_hint::access)
       : m_static_channels(0xffffffff)
       , m_dynamic_channels(0)
-      , m_out(h == channel_type_hint::error ? &std::cerr : &std::cout) {}
+      , m_out(h == channel_type_hint::error ? (std::ostream*)&Rcpp::Rcerr : (std::ostream*)&Rcpp::Rcout) {}
 
     basic<concurrency,names>(std::ostream * out)
       : m_static_channels(0xffffffff)
@@ -73,7 +73,7 @@ public:
         channel_type_hint::access)
       : m_static_channels(c)
       , m_dynamic_channels(0)
-      , m_out(h == channel_type_hint::error ? &std::cerr : &std::cout) {}
+      , m_out(h == channel_type_hint::error ? (std::ostream*)&Rcpp::Rcerr : (std::ostream*)&Rcpp::Rcout) {}
 
     basic<concurrency,names>(level c, std::ostream * out)
       : m_static_channels(c)
@@ -110,7 +110,7 @@ public:
 
 #endif // _WEBSOCKETPP_MOVE_SEMANTICS_
 
-    void set_ostream(std::ostream * out = &std::cout) {
+    void set_ostream(std::ostream * out = &Rcpp::Rcout) {
         m_out = out;
     }
 
