@@ -8,30 +8,43 @@ null_func <- function(...) { }
 
 #' Create a WebSocket client
 #'
-#' @details
-#'
-#' A WebSocket object has the following callback fields for you to assign your
-#' own functions to. Each of these functions should take a single `event`
-#' argument. The `event` argument is a named list that always contains a
-#' `target` element that is the WebSocket object that originated the event, plus
-#' any other relevant data as detailed below.
-#'
-#' \describe{
-#'   \item{\code{onMessage}}{A function called for each message received from
-#'     the server. The event will have a `data` element, which is the message
-#'     content. If the message is text, the `data` will be a one-element
-#'     character vector; if the message is binary, it will be a raw vector.}
-#'   \item{\code{onOpen}}{A function called when the connection is established.}
-#'   \item{\code{onClose}}{A function called when a previously-opened connection
-#'     is closed. The event will have `code` (integer) and `reason` (one-element
-#'     character) elements that describe the remote's reason for closing.}
-#'   \item{\code{onError}}{A function called when the connection fails while the
-#'     handshake is bring processed. The event will have an `message` element
-#'     that is a one-element character vector describing the reason for the
-#'     error.}
+#' \preformatted{
+#' WebSocket$new(url,
+#'   protocols = character(0),
+#'   headers = NULL,
+#'   autoConnect = TRUE,
+#'   accessLogChannels = c("none"),
+#'   errorLogChannels = NULL)
 #' }
 #'
-#' It also has the following methods:
+#' @details
+#'
+#' A WebSocket object has four events you can listen for, by calling the
+#' corresponding `onXXX` method and passing it a callback function. All callback
+#' functions must take a single `event` argument. The `event` argument is a
+#' named list that always contains a `target` element that is the WebSocket
+#' object that originated the event, plus any other relevant data as detailed
+#' below.
+#'
+#' \describe{
+#'   \item{\code{onMessage}}{Called each time a message is received from the
+#'     server. The event will have a `data` element, which is the message
+#'     content. If the message is text, the `data` will be a one-element
+#'     character vector; if the message is binary, it will be a raw vector.}
+#'   \item{\code{onOpen}}{Called when the connection is established.}
+#'   \item{\code{onClose}}{Called when a previously-opened connection is closed.
+#'     The event will have `code` (integer) and `reason` (one-element character)
+#'     elements that describe the remote's reason for closing.}
+#'   \item{\code{onError}}{Called when the connection fails to be established.
+#'     The event will have an `message` element, a character vector of length 1
+#'     describing the reason for the error.}
+#' }
+#'
+#' Each `onXXX` method can be called multiple times to register multiple
+#' callbacks. Each time an `onXXX` is called, its (invisible) return value is a
+#' function that can be invoked to cancel that particular registration.
+#'
+#' A WebSocket object also has the following methods:
 #'
 #' \describe{
 #'   \item{\code{connect()}}{Initiates the connection to the server. (This does
@@ -57,15 +70,6 @@ null_func <- function(...) { }
 #'     websocket's creation.  A value of \code{NULL} will not clear any existing Access channels.}
 #'   \item{clearErrorLogChannels(channels)}{Disable the websocket Error channels after the
 #'     websocket's creation.  A value of \code{NULL} will not clear any existing Error channels.}
-#' }
-#'
-#' @usage
-#' \preformatted{WebSocket$new(url,
-#'   protocols = character(0),
-#'   headers = NULL,
-#'   autoConnect = TRUE,
-#'   accessLogChannels = c("none"),
-#'   errorLogChannels = NULL)
 #' }
 #'
 #' @param url The WebSocket URL. Should begin with \code{ws://} or \code{wss://}.
@@ -137,10 +141,6 @@ NULL
 #' @export
 WebSocket <- R6::R6Class("WebSocket",
   public = list(
-    onMessage = NULL,
-    onOpen = NULL,
-    onClose = NULL,
-    onError = NULL,
     initialize = function(url,
       protocols = character(0),
       headers = NULL,
@@ -148,14 +148,14 @@ WebSocket <- R6::R6Class("WebSocket",
       accessLogChannels = c("none"),
       errorLogChannels = c("none")
     ) {
-      self$onOpen <-
-        self$onClose <-
-        self$onError <-
-        self$onMessage <-
-        function(event) {}
+      private$callbacks <- new.env(parent = emptyenv())
+      private$callbacks$open <- Callbacks$new()
+      private$callbacks$close <- Callbacks$new()
+      private$callbacks$error <- Callbacks$new()
+      private$callbacks$message <- Callbacks$new()
 
       private$wsObj <- wsCreate(
-        url, self,
+        url, self, private,
         private$accessLogChannels(accessLogChannels, "none"),
         private$errorLogChannels(errorLogChannels, "none")
       )
@@ -197,6 +197,18 @@ WebSocket <- R6::R6Class("WebSocket",
         stop("Unknown state ", wsState(private$wsObj))
       )
     },
+    onOpen = function(callback) {
+      invisible(private$callbacks[["open"]]$register(callback))
+    },
+    onClose = function(callback) {
+      invisible(private$callbacks[["close"]]$register(callback))
+    },
+    onError = function(callback) {
+      invisible(private$callbacks[["error"]]$register(callback))
+    },
+    onMessage = function(callback) {
+      invisible(private$callbacks[["message"]]$register(callback))
+    },
     protocol = function() {
       wsProtocol(private$wsObj)
     },
@@ -221,6 +233,7 @@ WebSocket <- R6::R6Class("WebSocket",
   ),
   private = list(
     wsObj = NULL,
+    callbacks = NULL,
     pendingConnect = TRUE,
     scheduleIncoming = function() {
       later::later(private$handleIncoming, 0.01)
@@ -232,6 +245,11 @@ WebSocket <- R6::R6Class("WebSocket",
         wsPoll(private$wsObj)
         private$scheduleIncoming()
       }
+    },
+    getInvoker = function(eventName) {
+      callbacks <- private$callbacks[[eventName]]
+      stopifnot(!is.null(callbacks))
+      callbacks$invoke
     },
     accessLogChannelValues = c(
       "none", "connect", "disconnect", "control", "frame_header", "frame_payload",
@@ -250,6 +268,46 @@ WebSocket <- R6::R6Class("WebSocket",
       channels <- match.arg(channels, private$errorLogChannelValues, several.ok = TRUE)
       if (stompValue %in% channels) channels <- stompValue
       channels
+    }
+  )
+)
+
+Callbacks <- R6::R6Class(
+  'Callbacks',
+  private = list(
+    .nextId = integer(0),
+    .callbacks = 'environment'
+  ),
+  public = list(
+    initialize = function() {
+      # NOTE: we avoid using '.Machine$integer.max' directly
+      # as R 3.3.0's 'radixsort' could segfault when sorting
+      # an integer vector containing this value
+      private$.nextId <- as.integer(.Machine$integer.max - 1L)
+      private$.callbacks <- new.env(parent = emptyenv())
+    },
+    register = function(callback) {
+      if (!is.function(callback)) {
+        stop("callback must be a function")
+      }
+      id <- as.character(private$.nextId)
+      private$.nextId <- private$.nextId - 1L
+      private$.callbacks[[id]] <- callback
+      return(function() {
+        rm(list = id, pos = private$.callbacks)
+      })
+    },
+    invoke = function(...) {
+      # Ensure that calls are invoked in the order that they were registered
+      keys <- as.character(sort(as.integer(ls(private$.callbacks)), decreasing = TRUE))
+      callbacks <- mget(keys, private$.callbacks)
+
+      for (callback in callbacks) {
+        callback(...)
+      }
+    },
+    count = function() {
+      length(ls(private$.callbacks))
     }
   )
 )

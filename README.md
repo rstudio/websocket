@@ -11,19 +11,19 @@ This is an R WebSocket client library backed by the [websocketpp](https://github
 library(websocket)
 
 ws <- WebSocket$new("ws://echo.websocket.org/", autoConnect = FALSE)
-ws$onOpen <- function(event) {
+ws$onOpen(function(event) {
   cat("Connection opened\n")
-}
-ws$onMessage <- function(event) {
+})
+ws$onMessage(function(event) {
   cat("Client got msg: ", event$data, "\n")
-}
-ws$onClose <- function(event) {
+})
+ws$onClose(function(event) {
   cat("Client disconnected with code ", event$code,
     " and reason ", event$reason, "\n", sep = "")
-}
-ws$onError <- function(event) {
+})
+ws$onError(function(event) {
   cat("Client failed to connect: ", event$message, "\n")
-}
+})
 ws$connect()
 ```
 
@@ -36,7 +36,7 @@ Once connected, you can send commands as follows:
 ws$send("hello")
 
 # Send binary messages
-ws$send( charToRaw("hello") )
+ws$send(charToRaw("hello"))
 
 # Finish
 ws$close()

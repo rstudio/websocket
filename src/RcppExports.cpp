@@ -6,16 +6,17 @@
 using namespace Rcpp;
 
 // wsCreate
-SEXP wsCreate(std::string uri, Rcpp::Environment callbackEnv, Rcpp::CharacterVector accessLogChannels, Rcpp::CharacterVector errorLogChannels);
-RcppExport SEXP _websocket_wsCreate(SEXP uriSEXP, SEXP callbackEnvSEXP, SEXP accessLogChannelsSEXP, SEXP errorLogChannelsSEXP) {
+SEXP wsCreate(std::string uri, Rcpp::Environment robjPublic, Rcpp::Environment robjPrivate, Rcpp::CharacterVector accessLogChannels, Rcpp::CharacterVector errorLogChannels);
+RcppExport SEXP _websocket_wsCreate(SEXP uriSEXP, SEXP robjPublicSEXP, SEXP robjPrivateSEXP, SEXP accessLogChannelsSEXP, SEXP errorLogChannelsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type uri(uriSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Environment >::type callbackEnv(callbackEnvSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Environment >::type robjPublic(robjPublicSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Environment >::type robjPrivate(robjPrivateSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type accessLogChannels(accessLogChannelsSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type errorLogChannels(errorLogChannelsSEXP);
-    rcpp_result_gen = Rcpp::wrap(wsCreate(uri, callbackEnv, accessLogChannels, errorLogChannels));
+    rcpp_result_gen = Rcpp::wrap(wsCreate(uri, robjPublic, robjPrivate, accessLogChannels, errorLogChannels));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -153,7 +154,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_websocket_wsCreate", (DL_FUNC) &_websocket_wsCreate, 4},
+    {"_websocket_wsCreate", (DL_FUNC) &_websocket_wsCreate, 5},
     {"_websocket_wsAppendHeader", (DL_FUNC) &_websocket_wsAppendHeader, 3},
     {"_websocket_wsAddProtocols", (DL_FUNC) &_websocket_wsAddProtocols, 2},
     {"_websocket_wsConnect", (DL_FUNC) &_websocket_wsConnect, 1},
