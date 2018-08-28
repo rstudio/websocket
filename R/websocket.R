@@ -121,20 +121,19 @@ null_func <- function(...) { }
 #' if (interactive()) {
 #'
 #' # Create a websocket using the websocket.org test server
-#' ws <- WebSocket$new("ws://echo.websocket.org/",
-#'   onMessage = function(msg) {
-#'     cat("Client got msg: ", msg, "\n")
-#'   },
-#'   onClose = function() {
-#'     cat("Client disconnected\n")
-#'   }
-#' )
+#' ws <- WebSocket$new("ws://echo.websocket.org/")
+#' ws$onMessage(function(event) {
+#'   cat("Client got msg:", event$data, "\n")
+#' })
+#' ws$onClose(function(event) {
+#'   cat("Client disconnected\n")
+#' })
+#' ws$onOpen(function(event) {
+#'   cat("Client connected\n")
+#' })
 #'
-#' # Send a message
-#' ws$send("hello")
-#'
-#' # Close the websocket after we're done with it
-#' ws$close()
+#' # Try sending a message with ws$send("hello").
+#' # Close the websocket with ws$close() after you're done with it.
 #' }
 NULL
 
