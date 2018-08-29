@@ -73,21 +73,26 @@ library(websocket)
 
 ws <- WebSocket$new("ws://127.0.0.1:8080/",
   headers = list(Cookie = "Xyz"),
-  onOpen = function() {
-    cat("Connection opened.\n")
-  },
-  onMessage = function(msg) {
-    cat("Client received message: ", msg, "\n")
-  },
-  onClose = function() {
-    cat("Connection closed.\n")
-  },
   accessLogChannels = "all" # enable all websocketpp logging
 )
 
+ws$onOpen(function(event) {
+  cat("Connection opened\n")
+})
+ws$onMessage(function(event) {
+  cat("Client got msg: ", event$data, "\n")
+})
+ws$onClose(function(event) {
+  cat("Client disconnected with code ", event$code,
+    " and reason ", event$reason, "\n", sep = "")
+})
+ws$onError(function(event) {
+  cat("Client failed to connect: ", event$message, "\n")
+})
+
 ws$send("hello")
 
-ws$send( charToRaw("hello") )
+ws$send(charToRaw("hello"))
 
 ws$close()
 ```
