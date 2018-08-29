@@ -39,7 +39,10 @@ public:
 
   virtual void setup_connection(std::string location, ws_websocketpp::lib::error_code &ec) = 0;
   virtual void append_header(std::string key, std::string value) = 0;
+  virtual void add_subprotocol(std::string const & request) = 0;
   virtual void connect() = 0;
+
+  virtual std::string get_subprotocol() const = 0;
 
   virtual std::size_t run_one() = 0;
   virtual ws_websocketpp::lib::asio::io_service& get_io_service() = 0;
@@ -51,6 +54,10 @@ public:
   virtual void reset() = 0;
   virtual void close(ws_websocketpp::close::status::value const code, std::string const & reason) = 0;
   virtual bool stopped() = 0;
+
+  virtual ws_websocketpp::lib::error_code get_ec() const = 0;
+  virtual ws_websocketpp::close::status::value get_remote_close_code() const = 0;
+  virtual std::string const & get_remote_close_reason() const = 0;
 };
 
 
@@ -115,9 +122,20 @@ public:
   void append_header(std::string key, std::string value) {
     this->con->append_header(key, value);
   }
+  void add_subprotocol(std::string const & value) {
+    con->add_subprotocol(value);
+  };
   void connect() {
     client.connect(this->con);
   };
+
+  std::string get_subprotocol() const {
+    if (!con) {
+      return std::string();
+    } else {
+      return con->get_subprotocol();
+    }
+  }
 
   std::size_t run_one() {
     return client.run_one();
@@ -143,6 +161,17 @@ public:
   bool stopped() {
     return client.stopped();
   };
+
+  ws_websocketpp::lib::error_code get_ec() const {
+    return this->con->get_ec();
+  }
+  ws_websocketpp::close::status::value get_remote_close_code() const {
+    return this->con->get_remote_close_code();
+  }
+  std::string const & get_remote_close_reason() const {
+    return this->con->get_remote_close_reason();
+  }
+
 
 private:
   T client;

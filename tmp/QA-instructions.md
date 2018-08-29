@@ -15,7 +15,7 @@ First, create a websocket client by running:
 
 ``` r
 # Create a websocket using the websocket.org test server
-ws <- websocket::WebsocketClient$new("ws://echo.websocket.org/",
+ws <- websocket::WebSocket$new("ws://echo.websocket.org/",
   onMessage = function(msg) {
     cat("Client got msg: ", msg, "\n")
   },

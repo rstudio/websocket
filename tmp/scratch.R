@@ -1,4 +1,4 @@
-ws <- WebsocketClient$new("ws://localhost:8080/",
+ws <- WebSocket$new("ws://localhost:8080/",
   onMessage = function(msg) {
     cat("Client got msg: ", msg, "\n")
   },

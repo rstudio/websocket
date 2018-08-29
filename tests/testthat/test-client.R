@@ -41,12 +41,27 @@ check_ws <- function(wsUrl) {
   last <- NULL
   found <- 0
 
-  ws <- WebsocketClient$new(wsUrl,
-    onMessage = function(msg) last  <<- msg,
-    onOpen    = function()    state <<- "open",
-    onClose   = function()    state <<- "closed",
-    onFail    = function()    state <<- "failed"
-  )
+  ws <- WebSocket$new(wsUrl)
+  ws$onMessage(function(event) {
+    expect_identical(ws, event[["target"]])
+    expect_false(is.null(event[["data"]]))
+    last  <<- event$data
+  })
+  ws$onOpen(function(event) {
+    expect_identical(ws, event[["target"]])
+    state <<- "open"
+  })
+  ws$onClose(function(event) {
+    expect_identical(ws, event[["target"]])
+    expect_false(is.null(event[["code"]]))
+    expect_false(is.null(event[["reason"]]))
+    state <<- "closed"
+  })
+  ws$onError(function(event) {
+    expect_identical(ws, event[["target"]])
+    expect_true(is.character(event[["message"]]))
+    state <<- "failed"
+  })
 
   check_later("open",
     function() !is.null(state),
@@ -54,7 +69,7 @@ check_ws <- function(wsUrl) {
   )
 
   # Make sure the internal state gets set, and the onOpen function gets called.
-  expect_identical(ws$getState(), "OPEN")
+  expect_equivalent(ws$readyState(), 1L)
   expect_identical(state, "open")
 
   last <- NULL
@@ -77,7 +92,7 @@ check_ws <- function(wsUrl) {
   found <- found + check_later("closing",
     function() !is.null(state),
     function() {
-      expect_identical(ws$getState(), "CLOSED")
+      expect_equivalent(ws$readyState(), 3L)
       expect_identical(state, "closed")
     }
   )
@@ -95,11 +110,10 @@ test_that("Basic websocket communication", {
 test_that("WebSocket object can be garbage collected", {
   collected <- FALSE
   local({
-    ws <- WebsocketClient$new("ws://echo.websocket.org/",
-      onOpen = function() {
-        ws$close()
-      }
-    )
+    ws <- WebSocket$new("ws://echo.websocket.org/")
+    ws$onOpen(function(event) {
+      ws$close()
+    })
     reg.finalizer(ws, function(obj) {
       collected <<- TRUE
     })
@@ -114,12 +128,108 @@ test_that("WebSocket object can be garbage collected", {
 })
 
 test_that("Open is async", {
-  ws <- WebsocketClient$new("ws://echo.websocket.org",
-    onOpen = function() {
-      ws$close()
-    })
+  ws <- WebSocket$new("ws://echo.websocket.org")
+  ws$onOpen(function(event) {
+    ws$close()
+  })
   Sys.sleep(1)
-  expect_identical(ws$getState(), "INIT")
+  expect_equivalent(ws$readyState(), 0L)
+})
+
+test_that("Connection errors are reported", {
+  error_reported <- FALSE
+  ws <- WebSocket$new("ws://example.com")
+  ws$onError(function(event) {
+    expect_identical(ws, event[["target"]])
+    expect_true(is.character(event[["message"]]))
+    expect_true(nzchar(event[["message"]]))
+    error_reported <<- TRUE
+  })
+  while (!later::loop_empty()) {
+    later::run_now(1)
+  }
+  expect_true(error_reported)
+})
+
+test_that("Connect can be delayed", {
+  # With autoConnect = TRUE (the default), you can miss the onOpen event
+  connected <- FALSE
+  ws <- WebSocket$new("ws://echo.websocket.org")
+  for (i in 1:100) {
+    later::run_now(0.1)
+    if (later::loop_empty() || ws$readyState() >= 1L) {
+      break()
+    }
+  }
+  ws$onOpen(function(event) {
+    connected <<- TRUE
+  })
+  for (i in 1:20)
+    later::run_now(0.1)
+  expect_false(connected)
+  ws$close()
+
+  # With autoConnect = FALSE, the open event is guaranteed not to fire
+  # until after connect() is called
+  connected <- FALSE
+  ws <- WebSocket$new("ws://echo.websocket.org", autoConnect = FALSE)
+  for (i in 1:100) {
+    later::run_now(0.1)
+    if (later::loop_empty() || ws$readyState() >= 1L) {
+      break()
+    }
+  }
+  ws$connect()
+  # It's OK even if onOpen is registered immediately after connect() (in the
+  # same tick though), the same guarantee (that connect is asynchronous)
+  # as autoConnect = TRUE applies.
+  ws$onOpen(function(event) {
+    connected <<- TRUE
+  })
+  expect_false(connected)
+  while (!connected && !later::loop_empty())
+    later::run_now()
+  expect_true(connected)
+  ws$close()
+})
+
+test_that("WebSocket can be closed before being opened or after being closed", {
+  onCloseCalled <- FALSE
+  ws <- WebSocket$new("ws://echo.websocket.org")
+  ws$close()
+  ws$onClose(function(event) {
+    onCloseCalled <<- TRUE
+  })
+  while (!later::loop_empty())
+    later::run_now()
+  expect_equivalent(ws$readyState(), 3L)
+  ws$close()
+  expect_true(onCloseCalled)
+})
+
+test_that("WebSocket event handlers can be registered more than once", {
+  a_called <- FALSE
+  b_called <- FALSE
+  c_called <- FALSE
+  ws <- WebSocket$new("ws://echo.websocket.org")
+  ws$onOpen(function(event) {
+    a_called <<- TRUE
+  })
+  ws$onOpen(function(event) {
+    b_called <<- TRUE
+  })
+  handle_c <- ws$onOpen(function(event) {
+    c_called <<- TRUE
+  })
+  handle_c() # Unregister
+  ws$onOpen(function(event) {
+    ws$close()
+  })
+  while (!later::loop_empty())
+    later::run_now()
+  expect_true(a_called)
+  expect_true(b_called)
+  expect_false(c_called)
 })
 
 

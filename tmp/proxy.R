@@ -53,7 +53,7 @@ s <- startServer("0.0.0.0", 5002,
       resp_httr_to_rook(resp_curl)
     },
     onWSOpen = function(clientWS) {
-      serverWS <- WebsocketClient$new("ws://localhost:3923", onMessage = function(msgFromServer) {
+      serverWS <- WebSocket$new("ws://localhost:3923", onMessage = function(msgFromServer) {
         cat("Got message from server: ", msgFromServer, "\n")
         clientWS$send(msgFromServer)
       })
