@@ -5,6 +5,12 @@
 #include <websocketpp/config/asio_client.hpp>
 #include <websocketpp/client.hpp>
 
+// This is necessary on CentOS 7, where bringing in asio_client.hpp indirectly loads
+// krb5/krb5.h, which defines TRUE/FALSE as integers. This then breaks R, as it
+// relies on TRUE/FALSE being part of the Rboolean enum.
+#undef TRUE
+#undef FALSE
+
 
 typedef ws_websocketpp::config::asio_client::message_type::ptr message_ptr;
 typedef ws_websocketpp::lib::function<void(ws_websocketpp::connection_hdl, message_ptr)> message_handler;
