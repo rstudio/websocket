@@ -19,8 +19,8 @@ WebSocket object (i.e. you are constructing a WebSocket object manually at
 an interactive R console); after you are done attaching event handlers, you
 must call `ws$connect()` to establish the WebSocket connection.}
 
-\item{accessLogChannels}{A character vector of access log channels that should
-  be enabled.  Defaults to \code{"none"}, which displays no normal, websocketpp logging activity.
+\item{accessLogChannels}{A character vector of access log channels that are
+  enabled.  Defaults to \code{"none"}, which displays no normal, websocketpp logging activity.
   Setting \code{accessLogChannels = NULL} will use default websocketpp behavior.
   Multiple access logging levels may be passed in for them to be enabled.
 
@@ -36,8 +36,8 @@ must call `ws$connect()` to establish the WebSocket connection.}
 
   All logging levels are explained in more detail at \url{https://www.zaphoyd.com/websocketpp/manual/reference/logging}.}
 
-\item{errorLogChannels}{A character vector of error log channels that should
-  be displayed.  The default value is \code{NULL}, which will use default websocketpp behavior.
+\item{errorLogChannels}{A character vector of error log channels that are
+  displayed.  The default value is \code{NULL}, which will use default websocketpp behavior.
   Multiple error logging levels may be passed in for them to be enabled.
 
   A few commonly used error logging values are:
