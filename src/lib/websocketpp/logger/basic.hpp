@@ -110,7 +110,7 @@ public:
 
 #endif // _WEBSOCKETPP_MOVE_SEMANTICS_
 
-    void set_ostream(std::ostream * out = &Rcpp::Rcout) {
+    void set_ostream(std::ostream * out = (std::ostream*)&Rcpp::Rcout) {
         m_out = out;
     }
 

@@ -35,6 +35,7 @@
 #include <websocketpp/uri.hpp>
 #include <websocketpp/logger/levels.hpp>
 
+#include <websocketpp/common/asio.hpp>
 #include <websocketpp/common/functional.hpp>
 
 #include <sstream>
@@ -43,69 +44,6 @@
 namespace ws_websocketpp {
 namespace transport {
 namespace asio {
-
-/***
- * In current versions of libstdc++, the error_constants.h code associated to mingw32
- * does not define certain standard enum values for `std::errc`. (In C++11 standard,
- * sections 19.5.2, 19.5.3.) Asio uses these for lib::asio::errc when it is compiled
- * as a stand-alone library, so because of the libstdc++ defect, code below referring
- * to lib::asio::errc::operation_canceled fails to compile on mingw.
- *
- * This workaround detects the defect using SFINAE and returns 'false' for the check
- * if operation_canceled is not defined, instead of failing to compile.
- *
- * If upstream patches this later by defining those enum values, then the workaround
- * will stop having any effect.
- *
- * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=68307
- */
-namespace _workaround_gcc_libstdcpp_issue_68307_missing_values {
-  /***
-   * Same as std::enable_if, but don't want to introduce dependency on <type_traits>
-   * since that's C++11 only
-   */
-  template<bool B, class T = void>
-  struct enable_if {};
-
-  template<class T>
-  struct enable_if<true, T> { typedef T type; };
-
-  /***
-   * Metafunction to test "operation_canceled" value
-   */
-  template <typename T, typename ENABLE=void>
-  struct op_canceled_helper {
-    template <typename U>
-    static inline bool is_op_canceled(const U & u) { return false; }
-  };
-
-  template <typename T>
-  struct op_canceled_helper<T, enable_if<T::operation_canceled == T::operation_canceled, void> > {
-    template<typename U>
-    static inline bool is_op_canceled(const U & u) { return u == T::operation_canceled; }
-  };
-
-  /***
-   * This function is intended to be a drop-in replacement for
-   *   (asio_ec == lib::asio::errc::operation_canceled)
-   *
-   * except that if lib::asio::errc::operation_canceled does not exist, it returns false,
-   * instead of failing to compile.
-   *
-   * When using boost and not asio standalone, then lib::asio::errc is a namespace, not an enum class.
-   * So the template code will fail to compile and we need to block it from being instantiated, with this
-   * ifdef. When using boost the standard library symbol definitions aren't relevant afaik.
-   */
-#ifdef ASIO_STANDALONE
-  static inline bool is_op_canceled(const lib::asio::error_code & asio_ec) {
-    return op_canceled_helper<lib::asio::errc, void>::is_op_canceled(asio_ec);
-  }
-#else
-  static inline bool is_op_canceled(const lib::asio::error_code & asio_ec) {
-    return asio_ec == lib::asio::errc::operation_canceled;
-  }
-#endif
-} // namespace _workaround
 
 /// Asio based endpoint transport component
 /**
@@ -150,11 +88,14 @@ public:
     /// Type of a shared pointer to an io_service work object
     typedef lib::shared_ptr<lib::asio::io_service::work> work_ptr;
 
+    /// Type of socket pre-bind handler
+    typedef lib::function<lib::error_code(acceptor_ptr)> tcp_pre_bind_handler;
+
     // generate and manage our own io_service
     explicit endpoint()
       : m_io_service(NULL)
       , m_external_io_service(false)
-      , m_listen_backlog(0)
+      , m_listen_backlog(lib::asio::socket_base::max_connections)
       , m_reuse_addr(false)
       , m_state(UNINITIALIZED)
     {
@@ -322,6 +263,19 @@ public:
         m_external_io_service = false;
     }
 
+    /// Sets the tcp pre bind handler
+    /**
+     * The tcp pre bind handler is called after the listen acceptor has
+     * been created but before the socket bind is performed.
+     *
+     * @since 0.8.0
+     *
+     * @param h The handler to call on tcp pre bind init.
+     */
+    void set_tcp_pre_bind_handler(tcp_pre_bind_handler h) {
+        m_tcp_pre_bind_handler = h;
+    }
+
     /// Sets the tcp pre init handler
     /**
      * The tcp pre init handler is called after the raw tcp connection has been
@@ -377,8 +331,10 @@ public:
      *
      * New values affect future calls to listen only.
      *
-     * A value of zero will use the operating system default. This is the
-     * default value.
+     * The default value is specified as *::asio::socket_base::max_connections
+     * which uses the operating system defined maximum queue length. Your OS
+     * may restrict or silently lower this value. A value of zero may cause
+     * all connections to be rejected.
      *
      * @since 0.3.0
      *
@@ -391,10 +347,13 @@ public:
     /// Sets whether to use the SO_REUSEADDR flag when opening listening sockets
     /**
      * Specifies whether or not to use the SO_REUSEADDR TCP socket option. What
-     * this flag does depends on your operating system. Please consult operating
-     * system documentation for more details.
+     * this flag does depends on your operating system.
      *
-     * New values affect future calls to listen only.
+     * Please consult operating system documentation for more details. There
+     * may be security consequences to enabling this option.
+     *
+     * New values affect future calls to listen only so set this value prior to
+     * calling listen.
      *
      * The default is false.
      *
@@ -466,26 +425,32 @@ public:
         lib::asio::error_code bec;
 
         m_acceptor->open(ep.protocol(),bec);
-        if (!bec) {
-            m_acceptor->set_option(lib::asio::socket_base::reuse_address(m_reuse_addr),bec);
-        }
-        if (!bec) {
-            m_acceptor->bind(ep,bec);
-        }
-        if (!bec) {
-            m_acceptor->listen(m_listen_backlog,bec);
-        }
-        if (bec) {
-            if (m_acceptor->is_open()) {
-                m_acceptor->close();
+        if (bec) {ec = clean_up_listen_after_error(bec);return;}
+        
+        m_acceptor->set_option(lib::asio::socket_base::reuse_address(m_reuse_addr),bec);
+        if (bec) {ec = clean_up_listen_after_error(bec);return;}
+        
+        // if a TCP pre-bind handler is present, run it
+        if (m_tcp_pre_bind_handler) {
+            ec = m_tcp_pre_bind_handler(m_acceptor);
+            if (ec) {
+                ec = clean_up_listen_after_error(ec);
+                return;
             }
-            log_err(log::elevel::info,"asio listen",bec);
-            ec = make_error_code(error::pass_through);
-        } else {
-            m_state = LISTENING;
-            ec = lib::error_code();
         }
+        
+        m_acceptor->bind(ep,bec);
+        if (bec) {ec = clean_up_listen_after_error(bec);return;}
+        
+        m_acceptor->listen(m_listen_backlog,bec);
+        if (bec) {ec = clean_up_listen_after_error(bec);return;}
+        
+        // Success
+        m_state = LISTENING;
+        ec = lib::error_code();
     }
+
+
 
     /// Set up endpoint for listening manually
     /**
@@ -790,7 +755,7 @@ public:
                 m_elog->write(log::elevel::info,
                     "asio handle_timer error: "+ec.message());
                 log_err(log::elevel::info,"asio handle_timer",ec);
-                callback(make_error_code(error::pass_through));
+                callback(socket_con_type::translate_ec(ec));
             }
         } else {
             callback(lib::error_code());
@@ -806,7 +771,7 @@ public:
     void async_accept(transport_con_ptr tcon, accept_handler callback,
         lib::error_code & ec)
     {
-        if (m_state != LISTENING) {
+        if (m_state != LISTENING || !m_acceptor) {
             using ws_websocketpp::error::make_error_code;
             ec = make_error_code(ws_websocketpp::error::async_accept_not_listening);
             return;
@@ -858,7 +823,7 @@ protected:
      * haven't been constructed yet, and cannot be used in the transport
      * destructor as they will have been destroyed by then.
      */
-    void init_logging(alog_type* a, elog_type* e) {
+    void init_logging(const lib::shared_ptr<alog_type>& a, const lib::shared_ptr<elog_type>& e) {
         m_alog = a;
         m_elog = e;
     }
@@ -871,12 +836,11 @@ protected:
         m_alog->write(log::alevel::devel, "asio::handle_accept");
 
         if (asio_ec) {
-            // if (asio_ec == lib::asio::errc::operation_canceled) {
-            if (_workaround_gcc_libstdcpp_issue_68307_missing_values::is_op_canceled(asio_ec)) {
+            if (asio_ec == lib::asio::errc::operation_canceled) {
                 ret_ec = make_error_code(ws_websocketpp::error::operation_canceled);
             } else {
                 log_err(log::elevel::info,"asio handle_accept",asio_ec);
-                ret_ec = make_error_code(error::pass_through);
+                ret_ec = socket_con_type::translate_ec(asio_ec);
             }
         }
 
@@ -1019,7 +983,7 @@ protected:
 
         if (ec) {
             log_err(log::elevel::info,"asio async_resolve",ec);
-            callback(make_error_code(error::pass_through));
+            callback(socket_con_type::translate_ec(ec));
             return;
         }
 
@@ -1127,7 +1091,7 @@ protected:
 
         if (ec) {
             log_err(log::elevel::info,"asio async_connect",ec);
-            callback(make_error_code(error::pass_through));
+            callback(socket_con_type::translate_ec(ec));
             return;
         }
 
@@ -1176,6 +1140,16 @@ private:
         m_elog->write(l,s.str());
     }
 
+    /// Helper for cleaning up in the listen method after an error
+    template <typename error_type>
+    lib::error_code clean_up_listen_after_error(error_type const & ec) {
+        if (m_acceptor->is_open()) {
+            m_acceptor->close();
+        }
+        log_err(log::elevel::info,"asio listen",ec);
+        return socket_con_type::translate_ec(ec);
+    }
+
     enum state {
         UNINITIALIZED = 0,
         READY = 1,
@@ -1183,6 +1157,7 @@ private:
     };
 
     // Handlers
+    tcp_pre_bind_handler    m_tcp_pre_bind_handler;
     tcp_init_handler    m_tcp_pre_init_handler;
     tcp_init_handler    m_tcp_post_init_handler;
 
@@ -1197,8 +1172,8 @@ private:
     int                 m_listen_backlog;
     bool                m_reuse_addr;
 
-    elog_type* m_elog;
-    alog_type* m_alog;
+    lib::shared_ptr<elog_type> m_elog;
+    lib::shared_ptr<alog_type> m_alog;
 
     // Transport state
     state               m_state;
