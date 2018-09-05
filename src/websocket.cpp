@@ -192,8 +192,16 @@ SEXP wsCreate(
 
   weak_ptr<WSConnection> wsPtrWeak(wsPtr);
 
-  wsPtr->client->update_log_channels("access", "set", accessLogChannels);
-  wsPtr->client->update_log_channels("error", "set", errorLogChannels);
+  if (accessLogChannels.size() > 0) {
+    // clear all channels and set user channels
+    wsPtr->client->clear_access_channels(ws_websocketpp::log::alevel::all);
+    wsPtr->client->update_log_channels("access", "set", accessLogChannels);
+  }
+  if (errorLogChannels.size() > 0) {
+    // clear all channels and set user channels
+    wsPtr->client->clear_error_channels(ws_websocketpp::log::elevel::all);
+    wsPtr->client->update_log_channels("error", "set", errorLogChannels);
+  }
   wsPtr->client->init_asio();
   wsPtr->client->set_open_handler(bind(handleOpen, wsPtrWeak, ::_1));
   wsPtr->client->set_message_handler(bind(handleMessage, wsPtrWeak, ::_1, ::_2));

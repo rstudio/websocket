@@ -16,7 +16,7 @@ Imports: Rcpp,
     later
 LinkingTo: Rcpp, BH, AsioHeaders
 SystemRequirements: GNU make, OpenSSL >= 1.0.1
-RoxygenNote: 6.0.1.9000
+RoxygenNote: 6.1.0
 Collate:
     'RcppExports.R'
     'websocket.R'
