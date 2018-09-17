@@ -18,3 +18,6 @@ find . -path ./.git -prune -o -type f -print0 | xargs -0 sed -i "" -e 's/&std::c
 cd ../..
 mv websocketpp_repo/websocketpp .
 rm -rf websocketpp_repo
+
+echo "IMPORTANT NOTE: Apply this patch manually:" >&2
+echo "https://github.com/rstudio/websocket/commit/063ca452c7639b952dfd4981602436d43305457a" >&2
