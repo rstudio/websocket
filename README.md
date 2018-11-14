@@ -60,10 +60,10 @@ To install the development version of httpuv, run:
 remotes::install_github("rstudio/httpuv")`
 ```
 
-Then to run the WebSocket server, run this in a terminal:
+Then, download the [Websocket Server script](https://github.com/rstudio/websocket/blob/master/tmp/websocketServer.R) and run this in a terminal:
 
 ```
-R -e 'source("tmp/websocketServer.R"); httpuv::service(Inf)'
+R -e 'source("websocketServer.R"); httpuv::service(Inf)'
 ```
 
 Finally, to test the WebSocket client, run this in R.
