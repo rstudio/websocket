@@ -302,7 +302,16 @@ Callbacks <- R6::R6Class(
       callbacks <- mget(keys, private$.callbacks)
 
       for (callback in callbacks) {
-        callback(...)
+        tryCatch(
+          callback(...),
+          error = function(e) {
+            message("Error in websocket callback: ", e$message)
+          },
+          interrupt = function(e) {
+            message("Interrupt received while executing websocket callback.")
+          }
+        )
+
       }
     },
     count = function() {
