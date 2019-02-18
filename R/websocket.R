@@ -238,15 +238,11 @@ WebSocket <- R6::R6Class("WebSocket",
       later::later(private$handleIncoming, 0.01)
     },
     handleIncoming = function() {
+      wsPoll(private$wsObj)
       if (self$readyState() == 3L) {
         return()
-      } else {
-        wsPoll(private$wsObj)
-        if (self$readyState() == 3L) {
-          return()
-        }
-        private$scheduleIncoming()
       }
+      private$scheduleIncoming()
     },
     getInvoker = function(eventName) {
       callbacks <- private$callbacks[[eventName]]
