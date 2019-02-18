@@ -242,6 +242,9 @@ WebSocket <- R6::R6Class("WebSocket",
         return()
       } else {
         wsPoll(private$wsObj)
+        if (self$readyState() == 3L) {
+          return()
+        }
         private$scheduleIncoming()
       }
     },
