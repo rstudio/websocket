@@ -5,7 +5,13 @@ PKG_LIBS= -L../windows/openssl-$(OPENSSL_VERSION)/lib${R_ARCH} -lssl -lcrypto -l
 
 CXX_STD=CXX11
 
-all: clean winlibs
+.PHONY: all winlibs
+
+all: $(SHLIB)
+
+# Need to make sure that openssl is fully downloaded before trying to compile
+# websocket.cpp. See https://github.com/rstudio/websocket/issues/43
+$(OBJECTS): winlibs
 
 clean:
 	rm -f $(SHLIB) $(OBJECTS)
