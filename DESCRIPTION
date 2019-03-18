@@ -15,7 +15,7 @@ Imports: Rcpp,
     R6,
     later
 LinkingTo: Rcpp, BH, AsioHeaders
-SystemRequirements: OpenSSL >= 1.0.1
+SystemRequirements: GNU make, OpenSSL >= 1.0.1
 RoxygenNote: 6.1.1
 Collate:
     'RcppExports.R'
