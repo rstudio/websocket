@@ -3,10 +3,11 @@ Version: 1.0.0
 Title: WebSocket Client Library
 Description: Provides a WebSocket client interface for R.
 Authors@R: c(
-    person("Dipert", "Alan", , "alan@rstudio.com", c("aut", "cre")),
-    person("Barbara", "Borges", , "barbara@rstudio.com", "aut"),
-    person("Chang", "Winston", , "winston@rstudio.com", "aut"),
-    person("Cheng", "Joe", , "joe@rstudio.com", "aut"))
+    person("Alan", "Dipert", role = c("aut", "cre"), email = "alan@rstudio.com"),
+    person("Barbara", "Borges", role = c("aut")),
+    person("Winston", "Chang", role = c("aut"), email = "winston@rstudio.com"),
+    person("Joe", "Cheng", role = c("aut"), email = "joe@rstudio.com")
+    )
 License: GPL (>= 2) | file LICENSE
 Encoding: UTF-8
 LazyData: true
