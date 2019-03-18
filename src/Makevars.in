@@ -2,4 +2,4 @@
 CXX_STD=CXX11
 
 PKG_CPPFLAGS = -I./lib @cflags@
-PKG_LIBS += @libs@
+PKG_LIBS = $(PKG_LIBS) @libs@
