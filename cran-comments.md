@@ -1,6 +1,7 @@
 # Test environments
 * local Windows 10 install, R 3.5.2
 * Ubuntu 14.04 (on travis-ci), R 3.5.2
+* Ubuntu 14.04 (on travis-ci), R-devel
 
 ## R CMD check results
 There were no ERRORs or WARNINGs.
