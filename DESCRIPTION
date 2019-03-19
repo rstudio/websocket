@@ -2,6 +2,8 @@ Package: websocket
 Version: 1.0.0
 Title: WebSocket Client Library
 Description: Provides a WebSocket client interface for R.
+    WebSocket is a protocol for low-overhead real-time communication:
+    <https://en.wikipedia.org/wiki/WebSocket>.
 Authors@R: c(
     person("Alan", "Dipert", role = c("aut", "cre"), email = "alan@rstudio.com"),
     person("Barbara", "Borges", role = c("aut")),
