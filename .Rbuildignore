@@ -1,3 +1,5 @@
+^docs$
+^_pkgdown\.yml$
 ^windows$
 ^websocket\.Rproj$
 ^\.Rproj\.user$

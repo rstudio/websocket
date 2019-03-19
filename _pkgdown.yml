@@ -1,0 +1,19 @@
+template:
+  params:
+    bootswatch: cosmo
+navbar:
+  type: inverse
+  left:
+    - text: Home
+      icon: fa-home
+      href: index.html
+    - text: Learning
+      menu:
+      - text: "Overview"
+        href: articles/overview.html
+    - text: Reference
+      href: reference/index.html
+authors:
+  RStudio:
+    href: https://www.rstudio.com
+    html: <img src="https://tidyverse.org/rstudio-logo.svg" height="24" />
