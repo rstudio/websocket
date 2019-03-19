@@ -22,4 +22,7 @@ Collate:
     'RcppExports.R'
     'websocket.R'
 Suggests:
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
