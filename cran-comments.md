@@ -1,13 +1,31 @@
-# 2019-03-19
+# 2019-03-25
 
-This is a resubmission after expanding the Description per the feedback below.
+This is a resubmission after amending the Description per the feedback below. I
+did not remove the LICENSE file because websocketpp is BSD-licensed, and I
+believe its license must be included in order to comply with its terms.
 
 Thank you,
 Alan
 
+# 2019-03-24
+
+Thanks,
+
+Please write package names, software names and API names in single 
+quotes (e.g. 'R') in the Description field.
+
+The LICENSE file is only needed if you have additional restrictions to 
+the GPL-2 which you have not? In that case omit the file and its 
+reference in the DESCRIPTION file.
+
+Please fix and resubmit.
+
+Best,
+Martina Schmirl
+
 # 2019-03-19
 
-Thanks, can you please explain what "WebSocket" is? Perhaps add an URL 
+Thanks, can you please explain what "WebSocket" is? Perhaps add an URL
 and point to it in the form <http....>?
 
 Best,
