@@ -1,3 +1,10 @@
+# 2019-04-23
+
+This is a resubmission after changing the Title field in DESCRIPTION. It no longer begins with the name of the package.
+
+Thank you,
+Alan
+
 # 2019-03-25
 
 This is a resubmission after amending the Description per the feedback below. I
