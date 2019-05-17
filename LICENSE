@@ -1,16 +1,21 @@
-This package is provided you under the terms of the GNU General Public License
-version 2 or any later version.
+The websocket package as a whole is distributed under GPL-2 (GNU GENERAL PUBLIC
+LICENSE version 2).
 
-Included below is license and copyright information for externally maintained
-libraries used by websocket. All other code in websocket is copyright RStudio,
-Inc.
+The websocket package includes the WebSocket++ C++ library, which itself
+includes other open source software sources.
+
+The following is a list of all of the libraries included in the websocket
+package. Full copies of the license agreements used by these libraries are also
+included below:
+
+- WebSocket++, https://github.com/zaphoyd/websocketpp
+- Base 64 library, https://renenyffenegger.ch/notes/development/Base64/Encoding-and-decoding-base-64-with-cpp
+- SHA-1 library, http://code.google.com/p/smallsha1/
+- MD5 library, http://www.opensource.apple.com/source/cups/cups-59/cups/md5.c
+- UT8 validation logic, http://bjoern.hoehrmann.de/utf-8/decoder/dfa/
 
 
-websocketpp is licensed for use as follows:
-
-====
-
-Main Library:
+WebSocket++ license:
 
 Copyright (c) 2014, Peter Thorson. All rights reserved.
 
