@@ -1,14 +1,20 @@
 # 2019-05-17
 
-This is a resubmission after adding additional information to LICENSE and
-adding library author information to DESCRIPTION.
+This is a resubmission after clarifying that websocket is licensed GPL-2 (by
+removing LICENSE) and adding library authors to DESCRIPTION, per feedback.
 
-websocket is licensed GPLv2 and all of the libraries it includes are distributed
-with compatible licenses by https://www.gnu.org/licenses/license-list.en.html#GPLCompatibleLicenses
-(2 use zlib, 1 uses MIT, 2 use Modified BSD)
+websocket includes the WebSocket++ library, which itself includes several other
+libraries with a variety of licenses: https://github.com/zaphoyd/websocketpp/blob/master/COPYING
 
-Consequently, permission from library authors to redistribute their software
-under the terms of GPLv2 is not necessary.
+WebSocket++ and the libraries it includes are all distributed under licenses
+that are compatible with GPL-2 by by
+https://www.gnu.org/licenses/license-list.en.html#GPLCompatibleLicenses.
+
+2 use zlib, 1 uses MIT, 2 use Modified BSD.
+
+Consequently, it is not necessary to obtain permission from these library
+authors to redistribute their software under the terms of GPL-2 as part of the
+websocket package.
 
 Thank you,
 Alan
