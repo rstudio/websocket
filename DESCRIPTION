@@ -15,7 +15,7 @@ Authors@R: c(
     person("Micael", "Hildenborg", role = "ctb", comment = "SHA1 library"),
     person(family = "Aladdin Enterprises", role = "cph", comment = "MD5 library"),
     person("Bjoern", "Hoehrmann", role = "ctb", comment = "UTF8 Validation library"))
-License: GPL-2
+License: GPL-2 | file LICENSE
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
