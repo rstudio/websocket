@@ -13,7 +13,7 @@ package:
 - Base 64 library, https://renenyffenegger.ch/notes/development/Base64/Encoding-and-decoding-base-64-with-cpp
 - SHA1 library, http://code.google.com/p/smallsha1/
 - MD5 library, http://www.opensource.apple.com/source/cups/cups-59/cups/md5.c
-- UT8 validation logic, http://bjoern.hoehrmann.de/utf-8/decoder/dfa/
+- UTF8 validation logic, http://bjoern.hoehrmann.de/utf-8/decoder/dfa/
 
 Full copies of the license agreements used by these libraries are included
 below:
