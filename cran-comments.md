@@ -1,3 +1,18 @@
+# 2019-05-18
+
+I am resubmitting after realizing that in order to comply with the terms of
+WebSocket++ and constituent libraries -- even as they are compatible with
+GPL-2 -- I must include their licenses in the source code.
+
+In the prior submission I removed LICENSE per feedback; in this submission
+I brought it back as the natural place to include library licenses.
+
+Please consider my previous submission invalid. I apologize
+for the confusion.
+
+Thank you,
+Alan
+
 # 2019-05-17
 
 This is a resubmission after clarifying that websocket is licensed GPL-2 (by
