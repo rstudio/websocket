@@ -8,7 +8,7 @@ Authors@R: c(
     person("Alan", "Dipert", role = c("aut", "cre"), email = "alan@rstudio.com"),
     person("Barbara", "Borges", role = c("aut")),
     person("Winston", "Chang", role = c("aut"), email = "winston@rstudio.com"),
-    person("Joe", "Cheng", role = c("aut"), email = "joe@rstudio.com")
+    person("Joe", "Cheng", role = c("aut"), email = "joe@rstudio.com"),
     person(family = "RStudio", role = "cph"),
     person("Peter", "Thorson", role = "ctb", comment = "WebSocket++ library"),
     person("René", "Nyffenegger", role = "ctb", comment = "Base 64 library"),
