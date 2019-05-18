@@ -9,7 +9,12 @@ Authors@R: c(
     person("Barbara", "Borges", role = c("aut")),
     person("Winston", "Chang", role = c("aut"), email = "winston@rstudio.com"),
     person("Joe", "Cheng", role = c("aut"), email = "joe@rstudio.com")
-    )
+    person(family = "RStudio", role = "cph"),
+    person("Peter", "Thorson", role = "ctb", comment = "WebSocket++ library"),
+    person("René", "Nyffenegger", role = "ctb", comment = "Base 64 library"),
+    person("Micael", "Hildenborg", role = "ctb", comment = "SHA1 library"),
+    person(family = "Aladdin Enterprises", role = "cph", comment = "MD5 library"),
+    person("Bjoern", "Hoehrmann", role = "ctb", comment = "UTF8 Validation library"))
 License: GPL (>= 2) | file LICENSE
 Encoding: UTF-8
 LazyData: true
