@@ -1,3 +1,35 @@
+# 2019-05-24
+
+Renamed LICENSE to LICENSE.note and changed license in DESCRIPTION to simply GPL-2 per below feedback.
+
+--
+
+Thanks, for the license:
+
+Please then write
+
+License: GPL-2
+
+in your DESCRIPTION file and rename the LICENSE file to LICENSE.note.
+See Writing R Extensions that this is the best place to add comments 
+about the license situation.
+
+Please fix and resubmit.
+
+
+
+
+Explanation: The entry
+
+License: GPL-2 | file LICENSE
+
+means semantically: a user could choose between GPL-2 and the ölicense 
+declared in the LICENSE file which is not true here.
+
+
+Best,
+Uwe Ligges
+
 # 2019-05-18
 
 I am resubmitting after realizing that in order to comply with the terms of
