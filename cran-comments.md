@@ -1,6 +1,6 @@
 # 2019-06-07
 
-Added cph to the individuals listed as contributors who are also copyright holders, per below feedback.
+Added cph to the individuals listed as contributors who are also copyright holders per feedback.
 
 --
 
