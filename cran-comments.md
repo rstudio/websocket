@@ -1,3 +1,23 @@
+# 2019-06-07
+
+Added cph to the individuals listed as contributors who are also copyright holders, per below feedback.
+
+--
+
+Thanks,
+
+Please add all authors and copyright holders in the Authors@R field with 
+the appropriate roles.
+f.i. Several mentioned people are not only contributors but also 
+copyright holders according to LICENSE.note.
+
+
+
+Please fix and resubmit.
+
+Best,
+Martina Schmirl
+
 # 2019-05-24
 
 Renamed LICENSE to LICENSE.note and changed license in DESCRIPTION to simply GPL-2 per below feedback.

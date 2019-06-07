@@ -10,11 +10,11 @@ Authors@R: c(
     person("Winston", "Chang", role = c("aut"), email = "winston@rstudio.com"),
     person("Joe", "Cheng", role = c("aut"), email = "joe@rstudio.com"),
     person(family = "RStudio", role = "cph"),
-    person("Peter", "Thorson", role = "ctb", comment = "WebSocket++ library"),
-    person("René", "Nyffenegger", role = "ctb", comment = "Base 64 library"),
-    person("Micael", "Hildenborg", role = "ctb", comment = "SHA1 library"),
+    person("Peter", "Thorson", role = c("ctb", "cph") comment = "WebSocket++ library"),
+    person("René", "Nyffenegger", role = c("ctb", "cph") comment = "Base 64 library"),
+    person("Micael", "Hildenborg", role = c("ctb", "cph") comment = "SHA1 library"),
     person(family = "Aladdin Enterprises", role = "cph", comment = "MD5 library"),
-    person("Bjoern", "Hoehrmann", role = "ctb", comment = "UTF8 Validation library"))
+    person("Bjoern", "Hoehrmann", role = c("ctb", "cph") comment = "UTF8 Validation library"))
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
