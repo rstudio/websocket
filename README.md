@@ -1,5 +1,4 @@
-websocket
-=========
+# websocket <img src="man/figures/websocket_logo.svg" align="right" height="250px" />
 
 [![Travis Build Status](https://travis-ci.org/rstudio/websocket.svg?branch=master)](https://travis-ci.org/rstudio/websocket)
 
