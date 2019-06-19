@@ -1,4 +1,4 @@
-# websocket <img src="man/figures/websocket_logo.svg" align="right" height="250px" />
+# websocket <img src="man/figures/websocket_logo.svg#cachebust1" align="right" height="250px" />
 
 [![CRAN status](https://www.r-pkg.org/badges/version/websocket)](https://cran.r-project.org/package=websocket)
 [![Travis Build Status](https://travis-ci.org/rstudio/websocket.svg?branch=master)](https://travis-ci.org/rstudio/websocket)
