@@ -1,7 +1,19 @@
 #' @useDynLib websocket, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 #' @include RcppExports.R
+#' @import later
 NULL
+
+# In httpuv, we just use Boost to handle the callbacks
+# httprequest.cpp:130
+# invoke_later(boost::bind())
+#   https://github.com/rstudio/httpuv/blob/master/src/httprequest.cpp#L144-L146
+# callback.cpp::12 - invoke_ater - later takes a C function
+#   https://github.com/rstudio/httpuv/blob/master/src/callback.cpp#L5-L15
+# replace the boost callback stuff in callback.h with websocket's bind?
+# background thread -- schedule some callback that happens on the main thread using later
+#   in that function, invoke R.
+# later::run_now() in a loop on the main thread.
 
 # Used to "null out" handler functions after a websocket client is closed
 null_func <- function(...) { }
@@ -170,13 +182,16 @@ WebSocket <- R6::R6Class("WebSocket",
       }
     },
     connect = function() {
-      if (private$pendingConnect) {
-        private$pendingConnect <- FALSE
-        wsConnect(private$wsObj)
-        private$scheduleIncoming()
-      } else {
-        warning("Ignoring extraneous connect() call (did you mean to have autoConnect=FALSE in the constructor?)")
-      }
+      #wsConnect(private$wsObj)
+      #private$run()
+
+       if (private$pendingConnect) {
+         private$pendingConnect <- FALSE
+         wsConnect(private$wsObj)
+         private$scheduleIncoming()
+       } else {
+         warning("Ignoring extraneous connect() call (did you mean to have autoConnect=FALSE in the constructor?)")
+       }
     },
     readyState = function() {
       code <- function(value, desc) {
@@ -243,6 +258,9 @@ WebSocket <- R6::R6Class("WebSocket",
         return()
       }
       private$scheduleIncoming()
+    },
+    run = function(){
+      wsRun(private$wsObj)
     },
     getInvoker = function(eventName) {
       callbacks <- private$callbacks[[eventName]]

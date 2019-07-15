@@ -23,6 +23,7 @@
 #include <websocketpp/common/functional.hpp>
 #include "client.hpp"
 
+#include <later_api.h>
 
 using namespace Rcpp;
 
@@ -37,8 +38,53 @@ using ws_websocketpp::lib::placeholders::_1;
 using ws_websocketpp::lib::placeholders::_2;
 using ws_websocketpp::lib::bind;
 
+#include <websocketpp/common/connection_hdl.hpp>
+
 typedef shared_ptr<asio::ssl::context> context_ptr;
 
+#include <boost/function.hpp>
+#include <later_api.h>
+
+class Callback {
+public:
+  virtual ~Callback() {};
+  virtual void operator()() = 0;
+};
+
+// Wrapper class for lib functions
+class LibFunctionCallback : public Callback {
+private:
+  ws_websocketpp::lib::function<void(void)> fun;
+
+public:
+  LibFunctionCallback(ws_websocketpp::lib::function<void(void)> fun)
+    : fun(fun) {
+  }
+
+  void operator()() {
+    fun();
+  }
+};
+
+// If the Callback class were integrated into later, this wouldn't be
+// necessary -- later could accept a void(Callback*) function.
+void invoke_open(void* data);
+
+// Invoke a callback and delete the object. The Callback object must have been
+// heap-allocated.
+void invoke_callback(void* f) {
+  Callback* cb = reinterpret_cast<Callback*>(f);
+  (*cb)();
+  delete cb;
+}
+
+// Schedule a function<void(void)> to be invoked with later().
+/*void invoke_open(ws_websocketpp::lib::function<void(ws_websocketpp::connection_hdl)> f,
+                 ws_websocketpp::connection_hdl hdl) {
+  ws_websocketpp::lib::function<void(void)> wrappedFun = bind(f, hdl);
+  LibFunctionCallback* b_fun = new LibFunctionCallback(wrappedFun);
+  later::later(invoke_callback, b_fun, 0.0);
+                 }*/
 
 static context_ptr on_tls_init() {
   context_ptr ctx = make_shared<asio::ssl::context>(asio::ssl::context::sslv23);
@@ -87,24 +133,34 @@ void client_deleter(SEXP client_xptr) {
   R_ClearExternalPtr(client_xptr);
 }
 
+void handleMessageCB(shared_ptr<WSConnection> wsPtr, message_ptr msg){
+  Rcpp::Rcout << "Message callback" << std::endl;
+
+  ws_websocketpp::frame::opcode::value opcode = msg->get_opcode();
+
+  Rcpp::List event;
+  event["target"] = wsPtr->robjPublic;
+  if (opcode == ws_websocketpp::frame::opcode::value::text) {
+    event["data"] = msg->get_payload();
+
+  } else if (opcode == ws_websocketpp::frame::opcode::value::binary) {
+    const std::string msg_str = msg->get_payload();
+    event["data"] = std::vector<uint8_t>(msg_str.begin(), msg_str.end());
+
+  } else {
+    stop("Unknown opcode for message (not text or binary).");
+  }
+
+  wsPtr->getInvoker("message")(event);
+}
 void handleMessage(weak_ptr<WSConnection> wsPtrWeak, ws_websocketpp::connection_hdl, message_ptr msg) {
   shared_ptr<WSConnection> wsPtr = wsPtrWeak.lock();
   if (wsPtr) {
-    ws_websocketpp::frame::opcode::value opcode = msg->get_opcode();
-    Rcpp::List event;
-    event["target"] = wsPtr->robjPublic;
-    if (opcode == ws_websocketpp::frame::opcode::value::text) {
-      event["data"] = msg->get_payload();
 
-    } else if (opcode == ws_websocketpp::frame::opcode::value::binary) {
-      const std::string msg_str = msg->get_payload();
-      event["data"] = std::vector<uint8_t>(msg_str.begin(), msg_str.end());
-
-    } else {
-      stop("Unknown opcode for message (not text or binary).");
-    }
-
-    wsPtr->getInvoker("message")(event);
+    Rcpp::Rcout << "Handle message later" << std::endl;
+    ws_websocketpp::lib::function<void(void)> wrappedFun = bind(handleMessageCB, wsPtr, msg);
+    LibFunctionCallback* b_fun = new LibFunctionCallback(wrappedFun);
+    later::later(invoke_callback, b_fun, 0.0);
   }
 }
 
@@ -113,23 +169,39 @@ void removeHandlers(shared_ptr<WSConnection> wsPtr) {
   wsPtr->robjPrivate = Rcpp::Environment();
 }
 
+void handleCloseCB(shared_ptr<WSConnection> wsPtr){
+  Rcpp::Rcout << "Close callback" << std::endl;
+  Rcpp::List event;
+
+  ws_websocketpp::close::status::value code = wsPtr->client->get_remote_close_code();
+  std::string reason = wsPtr->client->get_remote_close_reason();
+
+  wsPtr->state = WSConnection::STATE::CLOSED;
+  Rcpp::Function onClose = wsPtr->getInvoker("close");
+
+  event["target"] = wsPtr->robjPublic;
+  event["code"] = code;
+  event["reason"] = reason;
+
+  removeHandlers(wsPtr);
+  onClose(event);
+}
 void handleClose(weak_ptr<WSConnection> wsPtrWeak, ws_websocketpp::connection_hdl) {
   shared_ptr<WSConnection> wsPtr = wsPtrWeak.lock();
   if (wsPtr) {
-    wsPtr->state = WSConnection::STATE::CLOSED;
-    Rcpp::Function onClose = wsPtr->getInvoker("close");
-    ws_websocketpp::close::status::value code = wsPtr->client->get_remote_close_code();
-    std::string reason = wsPtr->client->get_remote_close_reason();
-    Rcpp::List event;
-    event["target"] = wsPtr->robjPublic;
-    event["code"] = code;
-    event["reason"] = reason;
-
-    removeHandlers(wsPtr);
-    onClose(event);
+    Rcpp::Rcout << "Close callback later" << std::endl;
+    ws_websocketpp::lib::function<void(void)> wrappedFun = bind(handleCloseCB, wsPtr);
+    LibFunctionCallback* b_fun = new LibFunctionCallback(wrappedFun);
+    later::later(invoke_callback, b_fun, 0.0);
   }
 }
 
+void handleOpenCB(shared_ptr<WSConnection> wsPtr){
+  Rcpp::Rcout << "Open callback" << std::endl;
+  Rcpp::List event;
+  event["target"] = wsPtr->robjPublic;
+  wsPtr->getInvoker("open")(event);
+}
 void handleOpen(weak_ptr<WSConnection> wsPtrWeak, ws_websocketpp::connection_hdl) {
   shared_ptr<WSConnection> wsPtr = wsPtrWeak.lock();
   if (wsPtr) {
@@ -140,26 +212,36 @@ void handleOpen(weak_ptr<WSConnection> wsPtrWeak, ws_websocketpp::connection_hdl
     }
 
     wsPtr->state = WSConnection::STATE::OPEN;
-    Rcpp::List event;
-    event["target"] = wsPtr->robjPublic;
-    wsPtr->getInvoker("open")(event);
+
+    Rcpp::Rcout << "Open callback later" << std::endl;
+    ws_websocketpp::lib::function<void(void)> wrappedFun = bind(handleOpenCB, wsPtr);
+    LibFunctionCallback* b_fun = new LibFunctionCallback(wrappedFun);
+    later::later(invoke_callback, b_fun, 0.0);
   }
 }
 
+void handleFailCB(shared_ptr<WSConnection> wsPtr, String errMessage){
+  Rcpp::Rcout << "Fail " << std::endl;
+  Rcpp::List event;
+  event["target"] = wsPtr->robjPublic;
+  event["message"] = errMessage;
+
+  Rcpp::Function onFail = wsPtr->getInvoker("error");
+  Rcpp::Rcout << "Running onfail" << std::endl;
+  removeHandlers(wsPtr);
+  onFail(event);
+  Rcpp::Rcout << "Exiting fail callback" << std::endl;
+}
 void handleFail(weak_ptr<WSConnection> wsPtrWeak, ws_websocketpp::connection_hdl) {
   shared_ptr<WSConnection> wsPtr = wsPtrWeak.lock();
   if (wsPtr) {
     wsPtr->state = WSConnection::STATE::FAILED;
-    Rcpp::Function onFail = wsPtr->getInvoker("error");
     ws_websocketpp::lib::error_code ec = wsPtr->client->get_ec();
-    std::string errMessage = ec.message();
 
-    Rcpp::List event;
-    event["target"] = wsPtr->robjPublic;
-    event["message"] = errMessage;
-
-    removeHandlers(wsPtr);
-    onFail(event);
+    Rcpp::Rcout << "Scheduling fail callback" << std::endl;
+    ws_websocketpp::lib::function<void(void)> wrappedFun = bind(handleFailCB, wsPtr, ec.message());
+    LibFunctionCallback* b_fun = new LibFunctionCallback(wrappedFun);
+    later::later(invoke_callback, b_fun, 0.0);
   }
 }
 
@@ -255,6 +337,12 @@ void wsRestart(SEXP client_xptr) {
 void wsPoll(SEXP client_xptr) {
   shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
   wsPtr->client->poll();
+}
+
+// [[Rcpp::export]]
+void wsRun(SEXP client_xptr) {
+  shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
+  wsPtr->client->run();
 }
 
 // [[Rcpp::export]]
