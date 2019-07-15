@@ -51,6 +51,7 @@ public:
   virtual std::string get_subprotocol() const = 0;
 
   virtual std::size_t run_one() = 0;
+  virtual std::size_t run() = 0;
   virtual ws_websocketpp::lib::asio::io_service& get_io_service() = 0;
   virtual std::size_t poll() = 0;
   virtual void send(std::string const& payload,
@@ -145,6 +146,9 @@ public:
 
   std::size_t run_one() {
     return client.run_one();
+  };
+  std::size_t run() {
+    return client.run();
   };
   ws_websocketpp::lib::asio::io_service& get_io_service() {
     return client.get_io_service();
