@@ -10,8 +10,8 @@
 #include <winsock2.h>
 #include <windows.h>
 
-// These are defined by windows.h but we have to undefine them so that the
-// typedef enum Rboolean will be used later on.
+// These are defined by windows.h but we have
+// to undefine them so that the typedef enum Rboolean will be used later on.
 #undef TRUE
 #undef FALSE
 
@@ -339,10 +339,27 @@ void wsPoll(SEXP client_xptr) {
   wsPtr->client->poll();
 }
 
+void doRun(shared_ptr<WSConnection> wsPtr){
+  Rcpp::Rcout << "Do run" << std::endl;
+  wsPtr->client->run();
+  Rcpp::Rcout << "Done running run" << std::endl;
+}
+
 // [[Rcpp::export]]
 void wsRun(SEXP client_xptr) {
+
+  /* FIXME: Do we need this equivalent here:
+   * if (self$readyState() == 3L) {
+        return()
+     }
+   */
   shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
-  wsPtr->client->run();
+
+  //boost::shared_ptr<boost::thread> pThread(new boost::thread(doRun, wsPtr));
+  // FIXME: requires C++11
+  std::thread t(doRun, wsPtr);
+  // Keep this thread running even thought it's about to go out of scope.
+  t.detach();
 }
 
 // [[Rcpp::export]]

@@ -182,13 +182,12 @@ WebSocket <- R6::R6Class("WebSocket",
       }
     },
     connect = function() {
-      #wsConnect(private$wsObj)
-      #private$run()
-
        if (private$pendingConnect) {
          private$pendingConnect <- FALSE
+
          wsConnect(private$wsObj)
-         private$scheduleIncoming()
+         private$run()
+         #private$scheduleIncoming()
        } else {
          warning("Ignoring extraneous connect() call (did you mean to have autoConnect=FALSE in the constructor?)")
        }
@@ -249,17 +248,18 @@ WebSocket <- R6::R6Class("WebSocket",
     wsObj = NULL,
     callbacks = NULL,
     pendingConnect = TRUE,
-    scheduleIncoming = function() {
-      later::later(private$handleIncoming, 0.01)
-    },
-    handleIncoming = function() {
-      wsPoll(private$wsObj)
-      if (self$readyState() == 3L) {
-        return()
-      }
-      private$scheduleIncoming()
-    },
+    #scheduleIncoming = function() {
+    #  later::later(private$handleIncoming, 0.01)
+    #},
+    #handleIncoming = function() {
+    #  wsPoll(private$wsObj)
+    #  if (self$readyState() == 3L) {
+    #    return()
+    #  }
+    #  private$scheduleIncoming()
+    #},
     run = function(){
+
       wsRun(private$wsObj)
     },
     getInvoker = function(eventName) {
