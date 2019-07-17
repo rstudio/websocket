@@ -17,9 +17,9 @@
 
 #endif // _WIN32
 
-
 #define ASIO_STANDALONE
 #include <iostream>
+#include <websocketpp/common/thread.hpp>
 #include <websocketpp/common/functional.hpp>
 #include "client.hpp"
 
@@ -346,7 +346,7 @@ void doRun(shared_ptr<WSConnection> wsPtr){
 }
 
 // [[Rcpp::export]]
-void wsRun(SEXP client_xptr) {
+void wsRun(SEXP client_xptr, Function run_now) {
 
   /* FIXME: Do we need this equivalent here:
    * if (self$readyState() == 3L) {
@@ -354,11 +354,15 @@ void wsRun(SEXP client_xptr) {
      }
    */
   shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
+  ws_websocketpp::lib::thread t(doRun, wsPtr);
 
-  //boost::shared_ptr<boost::thread> pThread(new boost::thread(doRun, wsPtr));
-  // FIXME: requires C++11
-  std::thread t(doRun, wsPtr);
-  // Keep this thread running even thought it's about to go out of scope.
+  // We can't move on now because the connection onOpen callback is going
+  // to try to schedule the onOpen handler via `later`. If we give back
+  // control right now the user might try to do something like send a message
+  // before we've determined the success/failure of the open call.
+  run_now(-1);
+
+  // Keep the thread running even thought it's about to go out of scope.
   t.detach();
 }
 

@@ -25,8 +25,8 @@ wsPoll <- function(client_xptr) {
     invisible(.Call(`_websocket_wsPoll`, client_xptr))
 }
 
-wsRun <- function(client_xptr) {
-    invisible(.Call(`_websocket_wsRun`, client_xptr))
+wsRun <- function(client_xptr, run_now) {
+    invisible(.Call(`_websocket_wsRun`, client_xptr, run_now))
 }
 
 wsSend <- function(client_xptr, msg) {

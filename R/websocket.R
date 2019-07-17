@@ -260,7 +260,7 @@ WebSocket <- R6::R6Class("WebSocket",
     #},
     run = function(){
 
-      wsRun(private$wsObj)
+      wsRun(private$wsObj, later::run_now)
     },
     getInvoker = function(eventName) {
       callbacks <- private$callbacks[[eventName]]
