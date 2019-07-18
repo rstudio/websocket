@@ -321,10 +321,40 @@ void wsAddProtocols(SEXP client_xptr, CharacterVector protocols) {
   }
 }
 
+void doRun(shared_ptr<WSConnection> wsPtr){
+  Rcpp::Rcout << "Do run" << std::endl;
+  wsPtr->client->run();
+  Rcpp::Rcout << "Done running run" << std::endl;
+}
+
 // [[Rcpp::export]]
-void wsConnect(SEXP client_xptr) {
+void wsConnect(SEXP client_xptr, Function run_now) {
   shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
   wsPtr->client->connect();
+
+  /* FIXME: Do we need this equivalent here:
+   * if (self$readyState() == 3L) {
+        return()
+     }
+   */
+
+  ws_websocketpp::lib::thread t(doRun, wsPtr);
+
+  // Keep the thread running even thought it's about to go out of scope.
+  t.detach();
+
+  // The docs aren't clear, but I believe that connect() can -- at least for
+  // some implementations -- be asynchronous. If we return and let the client
+  // e.g. call a send() before the connection is open, things go poorly. Since
+  // we expect this to be a quick operation, let's just let spin here until the
+  // ambiguity is resolved.
+  // TODO: there's surely a cleaner way to do this.
+
+  while (wsPtr->state == WSConnection::STATE::INIT){
+    // TOOD: add a timeout
+    run_now(-1);
+  }
+
 }
 
 // [[Rcpp::export]]
@@ -339,33 +369,6 @@ void wsPoll(SEXP client_xptr) {
   wsPtr->client->poll();
 }
 
-void doRun(shared_ptr<WSConnection> wsPtr){
-  Rcpp::Rcout << "Do run" << std::endl;
-  wsPtr->client->run();
-  Rcpp::Rcout << "Done running run" << std::endl;
-}
-
-// [[Rcpp::export]]
-void wsRun(SEXP client_xptr, Function run_now) {
-
-  /* FIXME: Do we need this equivalent here:
-   * if (self$readyState() == 3L) {
-        return()
-     }
-   */
-  shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
-  ws_websocketpp::lib::thread t(doRun, wsPtr);
-
-  // We can't move on now because the connection onOpen callback is going
-  // to try to schedule the onOpen handler via `later`. If we give back
-  // control right now the user might try to do something like send a message
-  // before we've determined the success/failure of the open call.
-  run_now(-1);
-
-  // Keep the thread running even thought it's about to go out of scope.
-  t.detach();
-}
-
 // [[Rcpp::export]]
 void wsSend(SEXP client_xptr, SEXP msg) {
   shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
@@ -377,7 +380,6 @@ void wsSend(SEXP client_xptr, SEXP msg) {
     const char* msg_ptr = CHAR(STRING_ELT(msg, 0));
     int len = R_nchar(STRING_ELT(msg, 0), Bytes, FALSE, FALSE, "wsSend");
     wsPtr->client->send(msg_ptr, len, ws_websocketpp::frame::opcode::text);
-
   } else if (TYPEOF(msg) == RAWSXP) {
     wsPtr->client->send(RAW(msg), Rf_length(msg), ws_websocketpp::frame::opcode::binary);
   } else {
@@ -438,9 +440,6 @@ std::string wsState(SEXP client_xptr) {
   // about reaching end of a non-void function.
   return "UNKNOWN";
 }
-
-
-
 
 // [[Rcpp::export]]
 void wsUpdateLogChannels(

@@ -13,8 +13,8 @@ wsAddProtocols <- function(client_xptr, protocols) {
     invisible(.Call(`_websocket_wsAddProtocols`, client_xptr, protocols))
 }
 
-wsConnect <- function(client_xptr) {
-    invisible(.Call(`_websocket_wsConnect`, client_xptr))
+wsConnect <- function(client_xptr, run_now) {
+    invisible(.Call(`_websocket_wsConnect`, client_xptr, run_now))
 }
 
 wsRestart <- function(client_xptr) {
@@ -23,10 +23,6 @@ wsRestart <- function(client_xptr) {
 
 wsPoll <- function(client_xptr) {
     invisible(.Call(`_websocket_wsPoll`, client_xptr))
-}
-
-wsRun <- function(client_xptr, run_now) {
-    invisible(.Call(`_websocket_wsRun`, client_xptr, run_now))
 }
 
 wsSend <- function(client_xptr, msg) {
