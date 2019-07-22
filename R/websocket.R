@@ -165,16 +165,16 @@ WebSocket <- R6::R6Class("WebSocket",
       private$callbacks$error <- Callbacks$new()
       private$callbacks$message <- Callbacks$new()
 
-      private$wsObj <- wsCreate(
+      private$id <- wsCreate(
         url, self, private,
         private$accessLogChannels(accessLogChannels, "none"),
         private$errorLogChannels(errorLogChannels, "none")
       )
 
       mapply(names(headers), headers, FUN = function(key, value) {
-        wsAppendHeader(private$wsObj, key, value)
+        wsAppendHeader(private$id, key, value)
       })
-      wsAddProtocols(private$wsObj, protocols)
+      wsAddProtocols(private$id, protocols)
 
       private$pendingConnect <- TRUE
       if (autoConnect) {
@@ -182,12 +182,12 @@ WebSocket <- R6::R6Class("WebSocket",
       }
     },
     connect = function() {
-      #wsConnect(private$wsObj)
+      #wsConnect(private$id)
       #private$run()
 
        if (private$pendingConnect) {
          private$pendingConnect <- FALSE
-         wsConnect(private$wsObj)
+         wsConnect(private$id)
          private$scheduleIncoming()
        } else {
          warning("Ignoring extraneous connect() call (did you mean to have autoConnect=FALSE in the constructor?)")
@@ -202,13 +202,13 @@ WebSocket <- R6::R6Class("WebSocket",
         return(code(-1L, "Pre-connecting"))
       }
 
-      switch(wsState(private$wsObj),
+      switch(wsState(private$id),
         INIT = code(0L, "Connecting"),
         OPEN = code(1L, "Open"),
         CLOSING = code(2L, "Closing"),
         CLOSED = code(3L, "Closed"),
         FAILED = code(3L, "Closed"),
-        stop("Unknown state ", wsState(private$wsObj))
+        stop("Unknown state ", wsState(private$id))
       )
     },
     onOpen = function(callback) {
@@ -224,44 +224,43 @@ WebSocket <- R6::R6Class("WebSocket",
       invisible(private$callbacks[["message"]]$register(callback))
     },
     protocol = function() {
-      wsProtocol(private$wsObj)
+      wsProtocol(private$id)
     },
     send = function(msg) {
-      wsSend(private$wsObj, msg)
+      wsSend(private$id, msg)
     },
     close = function(code = 1000L, reason = "") {
-      wsClose(private$wsObj, code, reason)
+      wsClose(private$id, code, reason)
     },
     setAccessLogChannels = function(channels = c("all")) {
-      wsUpdateLogChannels(private$wsObj, "access", "set", private$accessLogChannels(channels, "none"))
+      wsUpdateLogChannels(private$id, "access", "set", private$accessLogChannels(channels, "none"))
     },
     setErrorLogChannels = function(channels = c("all")) {
-      wsUpdateLogChannels(private$wsObj, "error", "set", private$errorLogChannels(channels, "none"))
+      wsUpdateLogChannels(private$id, "error", "set", private$errorLogChannels(channels, "none"))
     },
     clearAccessLogChannels = function(channels = c("all")) {
-      wsUpdateLogChannels(private$wsObj, "access", "clear", private$accessLogChannels(channels, "all"))
+      wsUpdateLogChannels(private$id, "access", "clear", private$accessLogChannels(channels, "all"))
     },
     clearErrorLogChannels = function(channels = c("all")) {
-      wsUpdateLogChannels(private$wsObj, "error", "clear", private$errorLogChannels(channels, "all"))
+      wsUpdateLogChannels(private$id, "error", "clear", private$errorLogChannels(channels, "all"))
     }
   ),
   private = list(
     id = NULL,
-    wsObj = NULL,
     callbacks = NULL,
     pendingConnect = TRUE,
     scheduleIncoming = function() {
       later::later(private$handleIncoming, 0.01)
     },
     handleIncoming = function() {
-      wsPoll(private$wsObj)
+      wsPoll(private$id)
       if (self$readyState() == 3L) {
         return()
       }
       private$scheduleIncoming()
     },
     run = function(){
-      wsRun(private$wsObj)
+      wsRun(private$id)
     },
     getInvoker = function(eventName) {
       callbacks <- private$callbacks[[eventName]]

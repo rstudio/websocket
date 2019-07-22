@@ -105,20 +105,9 @@ int current_time_nanoseconds(){
   return tm.tv_nsec;
 }
 
-static const int IDENTIFIER_SIZE = 10;
-// NOT threadsafe due to the use of rand. Must be called
-// from only the main thread.
-std::string generateIdentifier(){
-  srand(current_time_nanoseconds());
-  static const char seq[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-  std::string randStr = "";
-  for (int i = 0; i < IDENTIFIER_SIZE; i++){
-    int ind = rand() % sizeof(seq);
-    char c = seq[ind];
-    randStr += c;
-  }
-  return randStr;
+int connectionCounter = 0;
+int generateIdentifier(){
+  return connectionCounter++;
 }
 
 class WSConnection {
@@ -139,17 +128,17 @@ public:
   }
 
   bool closeOnOpen = false;
-  std::string id = generateIdentifier();
+  int id = generateIdentifier();
 };
 
+// FIXME: cleanup on close
+std::map<int, shared_ptr<WSConnection>> connections;
 
-shared_ptr<WSConnection> xptrGetClient(SEXP client_xptr) {
-  if (TYPEOF(client_xptr) != EXTPTRSXP) {
-    throw Rcpp::exception("Expected external pointer.");
-  }
-  return *reinterpret_cast<shared_ptr<WSConnection>*>(R_ExternalPtrAddr(client_xptr));
+shared_ptr<WSConnection> getWSConnection(int id) {
+  return connections[id];
 }
 
+// TODO: update?
 void client_deleter(SEXP client_xptr) {
   delete reinterpret_cast<shared_ptr<WSConnection>*>(R_ExternalPtrAddr(client_xptr));
   R_ClearExternalPtr(client_xptr);
@@ -268,7 +257,7 @@ void handleFail(weak_ptr<WSConnection> wsPtrWeak, ws_websocketpp::connection_hdl
 }
 
 // [[Rcpp::export]]
-SEXP wsCreate(
+int wsCreate(
   std::string uri,
   Rcpp::Environment robjPublic,
   Rcpp::Environment robjPrivate,
@@ -323,18 +312,21 @@ SEXP wsCreate(
   SEXP client_xptr = PROTECT(R_MakeExternalPtr(extwsPtr, R_NilValue, R_NilValue));
   R_RegisterCFinalizerEx(client_xptr, client_deleter, TRUE);
   UNPROTECT(1);
-  return client_xptr;
+
+  connections.insert(std::pair<int, shared_ptr<WSConnection>>(wsPtr->id, *extwsPtr));
+
+  return wsPtr->id;
 }
 
 // [[Rcpp::export]]
-void wsAppendHeader(SEXP client_xptr, std::string key, std::string value) {
-  shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
+void wsAppendHeader(int connId, std::string key, std::string value) {
+  shared_ptr<WSConnection> wsPtr = getWSConnection(connId);
   wsPtr->client->append_header(key, value);
 }
 
 // [[Rcpp::export]]
-void wsAddProtocols(SEXP client_xptr, CharacterVector protocols) {
-  shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
+void wsAddProtocols(int connId, CharacterVector protocols) {
+  shared_ptr<WSConnection> wsPtr = getWSConnection(connId);
   for (Rcpp::CharacterVector::iterator it = protocols.begin();
        it != protocols.end();
        it++) {
@@ -344,32 +336,32 @@ void wsAddProtocols(SEXP client_xptr, CharacterVector protocols) {
 }
 
 // [[Rcpp::export]]
-void wsConnect(SEXP client_xptr) {
-  shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
+void wsConnect(int connId) {
+  shared_ptr<WSConnection> wsPtr = getWSConnection(connId);
   wsPtr->client->connect();
 }
 
 // [[Rcpp::export]]
-void wsRestart(SEXP client_xptr) {
-  shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
+void wsRestart(int connId) {
+  shared_ptr<WSConnection> wsPtr = getWSConnection(connId);
   wsPtr->client->get_io_service().restart();
 }
 
 // [[Rcpp::export]]
-void wsPoll(SEXP client_xptr) {
-  shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
+void wsPoll(int connId) {
+  shared_ptr<WSConnection> wsPtr = getWSConnection(connId);
   wsPtr->client->poll();
 }
 
 // [[Rcpp::export]]
-void wsRun(SEXP client_xptr) {
-  shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
+void wsRun(int connId) {
+  shared_ptr<WSConnection> wsPtr = getWSConnection(connId);
   wsPtr->client->run();
 }
 
 // [[Rcpp::export]]
-void wsSend(SEXP client_xptr, SEXP msg) {
-  shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
+void wsSend(int connId, SEXP msg) {
+  shared_ptr<WSConnection> wsPtr = getWSConnection(connId);
 
   if (TYPEOF(msg) == STRSXP &&
       Rf_length(msg) == 1 &&
@@ -387,14 +379,14 @@ void wsSend(SEXP client_xptr, SEXP msg) {
 }
 
 // [[Rcpp::export]]
-void wsReset(SEXP client_xptr) {
-  shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
+void wsReset(int connId) {
+  shared_ptr<WSConnection> wsPtr = getWSConnection(connId);
   wsPtr->client->reset();
 }
 
 // [[Rcpp::export]]
-void wsClose(SEXP client_xptr, uint16_t code, std::string reason) {
-  shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
+void wsClose(int connId, uint16_t code, std::string reason) {
+  shared_ptr<WSConnection> wsPtr = getWSConnection(connId);
 
   switch (wsPtr->state) {
   case WSConnection::STATE::INIT:
@@ -413,20 +405,20 @@ void wsClose(SEXP client_xptr, uint16_t code, std::string reason) {
 }
 
 // [[Rcpp::export]]
-bool wsStopped(SEXP client_xptr) {
-  shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
+bool wsStopped(int connId) {
+  shared_ptr<WSConnection> wsPtr = getWSConnection(connId);
   return wsPtr->client->stopped();
 }
 
 // [[Rcpp::export]]
-std::string wsProtocol(SEXP client_xptr) {
-  shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
+std::string wsProtocol(int connId) {
+  shared_ptr<WSConnection> wsPtr = getWSConnection(connId);
   return wsPtr->client->get_subprotocol();
 }
 
 // [[Rcpp::export]]
-std::string wsState(SEXP client_xptr) {
-  shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
+std::string wsState(int connId) {
+  shared_ptr<WSConnection> wsPtr = getWSConnection(connId);
   switch(wsPtr->state) {
     case WSConnection::STATE::INIT: return "INIT";
     case WSConnection::STATE::OPEN: return "OPEN";
@@ -445,11 +437,11 @@ std::string wsState(SEXP client_xptr) {
 
 // [[Rcpp::export]]
 void wsUpdateLogChannels(
-  SEXP client_xptr,
+  int connId,
   std::string accessOrError,
   std::string setOrClear,
   Rcpp::CharacterVector logChannels
 ) {
-  shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
+  shared_ptr<WSConnection> wsPtr = getWSConnection(connId);
   wsPtr->client->update_log_channels(accessOrError, setOrClear, logChannels);
 }

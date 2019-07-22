@@ -5,55 +5,55 @@ wsCreate <- function(uri, robjPublic, robjPrivate, accessLogChannels, errorLogCh
     .Call(`_websocket_wsCreate`, uri, robjPublic, robjPrivate, accessLogChannels, errorLogChannels)
 }
 
-wsAppendHeader <- function(client_xptr, key, value) {
-    invisible(.Call(`_websocket_wsAppendHeader`, client_xptr, key, value))
+wsAppendHeader <- function(connId, key, value) {
+    invisible(.Call(`_websocket_wsAppendHeader`, connId, key, value))
 }
 
-wsAddProtocols <- function(client_xptr, protocols) {
-    invisible(.Call(`_websocket_wsAddProtocols`, client_xptr, protocols))
+wsAddProtocols <- function(connId, protocols) {
+    invisible(.Call(`_websocket_wsAddProtocols`, connId, protocols))
 }
 
-wsConnect <- function(client_xptr) {
-    invisible(.Call(`_websocket_wsConnect`, client_xptr))
+wsConnect <- function(connId) {
+    invisible(.Call(`_websocket_wsConnect`, connId))
 }
 
-wsRestart <- function(client_xptr) {
-    invisible(.Call(`_websocket_wsRestart`, client_xptr))
+wsRestart <- function(connId) {
+    invisible(.Call(`_websocket_wsRestart`, connId))
 }
 
-wsPoll <- function(client_xptr) {
-    invisible(.Call(`_websocket_wsPoll`, client_xptr))
+wsPoll <- function(connId) {
+    invisible(.Call(`_websocket_wsPoll`, connId))
 }
 
-wsRun <- function(client_xptr) {
-    invisible(.Call(`_websocket_wsRun`, client_xptr))
+wsRun <- function(connId) {
+    invisible(.Call(`_websocket_wsRun`, connId))
 }
 
-wsSend <- function(client_xptr, msg) {
-    invisible(.Call(`_websocket_wsSend`, client_xptr, msg))
+wsSend <- function(connId, msg) {
+    invisible(.Call(`_websocket_wsSend`, connId, msg))
 }
 
-wsReset <- function(client_xptr) {
-    invisible(.Call(`_websocket_wsReset`, client_xptr))
+wsReset <- function(connId) {
+    invisible(.Call(`_websocket_wsReset`, connId))
 }
 
-wsClose <- function(client_xptr, code, reason) {
-    invisible(.Call(`_websocket_wsClose`, client_xptr, code, reason))
+wsClose <- function(connId, code, reason) {
+    invisible(.Call(`_websocket_wsClose`, connId, code, reason))
 }
 
-wsStopped <- function(client_xptr) {
-    .Call(`_websocket_wsStopped`, client_xptr)
+wsStopped <- function(connId) {
+    .Call(`_websocket_wsStopped`, connId)
 }
 
-wsProtocol <- function(client_xptr) {
-    .Call(`_websocket_wsProtocol`, client_xptr)
+wsProtocol <- function(connId) {
+    .Call(`_websocket_wsProtocol`, connId)
 }
 
-wsState <- function(client_xptr) {
-    .Call(`_websocket_wsState`, client_xptr)
+wsState <- function(connId) {
+    .Call(`_websocket_wsState`, connId)
 }
 
-wsUpdateLogChannels <- function(client_xptr, accessOrError, setOrClear, logChannels) {
-    invisible(.Call(`_websocket_wsUpdateLogChannels`, client_xptr, accessOrError, setOrClear, logChannels))
+wsUpdateLogChannels <- function(connId, accessOrError, setOrClear, logChannels) {
+    invisible(.Call(`_websocket_wsUpdateLogChannels`, connId, accessOrError, setOrClear, logChannels))
 }
 
