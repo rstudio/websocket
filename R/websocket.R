@@ -185,7 +185,7 @@ WebSocket <- R6::R6Class("WebSocket",
        if (private$pendingConnect) {
          private$pendingConnect <- FALSE
 
-         wsConnect(private$wsObj, later::run_now)
+         wsConnect(private$wsObj)
          #private$scheduleIncoming()
        } else {
          warning("Ignoring extraneous connect() call (did you mean to have autoConnect=FALSE in the constructor?)")

@@ -29,6 +29,11 @@ typedef ws_websocketpp::client<ws_websocketpp::config::asio_tls_client> wss_clie
 // connect(). This is so that all instances of the template class can use the
 // same Client interface.
 
+//httpuv callbackqueue.h singleton --
+// push things onto queue, built on a threadsafe queue of boost functions
+// std::queue's are not inherently threadsafe. Might need my own mutexes
+// tqueue.h, replace the uv mutexes with something else.
+
 class Client {
 public:
   virtual void set_access_channels(ws_websocketpp::log::level channels) = 0;
@@ -52,6 +57,7 @@ public:
 
   virtual std::size_t run_one() = 0;
   virtual std::size_t run() = 0;
+  virtual T::connection_ptr get_con_from_hdl() = 0;
   virtual ws_websocketpp::lib::asio::io_service& get_io_service() = 0;
   virtual std::size_t poll() = 0;
   virtual void send(std::string const& payload,
@@ -149,6 +155,9 @@ public:
   };
   std::size_t run() {
     return client.run();
+  };
+  typename T::connection_ptr get_con_from_hdl() {
+    return client.get_con_from_hdl();
   };
   ws_websocketpp::lib::asio::io_service& get_io_service() {
     return client.get_io_service();

@@ -220,7 +220,7 @@ void handleOpen(weak_ptr<WSConnection> wsPtrWeak, ws_websocketpp::connection_hdl
   }
 }
 
-void handleFailCB(shared_ptr<WSConnection> wsPtr, String errMessage){
+void handleFailCB(ws_websocketpp::connection_hdl, String errMessage){
   Rcpp::Rcout << "Fail " << std::endl;
   Rcpp::List event;
   event["target"] = wsPtr->robjPublic;
@@ -232,14 +232,15 @@ void handleFailCB(shared_ptr<WSConnection> wsPtr, String errMessage){
   onFail(event);
   Rcpp::Rcout << "Exiting fail callback" << std::endl;
 }
-void handleFail(weak_ptr<WSConnection> wsPtrWeak, ws_websocketpp::connection_hdl) {
+void handleFail(weak_ptr<WSConnection> wsPtrWeak, ws_websocketpp::connection_hdl hdl) {
   shared_ptr<WSConnection> wsPtr = wsPtrWeak.lock();
   if (wsPtr) {
     wsPtr->state = WSConnection::STATE::FAILED;
     ws_websocketpp::lib::error_code ec = wsPtr->client->get_ec();
 
     Rcpp::Rcout << "Scheduling fail callback" << std::endl;
-    ws_websocketpp::lib::function<void(void)> wrappedFun = bind(handleFailCB, wsPtr, ec.message());
+    void* con = wsPtr->get_con_from_hdl(hdl);
+    ws_websocketpp::lib::function<void(void)> wrappedFun = bind(handleFailCB, con, ec.message());
     LibFunctionCallback* b_fun = new LibFunctionCallback(wrappedFun);
     later::later(invoke_callback, b_fun, 0.0);
   }
@@ -284,6 +285,8 @@ SEXP wsCreate(
     wsPtr->client->clear_error_channels(ws_websocketpp::log::elevel::all);
     wsPtr->client->update_log_channels("error", "set", errorLogChannels);
   }
+  // Important that we use ASIO as it's thread-safe.
+  // See https://www.zaphoyd.com/websocketpp/manual/reference/thread-safety
   wsPtr->client->init_asio();
   wsPtr->client->set_open_handler(bind(handleOpen, wsPtrWeak, ::_1));
   wsPtr->client->set_message_handler(bind(handleMessage, wsPtrWeak, ::_1, ::_2));
@@ -328,7 +331,7 @@ void doRun(shared_ptr<WSConnection> wsPtr){
 }
 
 // [[Rcpp::export]]
-void wsConnect(SEXP client_xptr, Function run_now) {
+void wsConnect(SEXP client_xptr) {
   shared_ptr<WSConnection> wsPtr = xptrGetClient(client_xptr);
   wsPtr->client->connect();
 
@@ -338,23 +341,14 @@ void wsConnect(SEXP client_xptr, Function run_now) {
      }
    */
 
+  // FIXME: it's not clear to me if this wsPtr is fair game to be used on another thread.
+  // https://www.zaphoyd.com/websocketpp/manual/reference/thread-safety seems to indicate
+  // that it's not (the last section), but https://docs.websocketpp.org/md_tutorials_utility_client_utility_client.html
+  // uses code very similar to this.
   ws_websocketpp::lib::thread t(doRun, wsPtr);
 
   // Keep the thread running even thought it's about to go out of scope.
   t.detach();
-
-  // The docs aren't clear, but I believe that connect() can -- at least for
-  // some implementations -- be asynchronous. If we return and let the client
-  // e.g. call a send() before the connection is open, things go poorly. Since
-  // we expect this to be a quick operation, let's just let spin here until the
-  // ambiguity is resolved.
-  // TODO: there's surely a cleaner way to do this.
-
-  while (wsPtr->state == WSConnection::STATE::INIT){
-    // TOOD: add a timeout
-    run_now(-1);
-  }
-
 }
 
 // [[Rcpp::export]]

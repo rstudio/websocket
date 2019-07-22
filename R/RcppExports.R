@@ -13,8 +13,8 @@ wsAddProtocols <- function(client_xptr, protocols) {
     invisible(.Call(`_websocket_wsAddProtocols`, client_xptr, protocols))
 }
 
-wsConnect <- function(client_xptr, run_now) {
-    invisible(.Call(`_websocket_wsConnect`, client_xptr, run_now))
+wsConnect <- function(client_xptr) {
+    invisible(.Call(`_websocket_wsConnect`, client_xptr))
 }
 
 wsRestart <- function(client_xptr) {

@@ -3,3 +3,5 @@ CXX_STD=CXX11
 
 PKG_CPPFLAGS = -I./lib @cflags@
 PKG_LIBS += @libs@
+# Add -d strictRHeaders here so we force R_ or Rf_
+# Grab from HTTPUV
