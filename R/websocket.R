@@ -246,6 +246,7 @@ WebSocket <- R6::R6Class("WebSocket",
     }
   ),
   private = list(
+    id = NULL,
     wsObj = NULL,
     callbacks = NULL,
     pendingConnect = TRUE,

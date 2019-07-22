@@ -99,6 +99,27 @@ static context_ptr on_tls_init() {
   return ctx;
 }
 
+int current_time_nanoseconds(){
+  struct timespec tm;
+  clock_gettime(CLOCK_REALTIME, &tm);
+  return tm.tv_nsec;
+}
+
+static const int IDENTIFIER_SIZE = 10;
+// NOT threadsafe due to the use of rand. Must be called
+// from only the main thread.
+std::string generateIdentifier(){
+  srand(current_time_nanoseconds());
+  static const char seq[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+  std::string randStr = "";
+  for (int i = 0; i < IDENTIFIER_SIZE; i++){
+    int ind = rand() % sizeof(seq);
+    char c = seq[ind];
+    randStr += c;
+  }
+  return randStr;
+}
 
 class WSConnection {
 public:
@@ -118,6 +139,7 @@ public:
   }
 
   bool closeOnOpen = false;
+  std::string id = generateIdentifier();
 };
 
 
