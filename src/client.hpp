@@ -60,6 +60,7 @@ public:
   virtual void reset() = 0;
   virtual void close(ws_websocketpp::close::status::value const code, std::string const & reason) = 0;
   virtual bool stopped() = 0;
+  virtual void set_max_message_size(size_t mms) = 0;
 
   virtual ws_websocketpp::lib::error_code get_ec() const = 0;
   virtual ws_websocketpp::close::status::value get_remote_close_code() const = 0;
@@ -176,6 +177,9 @@ public:
   }
   std::string const & get_remote_close_reason() const {
     return this->con->get_remote_close_reason();
+  }
+  void set_max_message_size(size_t mms){
+    client.set_max_message_size(mms);
   }
 
 

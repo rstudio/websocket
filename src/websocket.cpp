@@ -169,7 +169,8 @@ SEXP wsCreate(
   Rcpp::Environment robjPublic,
   Rcpp::Environment robjPrivate,
   Rcpp::CharacterVector accessLogChannels,
-  Rcpp::CharacterVector errorLogChannels
+  Rcpp::CharacterVector errorLogChannels,
+  Rcpp::IntegerVector maxMessageSize
 ) {
   if (uri.size() < 6) {
     throw Rcpp::exception("Invalid websocket URI: too short");
@@ -190,6 +191,10 @@ SEXP wsCreate(
     throw Rcpp::exception("Invalid websocket URI: must begin with ws:// or wss://");
   }
 
+  if (maxMessageSize.size() != 1 || maxMessageSize[0] <= 0) {
+    throw Rcpp::exception("maxMessageSize must be a single, positive integer");
+  }
+
   weak_ptr<WSConnection> wsPtrWeak(wsPtr);
 
   if (accessLogChannels.size() > 0) {
@@ -207,6 +212,9 @@ SEXP wsCreate(
   wsPtr->client->set_message_handler(bind(handleMessage, wsPtrWeak, ::_1, ::_2));
   wsPtr->client->set_close_handler(bind(handleClose, wsPtrWeak, ::_1));
   wsPtr->client->set_fail_handler(bind(handleFail, wsPtrWeak, ::_1));
+
+  int mmSize = maxMessageSize[0];
+  wsPtr->client->set_max_message_size(mmSize);
 
   ws_websocketpp::lib::error_code ec;
   wsPtr->client->setup_connection(uri, ec);
