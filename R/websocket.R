@@ -6,6 +6,56 @@ NULL
 # Used to "null out" handler functions after a websocket client is closed
 null_func <- function(...) { }
 
+options <- list(max_message_size=32*1024*1024)
+#' Manage WebSocket options
+#'
+#' Lists the default options or assists in creating a custom configuration to
+#' use when creating a new WebSocket.
+#'
+#' @param ... Named options to be overridden.
+#' @details
+#' The following options are available:
+#' \describe{
+#'   \item{\code{max_message_size}}{The maximum size of a message in bytes. If a message
+#'   larger than this is sent, the connection will fail with the \code{message_too_big}
+#'   protocol error.}
+#' }
+#' @return If \code{opts} is \code{NULL} (the default), returns the default options. Otherwise,
+#' returns a named list that can be passed into \code{WebSocket$new()} as the \code{wsOptions}
+#' parameter to customize the behavior of a WebSocket.
+#' @examples
+#' ws <- WebSocket$new("ws://echo.websocket.org/", opts = wsOptions(max_message_size=1234))
+#' @export
+wsOptions <- function(...){
+  opts <- list(...)
+  if (length(opts) == 0){
+    # Just return the defaults
+    return(options)
+  }
+
+  if (is.null(names(opts))){
+    # TODO: better error message?
+    stop("wsOptions accepts named options")
+  }
+
+  unrecognized <- names(opts)[!names(opts) %in% names(options)]
+  if (length(unrecognized > 0)){
+    stop("Unrecognized options provided: ", paste(unrecognized, collapse=", "))
+  }
+
+  myopts <- options
+  myopts[names(opts)] <- opts
+
+  mms <- myopts[["max_message_size"]]
+  if (!is.numeric(mms) || !all.equal(mms, as.integer(mms)) || length(mms) != 1 || mms <= 0){
+    stop("`max_message_size` must be a single, positive integer")
+  } else if (!is.numeric(mms)){
+    myopts[["max_message_size"]] <- as.integer(mms)
+  }
+
+  myopts
+}
+
 #' Create a WebSocket client
 #'
 #' \preformatted{
@@ -15,7 +65,7 @@ null_func <- function(...) { }
 #'   autoConnect = TRUE,
 #'   accessLogChannels = c("none"),
 #'   errorLogChannels = NULL,
-#'   maxMessageSize = 32 * 1024 * 1024)
+#'   opts = wsOptions())
 #' }
 #'
 #' @details
@@ -113,9 +163,7 @@ null_func <- function(...) { }
 #'   }
 #'
 #'   All logging levels are explained in more detail at \url{https://www.zaphoyd.com/websocketpp/manual/reference/logging}.
-#' @param maxMessageSize The maximum size of a message in bytes. If a message
-#'   larger than this is sent, the connection will fail with the \code{message_too_big}
-#'   protocol error.
+#' @param opts The options used to customize the behavior of this WebSocket. See \link{\code{wsOptions}}.
 #'
 #'
 #' @name WebSocket
@@ -150,8 +198,12 @@ WebSocket <- R6::R6Class("WebSocket",
       autoConnect = TRUE,
       accessLogChannels = c("none"),
       errorLogChannels = NULL,
-      maxMessageSize = 32 * 1024 * 1024
+      opts = wsOptions()
     ) {
+      if (!all(names(wsOptions()) %in% names(opts))){
+        stop("Incomplete `opts` specified: please use the `wsOptions()` helper function to specify a complete set of options.")
+      }
+
       private$callbacks <- new.env(parent = emptyenv())
       private$callbacks$open <- Callbacks$new()
       private$callbacks$close <- Callbacks$new()
@@ -162,7 +214,7 @@ WebSocket <- R6::R6Class("WebSocket",
         url, self, private,
         private$accessLogChannels(accessLogChannels, "none"),
         private$errorLogChannels(errorLogChannels, "none"),
-        maxMessageSize
+        opts$max_message_size
       )
 
       mapply(names(headers), headers, FUN = function(key, value) {
