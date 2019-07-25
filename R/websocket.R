@@ -163,7 +163,7 @@ wsOptions <- function(...){
 #'   }
 #'
 #'   All logging levels are explained in more detail at \url{https://www.zaphoyd.com/websocketpp/manual/reference/logging}.
-#' @param opts The options used to customize the behavior of this WebSocket. See \link{\code{wsOptions}}.
+#' @param opts The options used to customize the behavior of this WebSocket. See \code{\link{wsOptions}}.
 #'
 #'
 #' @name WebSocket

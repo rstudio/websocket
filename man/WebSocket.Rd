@@ -50,7 +50,7 @@ must call `ws$connect()` to establish the WebSocket connection.}
 
   All logging levels are explained in more detail at \url{https://www.zaphoyd.com/websocketpp/manual/reference/logging}.}
 
-\item{opts}{The options used to customize the behavior of this WebSocket. See \link{\code{wsOptions}}.}
+\item{opts}{The options used to customize the behavior of this WebSocket. See \code{\link{wsOptions}}.}
 }
 \description{
 \preformatted{
