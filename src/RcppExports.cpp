@@ -6,7 +6,7 @@
 using namespace Rcpp;
 
 // wsCreate
-SEXP wsCreate(std::string uri, Rcpp::Environment robjPublic, Rcpp::Environment robjPrivate, Rcpp::CharacterVector accessLogChannels, Rcpp::CharacterVector errorLogChannels, int maxMessageSize);
+SEXP wsCreate(std::string uri, Rcpp::Environment robjPublic, Rcpp::Environment robjPrivate, Rcpp::CharacterVector accessLogChannels, Rcpp::CharacterVector errorLogChannels, Rcpp::IntegerVector maxMessageSize);
 RcppExport SEXP _websocket_wsCreate(SEXP uriSEXP, SEXP robjPublicSEXP, SEXP robjPrivateSEXP, SEXP accessLogChannelsSEXP, SEXP errorLogChannelsSEXP, SEXP maxMessageSizeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -16,7 +16,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Environment >::type robjPrivate(robjPrivateSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type accessLogChannels(accessLogChannelsSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type errorLogChannels(errorLogChannelsSEXP);
-    Rcpp::traits::input_parameter< int >::type maxMessageSize(maxMessageSizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type maxMessageSize(maxMessageSizeSEXP);
     rcpp_result_gen = Rcpp::wrap(wsCreate(uri, robjPublic, robjPrivate, accessLogChannels, errorLogChannels, maxMessageSize));
     return rcpp_result_gen;
 END_RCPP

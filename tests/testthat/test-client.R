@@ -1,8 +1,7 @@
 
-test_that("Connection can't be defined with invalid wsOptions", {
-  expect_error(WebSocket$new("ws://echo.websocket.org/", opts=wsOptions(max_message_size=-1)), "`max_message_size` must be a single, positive integer")
-  expect_error(WebSocket$new("ws://echo.websocket.org/", opts=wsOptions(max_message_size=1:2)), "`max_message_size` must be a single, positive integer")
-  expect_error(WebSocket$new("ws://echo.websocket.org/", opts=list()), "Incomplete `opts` specified")
+test_that("Connection can't be defined with invalid maxMessageSize", {
+  expect_error(WebSocket$new("ws://echo.websocket.org/", maxMessageSize=-1), "maxMessageSize must be a single, positive integer")
+  expect_error(WebSocket$new("ws://echo.websocket.org/", maxMessageSize=1:2), "maxMessageSize must be a single, positive integer")
 })
 
 check_later <- function(
@@ -41,11 +40,11 @@ check_later <- function(
   }
 }
 
-test_that("small max_message_sizes break simple connections", {
+test_that("small maxMessageSizes break simple connections", {
   state <- NULL
   didFail <- FALSE
 
-  ws <- WebSocket$new("ws://echo.websocket.org/", opts=wsOptions(max_message_size=2))
+  ws <- WebSocket$new("ws://echo.websocket.org/", maxMessageSize=2)
   ws$onMessage(function(event) {
 
   })
