@@ -1,8 +1,7 @@
 
 test_that("Connection can't be defined with invalid maxMessageSize", {
   expect_error(WebSocket$new("ws://echo.websocket.org/", maxMessageSize=-1), "maxMessageSize must be a non-negative integer")
-  expect_error(WebSocket$new("ws://echo.websocket.org/", maxMessageSize=1:2), "maxMessageSize must be a non-negative integer")
-  expect_error(WebSocket$new("ws://echo.websocket.org/", maxMessageSize=1:2), "maxMessageSize must be a non-negative integer")
+  expect_error(WebSocket$new("ws://echo.websocket.org/", maxMessageSize=1:2), class="Rcpp::not_compatible")
 })
 
 check_later <- function(
