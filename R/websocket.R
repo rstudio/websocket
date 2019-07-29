@@ -158,7 +158,7 @@ WebSocket <- R6::R6Class("WebSocket",
       private$callbacks$error <- Callbacks$new()
       private$callbacks$message <- Callbacks$new()
 
-      if (!is.numeric(maxMessageSize) || maxMessageSize < 0){
+      if (length(maxMessageSize) != 1 || !is.numeric(maxMessageSize) || maxMessageSize < 0){
         stop("maxMessageSize must be a non-negative integer")
       }
 
