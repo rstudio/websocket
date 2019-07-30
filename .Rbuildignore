@@ -10,3 +10,4 @@
 ^/windows$
 .travis.yml
 ^.vscode$
+^CONTRIBUTING.md$
