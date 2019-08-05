@@ -1,4 +1,9 @@
 
+test_that("Connection can't be defined with invalid maxMessageSize", {
+  expect_error(WebSocket$new("ws://echo.websocket.org/", maxMessageSize=-1), "maxMessageSize must be a non-negative integer")
+  expect_error(WebSocket$new("ws://echo.websocket.org/", maxMessageSize=1:2), "maxMessageSize must be a non-negative integer")
+})
+
 check_later <- function(
   # debugging name
   name,
@@ -35,6 +40,41 @@ check_later <- function(
   }
 }
 
+test_that("small maxMessageSizes break simple connections", {
+  state <- NULL
+  didFail <- FALSE
+
+  ws <- WebSocket$new("ws://echo.websocket.org/", maxMessageSize=2)
+  ws$onMessage(function(event) {
+
+  })
+  ws$onOpen(function(event) {
+    state <<- "open"
+  })
+  ws$onClose(function(event) {
+    state <<- "closed"
+  })
+  ws$onError(function(event) {
+    state <<- "failed"
+    didFail <<- TRUE
+  })
+
+  check_later("open",
+              function() !is.null(state),
+              function() identical(state, "open")
+  )
+
+  # Make sure the internal state gets set, and the onOpen function gets called.
+  expect_equivalent(ws$readyState(), 1L)
+  expect_identical(state, "open")
+
+  ws$send("hello")
+  check_later("open",
+              function() !identical(state, "open"),
+              function() didFail
+  )
+  ws$close()
+})
 
 check_ws <- function(wsUrl) {
   state <- NULL
@@ -96,7 +136,6 @@ check_ws <- function(wsUrl) {
       expect_identical(state, "closed")
     }
   )
-
 
   expect_identical(found, 3)
 }

@@ -49,6 +49,10 @@ must call `ws$connect()` to establish the WebSocket connection.}
   }
 
   All logging levels are explained in more detail at \url{https://www.zaphoyd.com/websocketpp/manual/reference/logging}.}
+
+\item{maxMessageSize}{The maximum size of a message in bytes. If a message
+larger than this is sent, the connection will fail with the \code{message_too_big}
+protocol error.}
 }
 \description{
 \preformatted{
@@ -57,7 +61,8 @@ WebSocket$new(url,
   headers = NULL,
   autoConnect = TRUE,
   accessLogChannels = c("none"),
-  errorLogChannels = NULL)
+  errorLogChannels = NULL,
+  maxMessageSize = 32 * 1024 * 1024)
 }
 }
 \details{

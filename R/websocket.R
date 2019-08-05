@@ -14,7 +14,8 @@ null_func <- function(...) { }
 #'   headers = NULL,
 #'   autoConnect = TRUE,
 #'   accessLogChannels = c("none"),
-#'   errorLogChannels = NULL)
+#'   errorLogChannels = NULL,
+#'   maxMessageSize = 32 * 1024 * 1024)
 #' }
 #'
 #' @details
@@ -112,6 +113,9 @@ null_func <- function(...) { }
 #'   }
 #'
 #'   All logging levels are explained in more detail at \url{https://www.zaphoyd.com/websocketpp/manual/reference/logging}.
+#' @param maxMessageSize The maximum size of a message in bytes. If a message
+#'   larger than this is sent, the connection will fail with the \code{message_too_big}
+#'   protocol error.
 #'
 #'
 #' @name WebSocket
@@ -145,7 +149,8 @@ WebSocket <- R6::R6Class("WebSocket",
       headers = NULL,
       autoConnect = TRUE,
       accessLogChannels = c("none"),
-      errorLogChannels = NULL
+      errorLogChannels = NULL,
+      maxMessageSize = 32 * 1024 * 1024
     ) {
       private$callbacks <- new.env(parent = emptyenv())
       private$callbacks$open <- Callbacks$new()
@@ -153,10 +158,15 @@ WebSocket <- R6::R6Class("WebSocket",
       private$callbacks$error <- Callbacks$new()
       private$callbacks$message <- Callbacks$new()
 
+      if (length(maxMessageSize) != 1 || !is.numeric(maxMessageSize) || maxMessageSize < 0){
+        stop("maxMessageSize must be a non-negative integer")
+      }
+
       private$wsObj <- wsCreate(
         url, self, private,
         private$accessLogChannels(accessLogChannels, "none"),
-        private$errorLogChannels(errorLogChannels, "none")
+        private$errorLogChannels(errorLogChannels, "none"),
+        maxMessageSize
       )
 
       mapply(names(headers), headers, FUN = function(key, value) {

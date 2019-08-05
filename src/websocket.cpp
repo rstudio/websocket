@@ -169,7 +169,8 @@ SEXP wsCreate(
   Rcpp::Environment robjPublic,
   Rcpp::Environment robjPrivate,
   Rcpp::CharacterVector accessLogChannels,
-  Rcpp::CharacterVector errorLogChannels
+  Rcpp::CharacterVector errorLogChannels,
+  int maxMessageSize
 ) {
   if (uri.size() < 6) {
     throw Rcpp::exception("Invalid websocket URI: too short");
@@ -207,6 +208,8 @@ SEXP wsCreate(
   wsPtr->client->set_message_handler(bind(handleMessage, wsPtrWeak, ::_1, ::_2));
   wsPtr->client->set_close_handler(bind(handleClose, wsPtrWeak, ::_1));
   wsPtr->client->set_fail_handler(bind(handleFail, wsPtrWeak, ::_1));
+
+  wsPtr->client->set_max_message_size(maxMessageSize);
 
   ws_websocketpp::lib::error_code ec;
   wsPtr->client->setup_connection(uri, ec);
