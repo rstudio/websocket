@@ -1,4 +1,4 @@
-# 1.1.0.9001
+# 1.1.0
 
 * Added `maxMessageSize` argument to `WebSocket$new()`. ([#57](https://github.com/rstudio/websocket/pull/57))
 
