@@ -1,3 +1,28 @@
+# 2019-08-06
+
+## Test environments
+
+* local macOS 10.14.6 install, R 3.6.1
+* local Ubuntu 18.04.2 install, R 3.6.1
+* Ubuntu 14.04 (on travis-ci), R 3.5.3
+* Ubuntu 14.04 (on travis-ci), R-devel
+
+## R CMD check results
+
+There were no ERRORs or WARNINGs.
+
+There were 2 NOTEs:
+
+* installed size is 16.0Mb
+  sub-directories of 1Mb or more:
+  libs  15.8Mb
+
+The websocketpp C++ library object files exceed 1Mb.
+
+* GNU make is a SystemRequirements.
+
+GNU syntax += is used in Makevars.in to append to the PKG_LIBS variable.
+
 # 2019-06-07
 
 Added cph to the individuals listed as contributors who are also copyright holders per feedback.
