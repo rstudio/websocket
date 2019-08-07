@@ -6,8 +6,12 @@ matrix:
   include:
     - os: osx
       osx_image: xcode8.1
-      brew_packages: libressl
+      brew_packages: openssl
       latex: false
+      r:
+        - oldrel
+        - release
+        - devel
 cache: packages
 addons:
   apt:
