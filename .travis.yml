@@ -8,10 +8,7 @@ matrix:
       osx_image: xcode8.1
       brew_packages: openssl
       latex: false
-      r:
-        - oldrel
-        - release
-        - devel
+      r: release
 cache: packages
 addons:
   apt:
