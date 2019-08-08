@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Authors • websocket</title>
+<title>NA • websocket</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,7 +30,7 @@
 
 
 
-<meta property="og:title" content="Authors" />
+<meta property="og:title" content="NA" />
 
 
 
@@ -47,7 +47,7 @@
   </head>
 
   <body>
-    <div class="container template-authors">
+    <div class="container template-title-body">
       <header>
       <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
@@ -104,51 +104,43 @@
 <div class="row">
   <div class="contents col-md-9">
     <div class="page-header">
-      <h1>Authors</h1>
+      <h1>NA</h1>
     </div>
 
-    <ul class="list-unstyled">
-      <li>
-        <p><strong>Alan Dipert</strong>. Author, maintainer. 
-        </p>
-      </li>
-      <li>
-        <p><strong>Barbara Borges</strong>. Author. 
-        </p>
-      </li>
-      <li>
-        <p><strong>Winston Chang</strong>. Author. 
-        </p>
-      </li>
-      <li>
-        <p><strong>Joe Cheng</strong>. Author. 
-        </p>
-      </li>
-      <li>
-        <p><strong> RStudio</strong>. Copyright holder. 
-        </p>
-      </li>
-      <li>
-        <p><strong>Peter Thorson</strong>. Contributor, copyright holder. 
-        <br /><small>WebSocket++ library</small></p>
-      </li>
-      <li>
-        <p><strong>René Nyffenegger</strong>. Contributor, copyright holder. 
-        <br /><small>Base 64 library</small></p>
-      </li>
-      <li>
-        <p><strong>Micael Hildenborg</strong>. Contributor, copyright holder. 
-        <br /><small>SHA1 library</small></p>
-      </li>
-      <li>
-        <p><strong> Aladdin Enterprises</strong>. Copyright holder. 
-        <br /><small>MD5 library</small></p>
-      </li>
-      <li>
-        <p><strong>Bjoern Hoehrmann</strong>. Contributor, copyright holder. 
-        <br /><small>UTF8 Validation library</small></p>
-      </li>
-    </ul>
+
+<p>We welcome contributions to the <strong>websocket</strong> package. To submit a contribution:</p>
+<ol>
+<li><p><a href="https://github.com/rstudio/websocket/fork">Fork</a> the repository and make your changes.</p></li>
+<li><p>Ensure that you have signed the <a href="https://rstudioblog.files.wordpress.com/2017/05/rstudio_individual_contributor_agreement.pdf">individual</a> or <a href="https://rstudioblog.files.wordpress.com/2017/05/rstudio_corporate_contributor_agreement.pdf">corporate</a> contributor agreement as appropriate. You can send the signed copy to <a href="mailto:jj@rstudio.com" class="email">jj@rstudio.com</a>.</p></li>
+<li><p>Submit a <a href="https://help.github.com/articles/using-pull-requests">pull request</a>.</p></li>
+</ol>
+<p>We generally will not merge a pull request that updates <code>websocketpp</code> or included libraries because it is difficult for us to verify that the update is done correctly. We prefer to update included libraries ourselves.</p>
+<div id="how-to-make-changes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#how-to-make-changes" class="anchor"></a>How to make changes</h2>
+<p>Before you submit a pull request, please do the following:</p>
+<ul>
+<li><p>Add an entry to NEWS.md concisely describing what you changed.</p></li>
+<li><p>If appropriate, add unit tests in the tests/ directory.</p></li>
+<li><p>Run Build-&gt;Check Package in the RStudio IDE, or <code><a href="https://www.rdocumentation.org/packages/devtools/topics/check">devtools::check()</a></code>, to make sure your change did not add any messages, warnings, or errors.</p></li>
+</ul>
+<p>Doing these things will make it easier to evaluate your pull request. Even so, we may still decide to modify your code or even not merge it at all. Factors that may prevent us from merging the pull request include:</p>
+<ul>
+<li>breaking backward compatibility</li>
+<li>adding a feature that we do not consider relevant</li>
+<li>is hard to understand</li>
+<li>is hard to maintain in the future</li>
+<li>is computationally expensive</li>
+<li>is not intuitive for people to use</li>
+</ul>
+<p>We will try to be responsive and provide feedback in case we decide not to merge your pull request.</p>
+</div>
+<div id="filing-issues" class="section level2">
+<h2 class="hasAnchor">
+<a href="#filing-issues" class="anchor"></a>Filing issues</h2>
+<p>If you find a bug in websocket, you can also <a href="https://github.com/rstudio/websocket/issues/new">file an issue</a>. Please provide as much relevant information as you can, and include a minimal reproducible example if possible.</p>
+</div>
+
 
   </div>
 

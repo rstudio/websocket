@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">websocket</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -89,10 +89,10 @@
 <h2 class="hasAnchor">
 <a href="#creating-websockets" class="anchor"></a>Creating WebSockets</h2>
 <p>WebSockets are represented as instances of an <a href="https://github.com/r-lib/R6">R6</a> object, and are created with <code>$new()</code>:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1">ws &lt;-<span class="st"> </span>WebSocket<span class="op">$</span><span class="kw">new</span>(<span class="st">"ws://echo.websocket.org/"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>ws &lt;-<span class="st"> </span>WebSocket<span class="op">$</span><span class="kw">new</span>(<span class="st">"ws://echo.websocket.org/"</span>)</span></code></pre></div>
 <p>By default, and similarly to how WebSockets in JavaScript work, constructing a WebSocket with <code>$new()</code> will automatically initiate the WebSocket connection. In normal usage, such as in a Shiny app or from within a function, this default behavior is ideal. When run interactively from the R console however, the default behavior is problematic. The reason is that the connection will open before the user is given an opportunity to register any event handlers, meaning messages from the server could be dropped.</p>
 <p>So, in the console, WebSockets should be created like this:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">ws &lt;-<span class="st"> </span>WebSocket<span class="op">$</span><span class="kw">new</span>(<span class="st">"ws://echo.websocket.org/"</span>, <span class="dt">autoConnect =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>ws &lt;-<span class="st"> </span>WebSocket<span class="op">$</span><span class="kw">new</span>(<span class="st">"ws://echo.websocket.org/"</span>, <span class="dt">autoConnect =</span> <span class="ot">FALSE</span>)</span></code></pre></div>
 </div>
 <div id="interaction-with-later" class="section level2">
 <h2 class="hasAnchor">
@@ -117,12 +117,12 @@
 <code>$onError()</code>: Invoked when an error occurs</li>
 </ol>
 <p>For example, the following code instantiates a WebSocket, installs an <code>onOpen</code> handler, and prints a message once the WebSocket is open:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">{</a>
-<a class="sourceLine" id="cb3-2" title="2">  ws &lt;-<span class="st"> </span>WebSocket<span class="op">$</span><span class="kw">new</span>(<span class="st">"ws://echo.websocket.org/"</span>)</a>
-<a class="sourceLine" id="cb3-3" title="3">  ws<span class="op">$</span><span class="kw">onOpen</span>(<span class="cf">function</span>(event) {</a>
-<a class="sourceLine" id="cb3-4" title="4">    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"connected</span><span class="ch">\n</span><span class="st">"</span>)</a>
-<a class="sourceLine" id="cb3-5" title="5">  })</a>
-<a class="sourceLine" id="cb3-6" title="6">}</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>{</span>
+<span id="cb3-2"><a href="#cb3-2"></a>  ws &lt;-<span class="st"> </span>WebSocket<span class="op">$</span><span class="kw">new</span>(<span class="st">"ws://echo.websocket.org/"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3"></a>  ws<span class="op">$</span><span class="kw">onOpen</span>(<span class="cf">function</span>(event) {</span>
+<span id="cb3-4"><a href="#cb3-4"></a>    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"connected</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5"></a>  })</span>
+<span id="cb3-6"><a href="#cb3-6"></a>}</span></code></pre></div>
 <blockquote>
 <p>Note that because the <code>$new()</code> and <code>$onOpen()</code> calls are within the same code block, <code>autoConnect</code> does not need to be <code>FALSE</code>.</p>
 </blockquote>
@@ -165,17 +165,17 @@
 <p>Multiple handler functions for the same event type can be added to the WebSocket by repeatedly calling a handler registration method such as <code>$onMessage()</code>.</p>
 <p>The return value of every registration method is a zero-argument function that may be invoked to <strong>deregister</strong> the handler function.</p>
 <p>The following is an example of an <code>$onMessage()</code> handler that immediately removes itself:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">{</a>
-<a class="sourceLine" id="cb4-2" title="2">  ws &lt;-<span class="st"> </span>WebSocket<span class="op">$</span><span class="kw">new</span>(<span class="st">"ws://echo.websocket.org/"</span>)</a>
-<a class="sourceLine" id="cb4-3" title="3">  removeThis &lt;-<span class="st"> </span>ws<span class="op">$</span><span class="kw">onMessage</span>(<span class="cf">function</span>(event) {</a>
-<a class="sourceLine" id="cb4-4" title="4">    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"this is the last time i'll run</span><span class="ch">\n</span><span class="st">"</span>)</a>
-<a class="sourceLine" id="cb4-5" title="5">    <span class="kw">removeThis</span>()</a>
-<a class="sourceLine" id="cb4-6" title="6">  })</a>
-<a class="sourceLine" id="cb4-7" title="7">  ws<span class="op">$</span><span class="kw">onOpen</span>(<span class="cf">function</span>(event) {</a>
-<a class="sourceLine" id="cb4-8" title="8">    ws<span class="op">$</span><span class="kw">send</span>(<span class="st">"one"</span>)</a>
-<a class="sourceLine" id="cb4-9" title="9">    ws<span class="op">$</span><span class="kw">send</span>(<span class="st">"two"</span>)</a>
-<a class="sourceLine" id="cb4-10" title="10">  })</a>
-<a class="sourceLine" id="cb4-11" title="11">}</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>{</span>
+<span id="cb4-2"><a href="#cb4-2"></a>  ws &lt;-<span class="st"> </span>WebSocket<span class="op">$</span><span class="kw">new</span>(<span class="st">"ws://echo.websocket.org/"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3"></a>  removeThis &lt;-<span class="st"> </span>ws<span class="op">$</span><span class="kw">onMessage</span>(<span class="cf">function</span>(event) {</span>
+<span id="cb4-4"><a href="#cb4-4"></a>    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"this is the last time i'll run</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb4-5"><a href="#cb4-5"></a>    <span class="kw">removeThis</span>()</span>
+<span id="cb4-6"><a href="#cb4-6"></a>  })</span>
+<span id="cb4-7"><a href="#cb4-7"></a>  ws<span class="op">$</span><span class="kw">onOpen</span>(<span class="cf">function</span>(event) {</span>
+<span id="cb4-8"><a href="#cb4-8"></a>    ws<span class="op">$</span><span class="kw">send</span>(<span class="st">"one"</span>)</span>
+<span id="cb4-9"><a href="#cb4-9"></a>    ws<span class="op">$</span><span class="kw">send</span>(<span class="st">"two"</span>)</span>
+<span id="cb4-10"><a href="#cb4-10"></a>  })</span>
+<span id="cb4-11"><a href="#cb4-11"></a>}</span></code></pre></div>
 <p>Even though <code>ws$send()</code> is called twice in the <code>$onOpen()</code> handler function, the <code>$onMessage()</code> handler function is only run once.</p>
 </div>
   </div>

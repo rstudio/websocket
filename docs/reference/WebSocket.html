@@ -38,7 +38,8 @@ WebSocket$new(url,
   headers = NULL,
   autoConnect = TRUE,
   accessLogChannels = c(&quot;none&quot;),
-  errorLogChannels = NULL)
+  errorLogChannels = NULL,
+  maxMessageSize = 32 * 1024 * 1024)
 " />
 <meta name="twitter:card" content="summary" />
 
@@ -70,7 +71,7 @@ WebSocket$new(url,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">websocket</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -127,7 +128,8 @@ WebSocket$new(url,
   headers = NULL,
   autoConnect = TRUE,
   accessLogChannels = c("none"),
-  errorLogChannels = NULL)
+  errorLogChannels = NULL,
+  maxMessageSize = 32 * 1024 * 1024)
 </pre>
     
     </div>
@@ -189,6 +191,12 @@ must call `ws$connect()` to establish the WebSocket connection.</p></td>
   </dl>
 
 <p>All logging levels are explained in more detail at <a href='https://www.zaphoyd.com/websocketpp/manual/reference/logging'>https://www.zaphoyd.com/websocketpp/manual/reference/logging</a>.</p></td>
+    </tr>
+    <tr>
+      <th>maxMessageSize</th>
+      <td><p>The maximum size of a message in bytes. If a message
+larger than this is sent, the connection will fail with the <code>message_too_big</code>
+protocol error.</p></td>
     </tr>
     </table>
     
