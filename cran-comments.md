@@ -1,4 +1,4 @@
-# 2019-08-06
+# 2019-08-08
 
 ## Test environments
 
@@ -22,6 +22,54 @@ The websocketpp C++ library object files exceed 1Mb.
 * GNU make is a SystemRequirements.
 
 GNU syntax += is used in Makevars.in to append to the PKG_LIBS variable.
+
+## Regarding Package Check Results
+
+On https://cloud.r-project.org/web/checks/check_results_websocket.html, the
+`r-release-osx-x86_64` and `r-patched-solaris-x86` platforms are listed with
+status ERROR.
+
+### `r-release-osx-x86_64`
+
+I was not able to reproduce this error on my own macOS system and I have used
+websocket 1.0.0 from CRAN on a macOS system without issue. In case it is a
+problem that could happen again, I have added macOS to the list of platforms
+tested on Travis CI.
+(https://github.com/rstudio/websocket/blob/master/.travis.yml#L6-L11)
+
+### `r-patched-solaris-x86`
+
+In an effort to reproduce I installed VMware and set up a Solaris 10 VM
+(https://github.com/jeroen/solarisvm)
+
+I followed these instructions
+(https://gist.github.com/alandipert/35a06ae0d783f6282c75d50731de9963) to compile
+R 3.6.1 on Solaris with the GNU toolchain.
+
+I built websocket_1.1.0.tar.gz on my macOS host and transferred it to the
+Solaris VM. I ran `R CMD check` successfully in the following way:
+
+`_R_CHECK_FORCE_SUGGESTS_=FALSE R CMD check --as-cran --no-manual`
+
+- I set `_R_CHECK_FORCE_SUGGESTS_` because suggested dependencies errored during
+  compilation
+- I added `--no-manual` because the texlive distribution provided by OpenCSW
+  (https://www.opencsw.org/packages/texlive/) was missing `inconsolata.sty` and
+  I wasn't sure how to install it. (On Ubuntu, I've resolved this by installing
+  the texlive-fonts-extra package, but I couldn't find an analogue on OpenCSW)
+
+In an R console on Solaris, I was able to connect to a WebSocket server and send
+and receive messages, with and without SSL. After installing the `testthat`
+package, I was able to run the test suite without errors.
+
+Ultimately, I was unable to replicate the Package Check Solaris error in my VM,
+but I recognize that my VM may differ significantly from the machine used for
+CRAN testing. If there is a better way to test this package on Solaris, I am
+more than open to trying it.
+
+Thank you for considering this release for CRAN.
+
+-Alan
 
 # 2019-06-07
 
