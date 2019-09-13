@@ -8,7 +8,7 @@ This is an R WebSocket client library backed by the [websocketpp](https://github
 ## Usage examples
 
 ```R
-library(websocket)
+library(websocket) 
 
 ws <- WebSocket$new("ws://echo.websocket.org/", autoConnect = FALSE)
 ws$onOpen(function(event) {
