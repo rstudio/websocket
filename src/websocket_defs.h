@@ -11,6 +11,7 @@
 using ws_websocketpp::lib::shared_ptr;
 using ws_websocketpp::lib::weak_ptr;
 using ws_websocketpp::lib::make_shared;
+using ws_websocketpp::lib::enable_shared_from_this;
 
 using ws_websocketpp::lib::placeholders::_1;
 using ws_websocketpp::lib::placeholders::_2;

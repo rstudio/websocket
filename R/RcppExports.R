@@ -5,47 +5,47 @@ wsCreate <- function(uri, robjPublic, robjPrivate, accessLogChannels, errorLogCh
     .Call(`_websocket_wsCreate`, uri, robjPublic, robjPrivate, accessLogChannels, errorLogChannels, maxMessageSize)
 }
 
-wsAppendHeader <- function(client_xptr, key, value) {
-    invisible(.Call(`_websocket_wsAppendHeader`, client_xptr, key, value))
+wsAppendHeader <- function(wsc_xptr, key, value) {
+    invisible(.Call(`_websocket_wsAppendHeader`, wsc_xptr, key, value))
 }
 
-wsAddProtocols <- function(client_xptr, protocols) {
-    invisible(.Call(`_websocket_wsAddProtocols`, client_xptr, protocols))
+wsAddProtocols <- function(wsc_xptr, protocols) {
+    invisible(.Call(`_websocket_wsAddProtocols`, wsc_xptr, protocols))
 }
 
-wsConnect <- function(wstask_xptr) {
-    invisible(.Call(`_websocket_wsConnect`, wstask_xptr))
+wsConnect <- function(wsc_xptr) {
+    invisible(.Call(`_websocket_wsConnect`, wsc_xptr))
 }
 
-wsRestart <- function(wstask_xptr) {
-    invisible(.Call(`_websocket_wsRestart`, wstask_xptr))
+wsRestart <- function(wsc_xptr) {
+    invisible(.Call(`_websocket_wsRestart`, wsc_xptr))
 }
 
-wsSend <- function(wstask_xptr, msg) {
-    invisible(.Call(`_websocket_wsSend`, wstask_xptr, msg))
+wsSend <- function(wsc_xptr, msg) {
+    invisible(.Call(`_websocket_wsSend`, wsc_xptr, msg))
 }
 
-wsReset <- function(wstask_xptr) {
-    invisible(.Call(`_websocket_wsReset`, wstask_xptr))
+wsReset <- function(wsc_xptr) {
+    invisible(.Call(`_websocket_wsReset`, wsc_xptr))
 }
 
-wsClose <- function(wstask_xptr, code, reason) {
-    invisible(.Call(`_websocket_wsClose`, wstask_xptr, code, reason))
+wsClose <- function(wsc_xptr, code, reason) {
+    invisible(.Call(`_websocket_wsClose`, wsc_xptr, code, reason))
 }
 
-wsStopped <- function(wstask_xptr) {
-    .Call(`_websocket_wsStopped`, wstask_xptr)
+wsStopped <- function(wsc_xptr) {
+    .Call(`_websocket_wsStopped`, wsc_xptr)
 }
 
-wsProtocol <- function(wstask_xptr) {
-    .Call(`_websocket_wsProtocol`, wstask_xptr)
+wsProtocol <- function(wsc_xptr) {
+    .Call(`_websocket_wsProtocol`, wsc_xptr)
 }
 
-wsState <- function(wstask_xptr) {
-    .Call(`_websocket_wsState`, wstask_xptr)
+wsState <- function(wsc_xptr) {
+    .Call(`_websocket_wsState`, wsc_xptr)
 }
 
-wsUpdateLogChannels <- function(wstask_xptr, accessOrError, setOrClear, logChannels) {
-    invisible(.Call(`_websocket_wsUpdateLogChannels`, wstask_xptr, accessOrError, setOrClear, logChannels))
+wsUpdateLogChannels <- function(wsc_xptr, accessOrError, setOrClear, logChannels) {
+    invisible(.Call(`_websocket_wsUpdateLogChannels`, wsc_xptr, accessOrError, setOrClear, logChannels))
 }
 

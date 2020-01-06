@@ -22,124 +22,124 @@ BEGIN_RCPP
 END_RCPP
 }
 // wsAppendHeader
-void wsAppendHeader(SEXP client_xptr, std::string key, std::string value);
-RcppExport SEXP _websocket_wsAppendHeader(SEXP client_xptrSEXP, SEXP keySEXP, SEXP valueSEXP) {
+void wsAppendHeader(SEXP wsc_xptr, std::string key, std::string value);
+RcppExport SEXP _websocket_wsAppendHeader(SEXP wsc_xptrSEXP, SEXP keySEXP, SEXP valueSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type wsc_xptr(wsc_xptrSEXP);
     Rcpp::traits::input_parameter< std::string >::type key(keySEXP);
     Rcpp::traits::input_parameter< std::string >::type value(valueSEXP);
-    wsAppendHeader(client_xptr, key, value);
+    wsAppendHeader(wsc_xptr, key, value);
     return R_NilValue;
 END_RCPP
 }
 // wsAddProtocols
-void wsAddProtocols(SEXP client_xptr, CharacterVector protocols);
-RcppExport SEXP _websocket_wsAddProtocols(SEXP client_xptrSEXP, SEXP protocolsSEXP) {
+void wsAddProtocols(SEXP wsc_xptr, CharacterVector protocols);
+RcppExport SEXP _websocket_wsAddProtocols(SEXP wsc_xptrSEXP, SEXP protocolsSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type client_xptr(client_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type wsc_xptr(wsc_xptrSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type protocols(protocolsSEXP);
-    wsAddProtocols(client_xptr, protocols);
+    wsAddProtocols(wsc_xptr, protocols);
     return R_NilValue;
 END_RCPP
 }
 // wsConnect
-void wsConnect(SEXP wstask_xptr);
-RcppExport SEXP _websocket_wsConnect(SEXP wstask_xptrSEXP) {
+void wsConnect(SEXP wsc_xptr);
+RcppExport SEXP _websocket_wsConnect(SEXP wsc_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type wstask_xptr(wstask_xptrSEXP);
-    wsConnect(wstask_xptr);
+    Rcpp::traits::input_parameter< SEXP >::type wsc_xptr(wsc_xptrSEXP);
+    wsConnect(wsc_xptr);
     return R_NilValue;
 END_RCPP
 }
 // wsRestart
-void wsRestart(SEXP wstask_xptr);
-RcppExport SEXP _websocket_wsRestart(SEXP wstask_xptrSEXP) {
+void wsRestart(SEXP wsc_xptr);
+RcppExport SEXP _websocket_wsRestart(SEXP wsc_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type wstask_xptr(wstask_xptrSEXP);
-    wsRestart(wstask_xptr);
+    Rcpp::traits::input_parameter< SEXP >::type wsc_xptr(wsc_xptrSEXP);
+    wsRestart(wsc_xptr);
     return R_NilValue;
 END_RCPP
 }
 // wsSend
-void wsSend(SEXP wstask_xptr, SEXP msg);
-RcppExport SEXP _websocket_wsSend(SEXP wstask_xptrSEXP, SEXP msgSEXP) {
+void wsSend(SEXP wsc_xptr, SEXP msg);
+RcppExport SEXP _websocket_wsSend(SEXP wsc_xptrSEXP, SEXP msgSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type wstask_xptr(wstask_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type wsc_xptr(wsc_xptrSEXP);
     Rcpp::traits::input_parameter< SEXP >::type msg(msgSEXP);
-    wsSend(wstask_xptr, msg);
+    wsSend(wsc_xptr, msg);
     return R_NilValue;
 END_RCPP
 }
 // wsReset
-void wsReset(SEXP wstask_xptr);
-RcppExport SEXP _websocket_wsReset(SEXP wstask_xptrSEXP) {
+void wsReset(SEXP wsc_xptr);
+RcppExport SEXP _websocket_wsReset(SEXP wsc_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type wstask_xptr(wstask_xptrSEXP);
-    wsReset(wstask_xptr);
+    Rcpp::traits::input_parameter< SEXP >::type wsc_xptr(wsc_xptrSEXP);
+    wsReset(wsc_xptr);
     return R_NilValue;
 END_RCPP
 }
 // wsClose
-void wsClose(SEXP wstask_xptr, uint16_t code, std::string reason);
-RcppExport SEXP _websocket_wsClose(SEXP wstask_xptrSEXP, SEXP codeSEXP, SEXP reasonSEXP) {
+void wsClose(SEXP wsc_xptr, uint16_t code, std::string reason);
+RcppExport SEXP _websocket_wsClose(SEXP wsc_xptrSEXP, SEXP codeSEXP, SEXP reasonSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type wstask_xptr(wstask_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type wsc_xptr(wsc_xptrSEXP);
     Rcpp::traits::input_parameter< uint16_t >::type code(codeSEXP);
     Rcpp::traits::input_parameter< std::string >::type reason(reasonSEXP);
-    wsClose(wstask_xptr, code, reason);
+    wsClose(wsc_xptr, code, reason);
     return R_NilValue;
 END_RCPP
 }
 // wsStopped
-bool wsStopped(SEXP wstask_xptr);
-RcppExport SEXP _websocket_wsStopped(SEXP wstask_xptrSEXP) {
+bool wsStopped(SEXP wsc_xptr);
+RcppExport SEXP _websocket_wsStopped(SEXP wsc_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type wstask_xptr(wstask_xptrSEXP);
-    rcpp_result_gen = Rcpp::wrap(wsStopped(wstask_xptr));
+    Rcpp::traits::input_parameter< SEXP >::type wsc_xptr(wsc_xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(wsStopped(wsc_xptr));
     return rcpp_result_gen;
 END_RCPP
 }
 // wsProtocol
-std::string wsProtocol(SEXP wstask_xptr);
-RcppExport SEXP _websocket_wsProtocol(SEXP wstask_xptrSEXP) {
+std::string wsProtocol(SEXP wsc_xptr);
+RcppExport SEXP _websocket_wsProtocol(SEXP wsc_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type wstask_xptr(wstask_xptrSEXP);
-    rcpp_result_gen = Rcpp::wrap(wsProtocol(wstask_xptr));
+    Rcpp::traits::input_parameter< SEXP >::type wsc_xptr(wsc_xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(wsProtocol(wsc_xptr));
     return rcpp_result_gen;
 END_RCPP
 }
 // wsState
-std::string wsState(SEXP wstask_xptr);
-RcppExport SEXP _websocket_wsState(SEXP wstask_xptrSEXP) {
+std::string wsState(SEXP wsc_xptr);
+RcppExport SEXP _websocket_wsState(SEXP wsc_xptrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type wstask_xptr(wstask_xptrSEXP);
-    rcpp_result_gen = Rcpp::wrap(wsState(wstask_xptr));
+    Rcpp::traits::input_parameter< SEXP >::type wsc_xptr(wsc_xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(wsState(wsc_xptr));
     return rcpp_result_gen;
 END_RCPP
 }
 // wsUpdateLogChannels
-void wsUpdateLogChannels(SEXP wstask_xptr, std::string accessOrError, std::string setOrClear, Rcpp::CharacterVector logChannels);
-RcppExport SEXP _websocket_wsUpdateLogChannels(SEXP wstask_xptrSEXP, SEXP accessOrErrorSEXP, SEXP setOrClearSEXP, SEXP logChannelsSEXP) {
+void wsUpdateLogChannels(SEXP wsc_xptr, std::string accessOrError, std::string setOrClear, Rcpp::CharacterVector logChannels);
+RcppExport SEXP _websocket_wsUpdateLogChannels(SEXP wsc_xptrSEXP, SEXP accessOrErrorSEXP, SEXP setOrClearSEXP, SEXP logChannelsSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type wstask_xptr(wstask_xptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type wsc_xptr(wsc_xptrSEXP);
     Rcpp::traits::input_parameter< std::string >::type accessOrError(accessOrErrorSEXP);
     Rcpp::traits::input_parameter< std::string >::type setOrClear(setOrClearSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type logChannels(logChannelsSEXP);
-    wsUpdateLogChannels(wstask_xptr, accessOrError, setOrClear, logChannels);
+    wsUpdateLogChannels(wsc_xptr, accessOrError, setOrClear, logChannels);
     return R_NilValue;
 END_RCPP
 }

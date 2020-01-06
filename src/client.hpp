@@ -61,6 +61,7 @@ public:
                     ws_websocketpp::frame::opcode::value op = ws_websocketpp::frame::opcode::binary) = 0;
   virtual void reset() = 0;
   virtual void close(ws_websocketpp::close::status::value const code, std::string const & reason) = 0;
+  virtual void stop() = 0;
   virtual bool stopped() = 0;
   virtual void set_max_message_size(size_t mms) = 0;
 
@@ -169,6 +170,9 @@ public:
   };
   void close(ws_websocketpp::close::status::value const code, std::string const& reason) {
     client.close(this->con, code, reason);
+  };
+  void stop() {
+    return client.stop();
   };
   bool stopped() {
     return client.stopped();
