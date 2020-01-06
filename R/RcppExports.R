@@ -13,43 +13,39 @@ wsAddProtocols <- function(client_xptr, protocols) {
     invisible(.Call(`_websocket_wsAddProtocols`, client_xptr, protocols))
 }
 
-wsConnect <- function(client_xptr) {
-    invisible(.Call(`_websocket_wsConnect`, client_xptr))
+wsConnect <- function(wstask_xptr) {
+    invisible(.Call(`_websocket_wsConnect`, wstask_xptr))
 }
 
-wsRestart <- function(client_xptr) {
-    invisible(.Call(`_websocket_wsRestart`, client_xptr))
+wsRestart <- function(wstask_xptr) {
+    invisible(.Call(`_websocket_wsRestart`, wstask_xptr))
 }
 
-wsPoll <- function(client_xptr) {
-    invisible(.Call(`_websocket_wsPoll`, client_xptr))
+wsSend <- function(wstask_xptr, msg) {
+    invisible(.Call(`_websocket_wsSend`, wstask_xptr, msg))
 }
 
-wsSend <- function(client_xptr, msg) {
-    invisible(.Call(`_websocket_wsSend`, client_xptr, msg))
+wsReset <- function(wstask_xptr) {
+    invisible(.Call(`_websocket_wsReset`, wstask_xptr))
 }
 
-wsReset <- function(client_xptr) {
-    invisible(.Call(`_websocket_wsReset`, client_xptr))
+wsClose <- function(wstask_xptr, code, reason) {
+    invisible(.Call(`_websocket_wsClose`, wstask_xptr, code, reason))
 }
 
-wsClose <- function(client_xptr, code, reason) {
-    invisible(.Call(`_websocket_wsClose`, client_xptr, code, reason))
+wsStopped <- function(wstask_xptr) {
+    .Call(`_websocket_wsStopped`, wstask_xptr)
 }
 
-wsStopped <- function(client_xptr) {
-    .Call(`_websocket_wsStopped`, client_xptr)
+wsProtocol <- function(wstask_xptr) {
+    .Call(`_websocket_wsProtocol`, wstask_xptr)
 }
 
-wsProtocol <- function(client_xptr) {
-    .Call(`_websocket_wsProtocol`, client_xptr)
+wsState <- function(wstask_xptr) {
+    .Call(`_websocket_wsState`, wstask_xptr)
 }
 
-wsState <- function(client_xptr) {
-    .Call(`_websocket_wsState`, client_xptr)
-}
-
-wsUpdateLogChannels <- function(client_xptr, accessOrError, setOrClear, logChannels) {
-    invisible(.Call(`_websocket_wsUpdateLogChannels`, client_xptr, accessOrError, setOrClear, logChannels))
+wsUpdateLogChannels <- function(wstask_xptr, accessOrError, setOrClear, logChannels) {
+    invisible(.Call(`_websocket_wsUpdateLogChannels`, wstask_xptr, accessOrError, setOrClear, logChannels))
 }
 

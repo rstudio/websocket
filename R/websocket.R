@@ -1,4 +1,5 @@
 #' @useDynLib websocket, .registration = TRUE
+#' @import later
 #' @importFrom Rcpp sourceCpp
 #' @include RcppExports.R
 NULL
@@ -183,7 +184,6 @@ WebSocket <- R6::R6Class("WebSocket",
       if (private$pendingConnect) {
         private$pendingConnect <- FALSE
         wsConnect(private$wsObj)
-        private$scheduleIncoming()
       } else {
         warning("Ignoring extraneous connect() call (did you mean to have autoConnect=FALSE in the constructor?)")
       }
@@ -244,16 +244,6 @@ WebSocket <- R6::R6Class("WebSocket",
     wsObj = NULL,
     callbacks = NULL,
     pendingConnect = TRUE,
-    scheduleIncoming = function() {
-      later::later(private$handleIncoming, 0.01)
-    },
-    handleIncoming = function() {
-      wsPoll(private$wsObj)
-      if (self$readyState() == 3L) {
-        return()
-      }
-      private$scheduleIncoming()
-    },
     getInvoker = function(eventName) {
       callbacks <- private$callbacks[[eventName]]
       stopifnot(!is.null(callbacks))

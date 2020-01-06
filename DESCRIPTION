@@ -22,7 +22,7 @@ ByteCompile: true
 Imports: Rcpp,
     R6,
     later
-LinkingTo: Rcpp, BH, AsioHeaders
+LinkingTo: Rcpp, BH, AsioHeaders, later
 SystemRequirements: GNU make, OpenSSL >= 1.0.1
 RoxygenNote: 7.0.2
 Collate:

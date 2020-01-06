@@ -1,6 +1,7 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
+#define ASIO_STANDALONE
 #include <websocketpp/config/asio_no_tls_client.hpp>
 #include <websocketpp/config/asio_client.hpp>
 #include <websocketpp/client.hpp>
@@ -50,6 +51,7 @@ public:
 
   virtual std::string get_subprotocol() const = 0;
 
+  virtual std::size_t run() = 0;
   virtual std::size_t run_one() = 0;
   virtual ws_websocketpp::lib::asio::io_service& get_io_service() = 0;
   virtual std::size_t poll() = 0;
@@ -144,6 +146,9 @@ public:
     }
   }
 
+  std::size_t run() {
+    return client.run();
+  };
   std::size_t run_one() {
     return client.run_one();
   };
@@ -228,12 +233,12 @@ private:
 
 // Specializations for set_tls_init_handler()
 template <>
-void ClientImpl<wss_client>::set_tls_init_handler(ws_websocketpp::transport::asio::tls_socket::tls_init_handler h) {
+inline void ClientImpl<wss_client>::set_tls_init_handler(ws_websocketpp::transport::asio::tls_socket::tls_init_handler h) {
   client.set_tls_init_handler(h);
 }
 
 template <>
-void ClientImpl<ws_client>::set_tls_init_handler(ws_websocketpp::transport::asio::tls_socket::tls_init_handler h) {
+inline void ClientImpl<ws_client>::set_tls_init_handler(ws_websocketpp::transport::asio::tls_socket::tls_init_handler h) {
   throw std::runtime_error("Can't set TLS init handler for ws:// connection.");
 }
 
