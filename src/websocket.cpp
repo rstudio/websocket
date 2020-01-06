@@ -47,6 +47,7 @@ void wsc_deleter(SEXP wsc_xptr) {
 // [[Rcpp::export]]
 SEXP wsCreate(
   std::string uri,
+  int loop_id,
   Rcpp::Environment robjPublic,
   Rcpp::Environment robjPrivate,
   Rcpp::CharacterVector accessLogChannels,
@@ -54,7 +55,7 @@ SEXP wsCreate(
   int maxMessageSize
 ) {
   WebsocketConnection* wsc = new WebsocketConnection(
-    uri, robjPublic, robjPrivate, accessLogChannels, errorLogChannels, maxMessageSize
+    uri, loop_id, robjPublic, robjPrivate, accessLogChannels, errorLogChannels, maxMessageSize
   );
 
   shared_ptr<WebsocketConnection> *wsc_pp = new shared_ptr<WebsocketConnection>(wsc);

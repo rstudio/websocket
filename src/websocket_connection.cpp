@@ -31,6 +31,7 @@ void invoke_function_callback(void* data) {
 
 WebsocketConnection::WebsocketConnection(
   std::string uri,
+  int loop_id,
   Rcpp::Environment robjPublic,
   Rcpp::Environment robjPrivate,
   Rcpp::CharacterVector accessLogChannels,
@@ -38,6 +39,7 @@ WebsocketConnection::WebsocketConnection(
   int maxMessageSize
 )
 : uri(uri),
+  loop_id(loop_id),
   robjPublic(robjPublic),
   robjPrivate(robjPrivate)
 {
@@ -92,7 +94,8 @@ void WebsocketConnection::handleMessage(ws_websocketpp::connection_hdl, message_
   later::later(
     invoke_function_callback,
     new function<void (void)>(bind(&WebsocketConnection::rHandleMessage, this, msg)),
-    0
+    0,
+    loop_id
   );
 }
 
@@ -124,7 +127,8 @@ void WebsocketConnection::handleClose(ws_websocketpp::connection_hdl) {
   later::later(
     invoke_function_callback,
     new function<void (void)>(bind(&WebsocketConnection::rHandleClose, this, code, reason)),
-    0
+    0,
+    loop_id
   );
 }
 
@@ -147,7 +151,8 @@ void WebsocketConnection::handleOpen(ws_websocketpp::connection_hdl) {
   later::later(
     invoke_function_callback,
     new function<void (void)>(bind(&WebsocketConnection::rHandleOpen, this)),
-    0
+    0,
+    loop_id
   );
 }
 
@@ -171,7 +176,8 @@ void WebsocketConnection::handleFail(ws_websocketpp::connection_hdl) {
   later::later(
     invoke_function_callback,
     new function<void (void)>(bind(&WebsocketConnection::rHandleFail, this)),
-    0
+    0,
+    loop_id
   );
 }
 

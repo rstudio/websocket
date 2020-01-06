@@ -14,6 +14,7 @@ class WebsocketConnection : public boost::noncopyable,
 public:
   WebsocketConnection(
     std::string uri,
+    int loop_id,
     Rcpp::Environment robjPublic,
     Rcpp::Environment robjPrivate,
     Rcpp::CharacterVector accessLogChannels,
@@ -41,6 +42,7 @@ public:
 
 private:
   std::string uri;
+  int loop_id;
   Rcpp::Environment robjPublic;
   Rcpp::Environment robjPrivate;
 

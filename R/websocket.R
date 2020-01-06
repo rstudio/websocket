@@ -151,7 +151,8 @@ WebSocket <- R6::R6Class("WebSocket",
       autoConnect = TRUE,
       accessLogChannels = c("none"),
       errorLogChannels = NULL,
-      maxMessageSize = 32 * 1024 * 1024
+      maxMessageSize = 32 * 1024 * 1024,
+      loop = later::current_loop()
     ) {
       private$callbacks <- new.env(parent = emptyenv())
       private$callbacks$open <- Callbacks$new()
@@ -164,7 +165,7 @@ WebSocket <- R6::R6Class("WebSocket",
       }
 
       private$wsObj <- wsCreate(
-        url, self, private,
+        url, loop$id, self, private,
         private$accessLogChannels(accessLogChannels, "none"),
         private$errorLogChannels(errorLogChannels, "none"),
         maxMessageSize
