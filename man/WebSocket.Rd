@@ -126,13 +126,13 @@ if (interactive()) {
 # Create a websocket using the websocket.org test server
 ws <- WebSocket$new("ws://echo.websocket.org/")
 ws$onMessage(function(event) {
-  cat("Client got msg:", event$data, "\\n")
+  cat("Client got msg:", event$data, "\n")
 })
 ws$onClose(function(event) {
-  cat("Client disconnected\\n")
+  cat("Client disconnected\n")
 })
 ws$onOpen(function(event) {
-  cat("Client connected\\n")
+  cat("Client connected\n")
 })
 
 # Try sending a message with ws$send("hello").
