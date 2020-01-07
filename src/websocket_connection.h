@@ -5,7 +5,6 @@
 #include <later_api.h>
 #include <Rcpp.h>
 #include "websocket_defs.h"
-#include "websocket_task.h"
 
 
 class WebsocketConnection : public boost::noncopyable, 
@@ -29,7 +28,6 @@ public:
 
   shared_ptr<Client> client;
 
-  void connect();
   void close(uint16_t code, std::string reason);
 
   enum STATE { INIT, OPEN, CLOSING, CLOSED, FAILED };

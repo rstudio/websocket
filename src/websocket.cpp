@@ -85,7 +85,13 @@ void wsAddProtocols(SEXP wsc_xptr, CharacterVector protocols) {
 // [[Rcpp::export]]
 void wsConnect(SEXP wsc_xptr) {
   shared_ptr<WebsocketConnection> wsc = xptrGetWsConn(wsc_xptr);
-  wsc->connect();
+
+  wsc->client->connect();
+
+  // Starts a new thread in which WebsocketTask::execute is called. Object is
+  // automatically deleted when thread stops.
+  WebsocketTask* wst = new WebsocketTask(wsc);
+  wst->begin();
 }
 
 // [[Rcpp::export]]

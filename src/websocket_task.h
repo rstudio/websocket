@@ -7,8 +7,6 @@
 #include "websocket_defs.h"
 #include "websocket_connection.h"
 
-class WebsocketConnection;
-
 class WebsocketTask : public later::BackgroundTask,
                       public boost::noncopyable
 {

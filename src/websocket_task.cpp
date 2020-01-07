@@ -1,7 +1,6 @@
 #include <Rcpp.h>
 #include "websocket_defs.h"
 #include "websocket_task.h"
-#include "websocket_connection.h"
 
 WebsocketTask::WebsocketTask(shared_ptr<WebsocketConnection> wsc) {
   this->wsc = wsc;
@@ -9,7 +8,6 @@ WebsocketTask::WebsocketTask(shared_ptr<WebsocketConnection> wsc) {
 
 void WebsocketTask::execute() {
   // ASSERT_BACKGROUND_THREAD()
-  wsc->client->connect();
   wsc->client->run();
 }
 

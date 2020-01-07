@@ -1,7 +1,6 @@
 #include <Rcpp.h>
 #include "websocket_defs.h"
 #include "websocket_connection.h"
-#include "websocket_task.h"
 
 using ws_websocketpp::lib::function;
 using ws_websocketpp::lib::bind;
@@ -195,14 +194,6 @@ void WebsocketConnection::rHandleFail() {
   Rcpp::Function onFail = getInvoker("error");
   removeHandlers();
   onFail(event);
-}
-
-
-void WebsocketConnection::connect() {
-  // ASSERT_MAIN_THREAD()
-  WebsocketTask* wst = new WebsocketTask(shared_from_this());
-  // Starts a new thread in which execute is called.
-  wst->begin();
 }
 
 void WebsocketConnection::close(uint16_t code, std::string reason) {
