@@ -302,6 +302,28 @@ test_that("WebSocket event handlers can be registered more than once", {
   expect_false(c_called)
 })
 
+test_that("WebSocket event handlers can run in private loop", {
+  onOpenCalled <- FALSE
+  loop <- later::create_loop(autorun = FALSE)
+  ws <- WebSocket$new("ws://echo.websocket.org", loop = loop)
+  ws$onOpen(function(event) {
+    onOpenCalled <<- TRUE
+  })
+
+  # Running main loop shouldn't cause onOpen callback to run.
+  for (i in 1:20) {
+    later::run_now()
+  }
+  expect_false(onOpenCalled)
+
+  # Runing the private loop should cause the onOpen callback to run.
+  end_time <- as.numeric(Sys.time()) + 10
+  while (!onOpenCalled && as.numeric(Sys.time()) < end_time) {
+    later::run_now(0.1, loop = loop)
+  }
+  expect_true(onOpenCalled)
+})
+
 
 context("Basic SSL WebSocket")
 test_that("Basic ssl websocket communication", {
