@@ -1,8 +1,28 @@
+echo_server <- function(port = httpuv::randomPort()) {
+  httpuv::startServer("127.0.0.1", port,
+    list(
+      onWSOpen = function(ws) {
+        ws$onMessage(function(binary, message) {
+          ws$send(message)
+        })
+      }
+    )
+  )
+}
+server_url <- function(server) {
+  paste0("ws://", server$getHost(), ":", server$getPort(), "/")
+}
+
 
 test_that("Connection can't be defined with invalid maxMessageSize", {
-  expect_error(WebSocket$new("ws://echo.websocket.org/", maxMessageSize=-1), "maxMessageSize must be a non-negative integer")
-  expect_error(WebSocket$new("ws://echo.websocket.org/", maxMessageSize=1:2), "maxMessageSize must be a non-negative integer")
+  s <- echo_server()
+  on.exit({ for (i in 1:5) later::run_now(0.02); s$stop() })
+  url <- server_url(s)
+
+  expect_error(WebSocket$new(url, maxMessageSize=-1), "maxMessageSize must be a non-negative integer")
+  expect_error(WebSocket$new(url, maxMessageSize=1:2), "maxMessageSize must be a non-negative integer")
 })
+
 
 check_later <- function(
   # debugging name
@@ -41,10 +61,16 @@ check_later <- function(
 }
 
 test_that("small maxMessageSizes break simple connections", {
+  s <- echo_server()
+  # Run the event loop a few more times to make sure httpuv handles the closed
+  # websocket properly.
+  on.exit({ for (i in 1:5) later::run_now(0.02); s$stop() })
+  url <- server_url(s)
+
   state <- NULL
   didFail <- FALSE
 
-  ws <- WebSocket$new("ws://echo.websocket.org/", maxMessageSize=2)
+  ws <- WebSocket$new(url, maxMessageSize=2)
   ws$onMessage(function(event) {
 
   })
@@ -143,13 +169,21 @@ check_ws <- function(wsUrl) {
 
 context("Basic WebSocket")
 test_that("Basic websocket communication", {
-  check_ws("ws://echo.websocket.org/")
+  s <- echo_server()
+  on.exit({ for (i in 1:5) later::run_now(0.02); s$stop() })
+  url <- server_url(s)
+
+  check_ws(url)
 })
 
 test_that("WebSocket object can be garbage collected", {
+  s <- echo_server()
+  on.exit({ for (i in 1:5) later::run_now(0.02); s$stop() })
+  url <- server_url(s)
+
   collected <- FALSE
   local({
-    ws <- WebSocket$new("ws://echo.websocket.org/")
+    ws <- WebSocket$new(url)
     ws$onOpen(function(event) {
       ws$close()
     })
@@ -168,8 +202,12 @@ test_that("WebSocket object can be garbage collected", {
 })
 
 test_that("Open is async", {
+  s <- echo_server()
+  on.exit({ for (i in 1:5) later::run_now(0.02); s$stop() })
+  url <- server_url(s)
+
   onOpenCalled <- FALSE
-  ws <- WebSocket$new("ws://echo.websocket.org")
+  ws <- WebSocket$new(url)
   ws$onOpen(function(event) {
     onOpenCalled <<- TRUE
     ws$close()
@@ -208,9 +246,13 @@ test_that("Connection errors are reported", {
 })
 
 test_that("Connect can be delayed", {
+  s <- echo_server()
+  on.exit({ for (i in 1:5) later::run_now(0.02); s$stop() })
+  url <- server_url(s)
+
   # With autoConnect = TRUE (the default), you can miss the onOpen event
   connected <- FALSE
-  ws <- WebSocket$new("ws://echo.websocket.org")
+  ws <- WebSocket$new(url)
   end_time <- as.numeric(Sys.time()) + 10
   while (ws$readyState() == 0L && as.numeric(Sys.time()) < end_time) {
     later::run_now(0.1)
@@ -226,7 +268,7 @@ test_that("Connect can be delayed", {
   # With autoConnect = FALSE, the open event is guaranteed not to fire
   # until after connect() is called
   connected <- FALSE
-  ws <- WebSocket$new("ws://echo.websocket.org", autoConnect = FALSE)
+  ws <- WebSocket$new(url, autoConnect = FALSE)
   for (i in 1:10) {
     later::run_now(0.1)
   }
@@ -250,8 +292,12 @@ test_that("Connect can be delayed", {
 })
 
 test_that("WebSocket can be closed before fully open", {
+  s <- echo_server()
+  on.exit({ for (i in 1:5) later::run_now(0.02); s$stop() })
+  url <- server_url(s)
+
   onCloseCalled <- FALSE
-  ws <- WebSocket$new("ws://echo.websocket.org")
+  ws <- WebSocket$new(url)
   ws$onClose(function(event) {
     onCloseCalled <<- TRUE
   })
@@ -277,10 +323,14 @@ test_that("WebSocket can be closed before fully open", {
 })
 
 test_that("WebSocket event handlers can be registered more than once", {
+  s <- echo_server()
+  on.exit({ for (i in 1:5) later::run_now(0.02); s$stop() })
+  url <- server_url(s)
+
   a_called <- FALSE
   b_called <- FALSE
   c_called <- FALSE
-  ws <- WebSocket$new("ws://echo.websocket.org", autoConnect = FALSE)
+  ws <- WebSocket$new(url, autoConnect = FALSE)
   ws$onOpen(function(event) {
     a_called <<- TRUE
   })
@@ -303,9 +353,13 @@ test_that("WebSocket event handlers can be registered more than once", {
 })
 
 test_that("WebSocket event handlers can run in private loop", {
+  s <- echo_server()
+  on.exit({ for (i in 1:5) later::run_now(0.02); s$stop() })
+  url <- server_url(s)
+
   onOpenCalled <- FALSE
   loop <- later::create_loop(autorun = FALSE)
-  ws <- WebSocket$new("ws://echo.websocket.org", loop = loop)
+  ws <- WebSocket$new(url, loop = loop)
   ws$onOpen(function(event) {
     onOpenCalled <<- TRUE
   })
@@ -322,6 +376,8 @@ test_that("WebSocket event handlers can run in private loop", {
     later::run_now(0.1, loop = loop)
   }
   expect_true(onOpenCalled)
+
+  ws$close()
 })
 
 
