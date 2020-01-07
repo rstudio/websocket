@@ -121,3 +121,8 @@ The following is an example of an `$onMessage()` handler that immediately remove
 ```
 
 Even though `ws$send()` is called twice in the `$onOpen()` handler function, the `$onMessage()` handler function is only run once.
+
+
+### Other notes
+
+* As long as a WebSocket object has an open connection, it will not be eligible for garbage collection, even if you lose all your references to the object, because the callback scheduling system maintains a reference to the object. This means that any callbacks on the WebSocket will continue to execute. If the connection is closed, the callback scheduling system will drop its references to the WebSocket object, and it will then be eligible for garbage collection.
