@@ -29,6 +29,7 @@ Collate:
     'RcppExports.R'
     'websocket.R'
 Suggests:
+    httpuv,
     testthat,
     knitr,
     rmarkdown
