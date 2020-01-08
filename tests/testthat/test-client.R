@@ -417,7 +417,6 @@ test_that("WebSocket persists after reference is gone, and can be GC'd after con
   ws <- WebSocket$new(url)
   reg.finalizer(ws, function(e) finalized <<- TRUE)
 
-  # Runing the private loop should cause the onOpen callback to run.
   end_time <- as.numeric(Sys.time()) + 10
   while (ws$readyState() == 0L && as.numeric(Sys.time()) < end_time) {
     later::run_now(0.1)
