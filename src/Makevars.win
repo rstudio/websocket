@@ -9,6 +9,10 @@ PKG_LIBS= -L../windows/openssl-$(OPENSSL_VERSION)/lib${R_ARCH} -lssl -lcrypto -l
 
 CXX_STD=CXX11
 
+#### Debugging flags ####
+# Uncomment to enable thread assertions
+# PKG_CPPFLAGS += -DDEBUG_THREAD -UNDEBUG
+
 .PHONY: all winlibs
 
 all: $(SHLIB)

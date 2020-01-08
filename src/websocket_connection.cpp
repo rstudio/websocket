@@ -1,12 +1,14 @@
 #include <Rcpp.h>
 #include "websocket_defs.h"
 #include "websocket_connection.h"
+#include "debug.h"
 
 using ws_websocketpp::lib::function;
 using ws_websocketpp::lib::bind;
 
 
 static context_ptr on_tls_init() {
+  ASSERT_MAIN_THREAD()
   context_ptr ctx = make_shared<asio::ssl::context>(asio::ssl::context::sslv23);
   try {
     ctx->set_options(asio::ssl::context::default_workarounds |
@@ -14,7 +16,7 @@ static context_ptr on_tls_init() {
       asio::ssl::context::no_sslv3 |
       asio::ssl::context::single_dh_use);
   } catch (std::exception &e) {
-    WrappedOstream::cerr << "Error in context pointer: " << e.what() << std::endl;
+    Rcpp::Rcerr << "Error in context pointer: " << e.what() << std::endl;
   }
   return ctx;
 }
@@ -22,6 +24,7 @@ static context_ptr on_tls_init() {
 // Invoke a callback and delete the object. The Callback object must have been
 // heap-allocated.
 void invoke_function_callback(void* data) {
+  ASSERT_MAIN_THREAD()
   function<void (void)>* fun = reinterpret_cast<function<void (void)>*>(data);
   (*fun)();
   delete fun;
@@ -42,7 +45,7 @@ WebsocketConnection::WebsocketConnection(
   robjPublic(robjPublic),
   robjPrivate(robjPrivate)
 {
-  // ASSERT_MAIN_THREAD()
+  ASSERT_MAIN_THREAD()
   if (uri.size() < 6) {
     throw Rcpp::exception("Invalid websocket URI: too short");
   }
@@ -86,8 +89,7 @@ WebsocketConnection::WebsocketConnection(
 }
 
 void WebsocketConnection::handleMessage(ws_websocketpp::connection_hdl, message_ptr msg) {
-  // ASSERT_BACKGROUND_THREAD()
-
+  ASSERT_BACKGROUND_THREAD()
   // Note that message_ptr is a shared_ptr, so the lifetime of msg will
   // continue until it's used by rHandleMessage().
   later::later(
@@ -99,7 +101,7 @@ void WebsocketConnection::handleMessage(ws_websocketpp::connection_hdl, message_
 }
 
 void WebsocketConnection::rHandleMessage(message_ptr msg) {
-  // ASSERT_MAIN_THREAD()
+  ASSERT_MAIN_THREAD()
   Rcpp::List event;
   event["target"] = robjPublic;
 
@@ -119,7 +121,7 @@ void WebsocketConnection::rHandleMessage(message_ptr msg) {
 }
 
 void WebsocketConnection::handleClose(ws_websocketpp::connection_hdl) {
-  // ASSERT_BACKGROUND_THREAD()
+  ASSERT_BACKGROUND_THREAD()
   ws_websocketpp::close::status::value code = client->get_remote_close_code();
   std::string reason = client->get_remote_close_reason();
 
@@ -132,7 +134,7 @@ void WebsocketConnection::handleClose(ws_websocketpp::connection_hdl) {
 }
 
 void WebsocketConnection::rHandleClose(ws_websocketpp::close::status::value code, std::string reason) {
-  // ASSERT_MAIN_THREAD()
+  ASSERT_MAIN_THREAD()
   state = WebsocketConnection::STATE::CLOSED;
   Rcpp::List event;
   event["target"] = robjPublic;
@@ -146,7 +148,7 @@ void WebsocketConnection::rHandleClose(ws_websocketpp::close::status::value code
 
 
 void WebsocketConnection::handleOpen(ws_websocketpp::connection_hdl) {
-  // ASSERT_BACKGROUND_THREAD()
+  ASSERT_BACKGROUND_THREAD()
   later::later(
     invoke_function_callback,
     new function<void (void)>(bind(&WebsocketConnection::rHandleOpen, this)),
@@ -156,7 +158,7 @@ void WebsocketConnection::handleOpen(ws_websocketpp::connection_hdl) {
 }
 
 void WebsocketConnection::rHandleOpen() {
-  // ASSERT_MAIN_THREAD()
+  ASSERT_MAIN_THREAD()
   if (closeOnOpen) {
     state = WebsocketConnection::STATE::CLOSING;
     client->close(ws_websocketpp::close::status::normal, "");
@@ -171,7 +173,7 @@ void WebsocketConnection::rHandleOpen() {
 
 
 void WebsocketConnection::handleFail(ws_websocketpp::connection_hdl) {
-  // ASSERT_BACKGROUND_THREAD()
+  ASSERT_BACKGROUND_THREAD()
   later::later(
     invoke_function_callback,
     new function<void (void)>(bind(&WebsocketConnection::rHandleFail, this)),
@@ -181,7 +183,7 @@ void WebsocketConnection::handleFail(ws_websocketpp::connection_hdl) {
 }
 
 void WebsocketConnection::rHandleFail() {
-  // ASSERT_MAIN_THREAD()
+  ASSERT_MAIN_THREAD()
   state = WebsocketConnection::STATE::FAILED;
 
   ws_websocketpp::lib::error_code ec = client->get_ec();
@@ -197,7 +199,7 @@ void WebsocketConnection::rHandleFail() {
 }
 
 void WebsocketConnection::close(uint16_t code, std::string reason) {
-  // ASSERT_MAIN_THREAD()
+  ASSERT_MAIN_THREAD()
   switch (state) {
   case WebsocketConnection::STATE::INIT:
     closeOnOpen = true;
@@ -215,8 +217,7 @@ void WebsocketConnection::close(uint16_t code, std::string reason) {
 }
 
 void WebsocketConnection::removeHandlers() {
-  // ASSERT_MAIN_THREAD()
-
+  ASSERT_MAIN_THREAD()
   // Clear the references to the parts of the WebSocket R6 object. This is
   // necessary for the WebSocket R6 object to get GC'd by R.
   robjPublic = Rcpp::Environment();
@@ -224,7 +225,7 @@ void WebsocketConnection::removeHandlers() {
 }
 
 Rcpp::Function WebsocketConnection::getInvoker(std::string name) {
-  // ASSERT_MAIN_THREAD()
+  ASSERT_MAIN_THREAD()
   Rcpp::Function gi = robjPrivate.get("getInvoker");
   return gi(name);
 }

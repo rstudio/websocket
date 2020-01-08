@@ -5,3 +5,8 @@ PKG_CFLAGS = -DSTRICT_R_HEADERS
 PKG_CXXFLAGS = -DSTRICT_R_HEADERS
 PKG_CPPFLAGS = -I./lib @cflags@
 PKG_LIBS += @libs@
+
+#### Debugging flags ####
+# Uncomment to enable thread assertions
+# PKG_CPPFLAGS += -pthread -DDEBUG_THREAD -UNDEBUG
+# PKG_LIBS += -pthread
