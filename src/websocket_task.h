@@ -3,7 +3,6 @@
 
 #include <boost/noncopyable.hpp>
 #include <later_api.h>
-#include <Rcpp.h>
 #include "websocket_defs.h"
 #include "websocket_connection.h"
 

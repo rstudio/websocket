@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <Rcpp.h>
+#include "wrapped_print.h"
 #include <websocketpp/common/functional.hpp>
 #include "client.hpp"
 #include "websocket_defs.h"

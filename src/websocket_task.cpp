@@ -1,4 +1,3 @@
-#include <Rcpp.h>
 #include "websocket_defs.h"
 #include "websocket_task.h"
 

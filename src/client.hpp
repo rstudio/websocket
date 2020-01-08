@@ -2,6 +2,8 @@
 #define CLIENT_HPP
 
 #define ASIO_STANDALONE
+#include "wrapped_print.h"
+#include <Rcpp.h>
 #include <websocketpp/config/asio_no_tls_client.hpp>
 #include <websocketpp/config/asio_client.hpp>
 #include <websocketpp/client.hpp>

@@ -1,8 +1,8 @@
 #ifndef WEBSOCKET_DEFS_HPP
 #define WEBSOCKET_DEFS_HPP
 
-#include <Rcpp.h>
 #include "client.hpp"
+#include "wrapped_print.h"
 #include <websocketpp/common/functional.hpp>
 
 // The websocketpp/common/functional.hpp file detects if a C++11 compiler is
