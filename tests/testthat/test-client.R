@@ -185,6 +185,7 @@ test_that("WebSocket object can be garbage collected", {
   on.exit(shut_down_server(s))
   url <- server_url(s)
 
+  # Test closed WebSocket is GC'd
   collected <- FALSE
   local({
     ws <- WebSocket$new(url)
@@ -192,7 +193,22 @@ test_that("WebSocket object can be garbage collected", {
       ws$close()
     })
     reg.finalizer(ws, function(obj) {
-      message("finalizer")
+      collected <<- TRUE
+    })
+    # Pump events until connection is closed, or up to 10 seconds.
+    end_time <- as.numeric(Sys.time()) + 10
+    while (ws$readyState() != 3L && as.numeric(Sys.time()) < end_time) {
+      later::run_now(0.1)
+    }
+  })
+  gc()
+  expect_true(collected)
+
+  # Test WebSocket with failed connection is GC'd
+  collected <- FALSE
+  local({
+    ws <- WebSocket$new("ws://example.com")
+    reg.finalizer(ws, function(obj) {
       collected <<- TRUE
     })
     # Pump events until connection is closed, or up to 10 seconds.
