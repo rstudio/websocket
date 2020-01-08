@@ -390,10 +390,13 @@ test_that("WebSocket event handlers can run in private loop", {
   }
   expect_false(onOpenCalled)
 
-  # Runing the private loop should cause the onOpen callback to run.
+  # Runing the private loop (for the websocket) should cause the onOpen callback
+  # to run. We also need to interleave running the main loop so that the httpuv
+  # server can handle the connection.
   end_time <- as.numeric(Sys.time()) + 10
   while (!onOpenCalled && as.numeric(Sys.time()) < end_time) {
     later::run_now(0.1, loop = loop)
+    later::run_now(0.1)
   }
   expect_true(onOpenCalled)
 
