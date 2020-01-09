@@ -1,5 +1,5 @@
 Package: websocket
-Version: 1.1.0.9000
+Version: 1.1.0.9001
 Title: 'WebSocket' Client Library
 Description: Provides a 'WebSocket' client interface for R.
     'WebSocket' is a protocol for low-overhead real-time communication:
@@ -21,15 +21,18 @@ LazyData: true
 ByteCompile: true
 Imports: Rcpp,
     R6,
-    later
-LinkingTo: Rcpp, BH, AsioHeaders
+    later (>= 1.0.0.9002)
+LinkingTo: Rcpp, BH, AsioHeaders, later
 SystemRequirements: GNU make, OpenSSL >= 1.0.1
 RoxygenNote: 7.0.2
 Collate:
     'RcppExports.R'
     'websocket.R'
 Suggests:
+    httpuv,
     testthat,
     knitr,
     rmarkdown
+Remotes:
+    r-lib/later
 VignetteBuilder: knitr

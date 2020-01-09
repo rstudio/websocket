@@ -1,8 +1,34 @@
+echo_server <- function(port = httpuv::randomPort()) {
+  httpuv::startServer("127.0.0.1", port,
+    list(
+      onWSOpen = function(ws) {
+        ws$onMessage(function(binary, message) {
+          ws$send(message)
+        })
+      }
+    )
+  )
+}
+shut_down_server <- function(s) {
+  # Run the event loop a few more times to make sure httpuv handles the closed
+  # websocket properly.
+  for (i in 1:5) later::run_now(0.02)
+  s$stop()
+}
+server_url <- function(server) {
+  paste0("ws://", server$getHost(), ":", server$getPort(), "/")
+}
+
 
 test_that("Connection can't be defined with invalid maxMessageSize", {
-  expect_error(WebSocket$new("ws://echo.websocket.org/", maxMessageSize=-1), "maxMessageSize must be a non-negative integer")
-  expect_error(WebSocket$new("ws://echo.websocket.org/", maxMessageSize=1:2), "maxMessageSize must be a non-negative integer")
+  s <- echo_server()
+  on.exit(shut_down_server(s))
+  url <- server_url(s)
+
+  expect_error(WebSocket$new(url, maxMessageSize=-1), "maxMessageSize must be a non-negative integer")
+  expect_error(WebSocket$new(url, maxMessageSize=1:2), "maxMessageSize must be a non-negative integer")
 })
+
 
 check_later <- function(
   # debugging name
@@ -41,10 +67,14 @@ check_later <- function(
 }
 
 test_that("small maxMessageSizes break simple connections", {
+  s <- echo_server()
+  on.exit(shut_down_server(s))
+  url <- server_url(s)
+
   state <- NULL
   didFail <- FALSE
 
-  ws <- WebSocket$new("ws://echo.websocket.org/", maxMessageSize=2)
+  ws <- WebSocket$new(url, maxMessageSize=2)
   ws$onMessage(function(event) {
 
   })
@@ -143,36 +173,79 @@ check_ws <- function(wsUrl) {
 
 context("Basic WebSocket")
 test_that("Basic websocket communication", {
-  check_ws("ws://echo.websocket.org/")
+  s <- echo_server()
+  on.exit(shut_down_server(s))
+  url <- server_url(s)
+
+  check_ws(url)
 })
 
 test_that("WebSocket object can be garbage collected", {
+  s <- echo_server()
+  on.exit(shut_down_server(s))
+  url <- server_url(s)
+
+  # Test closed WebSocket is GC'd
   collected <- FALSE
   local({
-    ws <- WebSocket$new("ws://echo.websocket.org/")
+    ws <- WebSocket$new(url)
     ws$onOpen(function(event) {
       ws$close()
     })
     reg.finalizer(ws, function(obj) {
       collected <<- TRUE
     })
+    # Pump events until connection is closed, or up to 10 seconds.
+    end_time <- as.numeric(Sys.time()) + 10
+    while (ws$readyState() != 3L && as.numeric(Sys.time()) < end_time) {
+      later::run_now(0.1)
+    }
   })
-  # Pump events until there are no more; only then can we be sure that the
-  # WebSocket is closed and can be garbage collected
-  while (!later::loop_empty()) {
-    later::run_now(1)
-  }
+  gc()
+  expect_true(collected)
+
+  # Test WebSocket with failed connection is GC'd
+  collected <- FALSE
+  local({
+    ws <- WebSocket$new("ws://example.com")
+    reg.finalizer(ws, function(obj) {
+      collected <<- TRUE
+    })
+    # Pump events until connection is closed, or up to 10 seconds.
+    end_time <- as.numeric(Sys.time()) + 10
+    while (ws$readyState() != 3L && as.numeric(Sys.time()) < end_time) {
+      later::run_now(0.1)
+    }
+  })
   gc()
   expect_true(collected)
 })
 
 test_that("Open is async", {
-  ws <- WebSocket$new("ws://echo.websocket.org")
+  s <- echo_server()
+  on.exit(shut_down_server(s))
+  url <- server_url(s)
+
+  onOpenCalled <- FALSE
+  ws <- WebSocket$new(url)
   ws$onOpen(function(event) {
+    onOpenCalled <<- TRUE
     ws$close()
   })
   Sys.sleep(1)
+  # Even though the I/O happens on a separate thread, the callback which invokes
+  # onOpen and sets readyState runs on the main thread using later(), so without
+  # a run_now(), there would be no opportunity for these values to be changed.
   expect_equivalent(ws$readyState(), 0L)
+  expect_false(onOpenCalled)
+
+  # Run events until closed state, or timeout.
+  end_time <- as.numeric(Sys.time()) + 10
+  while (ws$readyState() != 3L && as.numeric(Sys.time()) < end_time) {
+    later::run_now(0.1)
+  }
+  expect_equivalent(ws$readyState(), 3L)
+  expect_true(onOpenCalled)
 })
 
 test_that("Connection errors are reported", {
@@ -184,21 +257,25 @@ test_that("Connection errors are reported", {
     expect_true(nzchar(event[["message"]]))
     error_reported <<- TRUE
   })
-  while (!later::loop_empty()) {
-    later::run_now(1)
+
+  end_time <- as.numeric(Sys.time()) + 10
+  while (ws$readyState() != 3L && as.numeric(Sys.time()) < end_time) {
+    later::run_now(0.1)
   }
   expect_true(error_reported)
 })
 
 test_that("Connect can be delayed", {
+  s <- echo_server()
+  on.exit(shut_down_server(s))
+  url <- server_url(s)
+
   # With autoConnect = TRUE (the default), you can miss the onOpen event
   connected <- FALSE
-  ws <- WebSocket$new("ws://echo.websocket.org")
-  for (i in 1:100) {
+  ws <- WebSocket$new(url)
+  end_time <- as.numeric(Sys.time()) + 10
+  while (ws$readyState() == 0L && as.numeric(Sys.time()) < end_time) {
     later::run_now(0.1)
-    if (later::loop_empty() || ws$readyState() >= 1L) {
-      break()
-    }
   }
   ws$onOpen(function(event) {
     connected <<- TRUE
@@ -211,46 +288,69 @@ test_that("Connect can be delayed", {
   # With autoConnect = FALSE, the open event is guaranteed not to fire
   # until after connect() is called
   connected <- FALSE
-  ws <- WebSocket$new("ws://echo.websocket.org", autoConnect = FALSE)
-  for (i in 1:100) {
+  ws <- WebSocket$new(url, autoConnect = FALSE)
+  for (i in 1:10) {
     later::run_now(0.1)
-    if (later::loop_empty() || ws$readyState() >= 1L) {
-      break()
-    }
   }
   ws$connect()
   # It's OK even if onOpen is registered immediately after connect() (in the
-  # same tick though), the same guarantee (that connect is asynchronous)
-  # as autoConnect = TRUE applies.
+  # same tick though), the same guarantee (that connect is asynchronous) as
+  # autoConnect = TRUE applies. Note the connection is made on a separate
+  # thread, so the websocket could have been open before getting to the next
+  # line; however, the callback for onOpen is scheduled with later() on the main
+  # thread, so it can't run until a run_now().
   ws$onOpen(function(event) {
     connected <<- TRUE
   })
   expect_false(connected)
-  while (!connected && !later::loop_empty())
-    later::run_now()
+  end_time <- as.numeric(Sys.time()) + 10
+  while (!connected && as.numeric(Sys.time()) < end_time) {
+    later::run_now(0.1)
+  }
   expect_true(connected)
   ws$close()
 })
 
-test_that("WebSocket can be closed before being opened or after being closed", {
+test_that("WebSocket can be closed before fully open", {
+  s <- echo_server()
+  on.exit(shut_down_server(s))
+  url <- server_url(s)
+
   onCloseCalled <- FALSE
-  ws <- WebSocket$new("ws://echo.websocket.org")
-  ws$close()
+  ws <- WebSocket$new(url)
   ws$onClose(function(event) {
     onCloseCalled <<- TRUE
   })
-  while (!later::loop_empty())
-    later::run_now()
-  expect_equivalent(ws$readyState(), 3L)
   ws$close()
+  for (i in 1:20) {
+    if (onCloseCalled)
+      break
+    later::run_now(0.1)
+  }
+  expect_equivalent(ws$readyState(), 3L)
   expect_true(onCloseCalled)
+
+  # If no connection attempt is made, then we'll stay in the pre-connectiong
+  # state, and the onClose callback won't be invoked.
+  onCloseCalled <- FALSE
+  ws <- WebSocket$new("ws://echo.websocket.org", autoConnect = FALSE)
+  ws$onClose(function(event) {
+    onCloseCalled <<- TRUE
+  })
+  ws$close()
+  expect_equivalent(ws$readyState(), -1L)
+  expect_false(onCloseCalled)
 })
 
 test_that("WebSocket event handlers can be registered more than once", {
+  s <- echo_server()
+  on.exit(shut_down_server(s))
+  url <- server_url(s)
+
   a_called <- FALSE
   b_called <- FALSE
   c_called <- FALSE
-  ws <- WebSocket$new("ws://echo.websocket.org")
+  ws <- WebSocket$new(url, autoConnect = FALSE)
   ws$onOpen(function(event) {
     a_called <<- TRUE
   })
@@ -264,15 +364,85 @@ test_that("WebSocket event handlers can be registered more than once", {
   ws$onOpen(function(event) {
     ws$close()
   })
-  while (!later::loop_empty())
-    later::run_now()
+  ws$connect()
+  while (ws$readyState() != 3L)
+    later::run_now(1)
   expect_true(a_called)
   expect_true(b_called)
   expect_false(c_called)
 })
+
+test_that("WebSocket event handlers can run in private loop", {
+  s <- echo_server()
+  on.exit(shut_down_server(s))
+  url <- server_url(s)
+
+  onOpenCalled <- FALSE
+  loop <- later::create_loop(autorun = FALSE)
+  ws <- WebSocket$new(url, loop = loop)
+  ws$onOpen(function(event) {
+    onOpenCalled <<- TRUE
+  })
+
+  # Running main loop shouldn't cause onOpen callback to run.
+  for (i in 1:20) {
+    later::run_now()
+  }
+  expect_false(onOpenCalled)
+
+  # Runing the private loop (for the websocket) should cause the onOpen callback
+  # to run. We also need to interleave running the main loop so that the httpuv
+  # server can handle the connection.
+  end_time <- as.numeric(Sys.time()) + 10
+  while (!onOpenCalled && as.numeric(Sys.time()) < end_time) {
+    later::run_now(0.1, loop = loop)
+    later::run_now(0.1)
+  }
+  expect_true(onOpenCalled)
+
+  ws$close()
+})
+
+test_that("WebSocket persists after reference is gone, and can be GC'd after connection is closed", {
+  # Start a websocket server app where we can send commands to ws_server.
+  ws_server <- NULL
+  s <- httpuv::startServer("127.0.0.1", httpuv::randomPort(),
+    list(
+      onWSOpen = function(ws) {
+        ws_server <<- ws
+      }
+    )
+  )
+  on.exit(shut_down_server(s))
+  url <- server_url(s)
+
+  finalized <- FALSE
+  ws <- WebSocket$new(url)
+  reg.finalizer(ws, function(e) finalized <<- TRUE)
+
+  end_time <- as.numeric(Sys.time()) + 10
+  while (ws$readyState() == 0L && as.numeric(Sys.time()) < end_time) {
+    later::run_now(0.1)
+  }
+  rm(ws)
+  gc()
+  for (i in 1:5) later::run_now(0.02)
+
+  # Connection is still open, so WebSocket shouldn't be GC'd yet.
+  expect_false(finalized)
+
+  # If we close the connection from the other side, the WebSocket should get
+  # GC'd.
+  ws_server$close()
+  for (i in 1:5) later::run_now(0.02)
+  gc()
+  expect_true(finalized)
+})
+
 
 
 context("Basic SSL WebSocket")
 test_that("Basic ssl websocket communication", {
   check_ws("wss://echo.websocket.org/")
 })
+

@@ -3,7 +3,7 @@
 [![CRAN status](https://www.r-pkg.org/badges/version/websocket)](https://cran.r-project.org/package=websocket)
 [![Travis Build Status](https://travis-ci.org/rstudio/websocket.svg?branch=master)](https://travis-ci.org/rstudio/websocket)
 
-This is an R WebSocket client library backed by the [websocketpp](https://github.com/zaphoyd/websocketpp) C++ library.
+This is an R WebSocket client library backed by the [websocketpp](https://github.com/zaphoyd/websocketpp) C++ library. WebSocket I/O is handled on a separate thread from R.
 
 ## Usage examples
 

@@ -21,6 +21,8 @@ WebSocket clients are most commonly used from [JavaScript in a web browser](http
 
 Like WebSockets in a browser, `websocket` makes it easy to asynchronously process data from a WebSocket server. In the context of an R or Shiny application, this functionality is useful for incrementally consuming data from an external data source presented as a WebSocket server.
 
+The I/O for a WebSocket happens on a separate thread from the main R thread; there is one thread for each WebSocket.
+
 ## Creating WebSockets
 
 WebSockets are represented as instances of an [R6](https://github.com/r-lib/R6) object, and are created with `$new()`:
@@ -35,13 +37,28 @@ So, in the console, WebSockets should be created like this:
 
 ```{r, eval = FALSE}
 ws <- WebSocket$new("ws://echo.websocket.org/", autoConnect = FALSE)
+# Set up callbacks here...
+ws$connect()
 ```
 
 ## Interaction with `later`
 
-The technical reason that `autoConnect = FALSE` is necessary at the console has to do with how [later](https://github.com/r-lib/later) works. `later` is a package for scheduling functions to run in the future used by `websocket` to continuously check for WebSocket events.
+The technical reason that `autoConnect = FALSE` is necessary at the console has to do with how [later](https://github.com/r-lib/later) works. `later` is a package that provides an event loop for R, and the `websocket` package uses it to schedule callbacks that run in response to WebSocket events (like incoming messages).
 
-Functions scheduled for future execution with `later` will not be run until *after* the function in which the scheduling occurred has returned. Internally, `$new()` schedules a function with `later` that connects to the WebSocket server.
+When a function has been put in to the queue with `later`, there are two ways it could be executed. One way is when `later::run_now()` is called. The second way is when the R console is idle (and the R call stack is empty): when that happens, `later` will automatically execute callbacks from the queue.
+
+When running a block of code like this in a function, or surrounded with `{` and `}`, the console does not have a chance to be idle in between the lines of code:
+
+```{r, eval = FALSE}
+{
+  ws <- WebSocket$new("ws://echo.websocket.org/")
+  ws$onOpen(function(event) { message("websocket opened") })
+}
+```
+
+In this code, the WebSocket has queued a connection attempt before `ws$onOpen()` is called. However, the `ws$onOpen()` runs _before_ R tries to call any `onOpen` callbacks, because there were no idle "ticks" between the two lines of code for `later` to respond to any opened connections.
+
+(Technical note: `websocket` runs the I/O on a separate thread; when an event occurs, like an open event or message, it uses `later` to schedule a callback to run on the main R thread. In the case above, the WebSocket connection could actually be opened -- on the I/O thread -- before the main R thread calls `ws$onOpen()` to set up the callback. If that happened it would only be able to schedule the invocation of the `onOpen` callback immediately; only at a later point in time, when the R console is idle, or when `later::run_now()` is called, would it be able to actually execute the callbacks. So in the example above, the `onOpen` callback is guaranteed to run when the connection is successfully opened.)
 
 Because `$new()` only *schedules* the work of connecting &mdash; it does not perform it immediately &mdash; it's safe within a code block to attach handlers, because none of them can possibly run until after the enclosing block returns.
 
@@ -104,3 +121,8 @@ The following is an example of an `$onMessage()` handler that immediately remove
 ```
 
 Even though `ws$send()` is called twice in the `$onOpen()` handler function, the `$onMessage()` handler function is only run once.
+
+
+### Other notes
+
+* As long as a WebSocket object has an open connection, it will not be eligible for garbage collection, even if you lose all your references to the object, because the callback scheduling system maintains a reference to the object. This means that any callbacks on the WebSocket will continue to execute. If the connection is closed, the callback scheduling system will drop its references to the WebSocket object, and it will then be eligible for garbage collection.
