@@ -55,16 +55,6 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// wsRestart
-void wsRestart(SEXP wsc_xptr);
-RcppExport SEXP _websocket_wsRestart(SEXP wsc_xptrSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type wsc_xptr(wsc_xptrSEXP);
-    wsRestart(wsc_xptr);
-    return R_NilValue;
-END_RCPP
-}
 // wsSend
 void wsSend(SEXP wsc_xptr, SEXP msg);
 RcppExport SEXP _websocket_wsSend(SEXP wsc_xptrSEXP, SEXP msgSEXP) {
@@ -73,16 +63,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type wsc_xptr(wsc_xptrSEXP);
     Rcpp::traits::input_parameter< SEXP >::type msg(msgSEXP);
     wsSend(wsc_xptr, msg);
-    return R_NilValue;
-END_RCPP
-}
-// wsReset
-void wsReset(SEXP wsc_xptr);
-RcppExport SEXP _websocket_wsReset(SEXP wsc_xptrSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type wsc_xptr(wsc_xptrSEXP);
-    wsReset(wsc_xptr);
     return R_NilValue;
 END_RCPP
 }
@@ -96,17 +76,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type reason(reasonSEXP);
     wsClose(wsc_xptr, code, reason);
     return R_NilValue;
-END_RCPP
-}
-// wsStopped
-bool wsStopped(SEXP wsc_xptr);
-RcppExport SEXP _websocket_wsStopped(SEXP wsc_xptrSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type wsc_xptr(wsc_xptrSEXP);
-    rcpp_result_gen = Rcpp::wrap(wsStopped(wsc_xptr));
-    return rcpp_result_gen;
 END_RCPP
 }
 // wsProtocol
@@ -150,11 +119,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_websocket_wsAppendHeader", (DL_FUNC) &_websocket_wsAppendHeader, 3},
     {"_websocket_wsAddProtocols", (DL_FUNC) &_websocket_wsAddProtocols, 2},
     {"_websocket_wsConnect", (DL_FUNC) &_websocket_wsConnect, 1},
-    {"_websocket_wsRestart", (DL_FUNC) &_websocket_wsRestart, 1},
     {"_websocket_wsSend", (DL_FUNC) &_websocket_wsSend, 2},
-    {"_websocket_wsReset", (DL_FUNC) &_websocket_wsReset, 1},
     {"_websocket_wsClose", (DL_FUNC) &_websocket_wsClose, 3},
-    {"_websocket_wsStopped", (DL_FUNC) &_websocket_wsStopped, 1},
     {"_websocket_wsProtocol", (DL_FUNC) &_websocket_wsProtocol, 1},
     {"_websocket_wsState", (DL_FUNC) &_websocket_wsState, 1},
     {"_websocket_wsUpdateLogChannels", (DL_FUNC) &_websocket_wsUpdateLogChannels, 4},

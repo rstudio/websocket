@@ -17,24 +17,12 @@ wsConnect <- function(wsc_xptr) {
     invisible(.Call(`_websocket_wsConnect`, wsc_xptr))
 }
 
-wsRestart <- function(wsc_xptr) {
-    invisible(.Call(`_websocket_wsRestart`, wsc_xptr))
-}
-
 wsSend <- function(wsc_xptr, msg) {
     invisible(.Call(`_websocket_wsSend`, wsc_xptr, msg))
 }
 
-wsReset <- function(wsc_xptr) {
-    invisible(.Call(`_websocket_wsReset`, wsc_xptr))
-}
-
 wsClose <- function(wsc_xptr, code, reason) {
     invisible(.Call(`_websocket_wsClose`, wsc_xptr, code, reason))
-}
-
-wsStopped <- function(wsc_xptr) {
-    .Call(`_websocket_wsStopped`, wsc_xptr)
 }
 
 wsProtocol <- function(wsc_xptr) {

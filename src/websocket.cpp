@@ -102,13 +102,6 @@ void wsConnect(SEXP wsc_xptr) {
 }
 
 // [[Rcpp::export]]
-void wsRestart(SEXP wsc_xptr) {
-  ASSERT_MAIN_THREAD()
-  shared_ptr<WebsocketConnection> wsc = xptrGetWsConn(wsc_xptr);
-  wsc->client->get_io_service().restart();
-}
-
-// [[Rcpp::export]]
 void wsSend(SEXP wsc_xptr, SEXP msg) {
   ASSERT_MAIN_THREAD()
   shared_ptr<WebsocketConnection> wsc = xptrGetWsConn(wsc_xptr);
@@ -134,25 +127,10 @@ void wsSend(SEXP wsc_xptr, SEXP msg) {
 }
 
 // [[Rcpp::export]]
-void wsReset(SEXP wsc_xptr) {
-  ASSERT_MAIN_THREAD()
-  // TODO: disable? This isn't used anywhere.
-  shared_ptr<WebsocketConnection> wsc = xptrGetWsConn(wsc_xptr);
-  wsc->client->reset();
-}
-
-// [[Rcpp::export]]
 void wsClose(SEXP wsc_xptr, uint16_t code, std::string reason) {
   ASSERT_MAIN_THREAD()
   shared_ptr<WebsocketConnection> wsc = xptrGetWsConn(wsc_xptr);
   wsc->close(code, reason);
-}
-
-// [[Rcpp::export]]
-bool wsStopped(SEXP wsc_xptr) {
-  ASSERT_MAIN_THREAD()
-  shared_ptr<WebsocketConnection> wsc = xptrGetWsConn(wsc_xptr);
-  return wsc->client->stopped();
 }
 
 // [[Rcpp::export]]
@@ -178,7 +156,6 @@ std::string wsState(SEXP wsc_xptr) {
   // about reaching end of a non-void function.
   return "UNKNOWN";
 }
-
 
 // [[Rcpp::export]]
 void wsUpdateLogChannels(
