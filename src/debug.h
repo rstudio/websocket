@@ -7,9 +7,9 @@ extern "C" {
 
 // See the Makevars file to see how to compile with various debugging settings.
 
-#if defined(DEBUG_THREAD)
+#ifdef DEBUG_THREAD
 
-#if defined(_TTHREAD_WIN32_)
+#ifdef _WIN32
   #ifndef WIN32_LEAN_AND_MEAN
     #define WIN32_LEAN_AND_MEAN
     #define __UNDEF_LEAN_AND_MEAN
@@ -24,7 +24,7 @@ extern "C" {
 #endif
 
 
-#if defined(_TTHREAD_WIN32_)
+#ifdef _WIN32
 typedef HANDLE wsdebug_thrd_t;
 #else
 typedef pthread_t wsdebug_thrd_t;
@@ -43,14 +43,14 @@ extern wsdebug_thrd_t __background_thread__;
 #define ASSERT_MAIN_THREAD()         assert(wsdebug_thrd_current() == __main_thread__);
 #define ASSERT_BACKGROUND_THREAD()   assert(wsdebug_thrd_current() == __background_thread__);
 
-#else // defined(DEBUG_THREAD)
+#else // ifdef DEBUG_THREAD
 
 #define REGISTER_MAIN_THREAD()
 #define REGISTER_BACKGROUND_THREAD()
 #define ASSERT_MAIN_THREAD()
 #define ASSERT_BACKGROUND_THREAD()
 
-#endif // defined(DEBUG_THREAD)
+#endif // ifdef DEBUG_THREAD
 
 
 #ifdef __cplusplus
