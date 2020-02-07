@@ -378,7 +378,7 @@ test_that("WebSocket event handlers can run in private loop", {
   url <- server_url(s)
 
   onOpenCalled <- FALSE
-  loop <- later::create_loop(autorun = FALSE)
+  loop <- later::create_loop(parent = NULL)
   ws <- WebSocket$new(url, loop = loop)
   ws$onOpen(function(event) {
     onOpenCalled <<- TRUE

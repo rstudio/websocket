@@ -21,7 +21,7 @@ LazyData: true
 ByteCompile: true
 Imports: Rcpp,
     R6,
-    later (>= 1.0.0.9002)
+    later (>= 1.0.0.9004)
 LinkingTo: Rcpp, BH, AsioHeaders, later
 SystemRequirements: GNU make, OpenSSL >= 1.0.1
 RoxygenNote: 7.0.2
