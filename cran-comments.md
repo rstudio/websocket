@@ -2,7 +2,25 @@
 
 There were no ERRORs or WARNINGs.
 
-There were 2 NOTEs:
+There were 4 NOTEs:
+
+*  checking CRAN incoming feasibility ... NOTE
+
+Maintainer: ‘Winston Chang <winston@rstudio.com>’
+
+New maintainer:
+  Winston Chang <winston@rstudio.com>
+Old maintainer(s):
+  Alan Dipert <alan@rstudio.com>
+
+As mentioned above, Alan Dipert no longer is at RStudio and his email address has been deactivated, so I am asking to take over maintainership.
+
+* checking installed package size ... NOTE
+  installed size is 12.7Mb
+  sub-directories of 1Mb or more:
+    libs  12.5Mb
+
+The websocketpp C++ library is several megabytes in size, so this is unavoidable.
 
 * possible bashism in configure line 34 ($(OS|MACH)TYPE):
     case "$OSTYPE" in "darwin"*)
