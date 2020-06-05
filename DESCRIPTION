@@ -21,7 +21,7 @@ LazyData: true
 ByteCompile: true
 Imports: Rcpp,
     R6,
-    later (>= 1.0.0.9004)
+    later (>= 1.1.0)
 LinkingTo: Rcpp, BH, AsioHeaders, later
 SystemRequirements: GNU make, OpenSSL >= 1.0.1
 RoxygenNote: 7.1.0
@@ -33,6 +33,4 @@ Suggests:
     testthat,
     knitr,
     rmarkdown
-Remotes:
-    r-lib/later
 VignetteBuilder: knitr
