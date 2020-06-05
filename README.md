@@ -2,7 +2,6 @@
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/websocket)](https://cran.r-project.org/package=websocket)
-[![Travis Build Status](https://travis-ci.org/rstudio/websocket.svg?branch=master)](https://travis-ci.org/rstudio/websocket)
 [![R build status](https://github.com/rstudio/websocket/workflows/R-CMD-check/badge.svg)](https://github.com/rstudio/websocket/actions)
 <!-- badges: end -->
 
