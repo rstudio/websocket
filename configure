@@ -37,7 +37,7 @@ else
     BREWDIR=`brew --prefix`
   else
     curl -sfL "https://jeroen.github.io/autobrew/$PKG_BREW_NAME" > autobrew
-    source autobrew
+    . autobrew
   fi
   PKG_CFLAGS="-I$BREWDIR/opt/openssl/include"
   PKG_LIBS="-L$BREWDIR/opt/openssl/lib $PKG_LIBS"
