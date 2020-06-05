@@ -5,10 +5,10 @@ Description: Provides a 'WebSocket' client interface for R.
     'WebSocket' is a protocol for low-overhead real-time communication:
     <https://en.wikipedia.org/wiki/WebSocket>.
 Authors@R: c(
-    person("Alan", "Dipert", role = c("aut", "cre"), email = "alan@rstudio.com"),
-    person("Barbara", "Borges", role = c("aut")),
-    person("Winston", "Chang", role = c("aut"), email = "winston@rstudio.com"),
-    person("Joe", "Cheng", role = c("aut"), email = "joe@rstudio.com"),
+    person("Winston", "Chang", role = c("aut", "cre"), email = "winston@rstudio.com"),
+    person("Joe", "Cheng", role = "aut", email = "joe@rstudio.com"),
+    person("Alan", "Dipert", role = "aut"),
+    person("Barbara", "Borges", role = "aut"),
     person(family = "RStudio", role = "cph"),
     person("Peter", "Thorson", role = c("ctb", "cph"), comment = "WebSocket++ library"),
     person("René", "Nyffenegger", role = c("ctb", "cph"), comment = "Base 64 library"),
@@ -24,7 +24,7 @@ Imports: Rcpp,
     later (>= 1.0.0.9004)
 LinkingTo: Rcpp, BH, AsioHeaders, later
 SystemRequirements: GNU make, OpenSSL >= 1.0.1
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Collate:
     'RcppExports.R'
     'websocket.R'
