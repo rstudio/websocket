@@ -2,7 +2,7 @@
 
 There were no ERRORs or WARNINGs.
 
-There were 4 NOTEs:
+There were 3 NOTEs:
 
 *  checking CRAN incoming feasibility ... NOTE
 
@@ -21,13 +21,6 @@ As mentioned above, Alan Dipert no longer is at RStudio and his email address ha
     libs  12.5Mb
 
 The websocketpp C++ library is several megabytes in size, so this is unavoidable.
-
-* possible bashism in configure line 34 ($(OS|MACH)TYPE):
-    case "$OSTYPE" in "darwin"*)
-  possible bashism in configure line 79 ($(OS|MACH)TYPE):
-  case "$OSTYPE" in
-
-The use of `$OSTYPE` is the same as is used in the openssl package. I don't currently know of another way to achieve the same thing.
 
 * GNU make is a SystemRequirements.
 
