@@ -4,6 +4,13 @@
 # INCLUDE_DIR and LIB_DIR manually via e.g:
 # R CMD INSTALL --configure-vars='INCLUDE_DIR=/.../include LIB_DIR=/.../lib'
 
+# Detect system
+if [ "$R_OSTYPE" = "unix" ]; then
+  UNAME=`uname`
+else
+  UNAME=Windows
+fi
+
 # Library settings
 PKG_CONFIG_NAME="openssl"
 PKG_DEB_NAME="libssl-dev"
@@ -31,7 +38,7 @@ elif [ "$PKGCONFIG_CFLAGS" ] || [ "$PKGCONFIG_LIBS" ]; then
   PKG_CFLAGS=${PKGCONFIG_CFLAGS}
   PKG_LIBS=${PKGCONFIG_LIBS}
 else
-  case "$OSTYPE" in "darwin"*)
+  case "$UNAME" in "Darwin"*)
   brew --version 2>/dev/null
   if [ $? -eq 0 ]; then
     BREWDIR=`brew --prefix`
@@ -76,8 +83,8 @@ fi
 if [ -z "$AUTOBREW" ]; then
 SONAME=`${CC} -E ${PKG_CFLAGS} src/tests/soname.h | sh | xargs`
 if [ "$SONAME" ]; then
-case "$OSTYPE" in
-  "darwin"*)
+case "$UNAME" in
+  "Darwin"*)
   PKG_LIBS_VERSIONED=`echo "${PKG_LIBS}" | sed "s/-lssl/-lssl.${SONAME}/" | sed "s/-lcrypto/-lcrypto.${SONAME}/"`
   ;;
   *)
