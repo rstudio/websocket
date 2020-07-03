@@ -34,7 +34,7 @@ must call `ws$connect()` to establish the WebSocket connection.}
           termination of the connection or endpoint.}
   }
 
-  All logging levels are explained in more detail at \url{https://www.zaphoyd.com/websocketpp/manual/reference/logging}.}
+  All logging levels are explained in more detail at \url{https://docs.websocketpp.org/reference_8logging.html}.}
 
 \item{errorLogChannels}{A character vector of error log channels that are
   displayed.  The default value is \code{NULL}, which will use default websocketpp behavior.
@@ -48,7 +48,7 @@ must call `ws$connect()` to establish the WebSocket connection.}
     \item{\code{"disconnect"}}{One line for each new connection that is closed}
   }
 
-  All logging levels are explained in more detail at \url{https://www.zaphoyd.com/websocketpp/manual/reference/logging}.}
+  All logging levels are explained in more detail at \url{https://docs.websocketpp.org/reference_8logging.html}.}
 
 \item{maxMessageSize}{The maximum size of a message in bytes. If a message
 larger than this is sent, the connection will fail with the \code{message_too_big}
