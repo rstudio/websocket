@@ -1,22 +1,16 @@
-# Anticonf (tm) script by Jeroen Ooms (2015)
+#!/usr/bin/env bash
+# Anticonf (tm) script by Jeroen Ooms (2020)
 # This script will query 'pkg-config' for the required cflags and ldflags.
 # If pkg-config is unavailable or does not find the library, try setting
 # INCLUDE_DIR and LIB_DIR manually via e.g:
 # R CMD INSTALL --configure-vars='INCLUDE_DIR=/.../include LIB_DIR=/.../lib'
-
-# Detect system
-if [ "$R_OSTYPE" = "unix" ]; then
-  UNAME=`uname`
-else
-  UNAME=Windows
-fi
 
 # Library settings
 PKG_CONFIG_NAME="openssl"
 PKG_DEB_NAME="libssl-dev"
 PKG_RPM_NAME="openssl-devel"
 PKG_CSW_NAME="libssl_dev"
-PKG_BREW_NAME="openssl"
+PKG_BREW_NAME="openssl@1.1"
 PKG_TEST_FILE="tools/version.c"
 PKG_LIBS="-lssl -lcrypto"
 PKG_CFLAGS=""
@@ -38,16 +32,16 @@ elif [ "$PKGCONFIG_CFLAGS" ] || [ "$PKGCONFIG_LIBS" ]; then
   PKG_CFLAGS=${PKGCONFIG_CFLAGS}
   PKG_LIBS=${PKGCONFIG_LIBS}
 else
-  case "$UNAME" in "Darwin"*)
+  case "$OSTYPE" in "darwin"*)
   brew --version 2>/dev/null
   if [ $? -eq 0 ]; then
     BREWDIR=`brew --prefix`
   else
-    curl -sfL "https://jeroen.github.io/autobrew/$PKG_BREW_NAME" > autobrew
-    . autobrew
+    curl -sfL "https://autobrew.github.io/scripts/$PKG_BREW_NAME" > autobrew
+    source autobrew
   fi
-  PKG_CFLAGS="-I$BREWDIR/opt/openssl/include"
-  PKG_LIBS="-L$BREWDIR/opt/openssl/lib $PKG_LIBS"
+  PKG_CFLAGS="-I$BREWDIR/opt/openssl@1.1/include -I$BREWDIR/opt/openssl/include"
+  PKG_LIBS="-L$BREWDIR/opt/openssl@1.1/lib -L$BREWDIR/opt/openssl/lib $PKG_LIBS"
   ;;
   esac
 fi
@@ -61,11 +55,11 @@ CPPFLAGS=`${R_HOME}/bin/R CMD config CPPFLAGS`
 echo "Using PKG_CFLAGS=$PKG_CFLAGS"
 
 # Test configuration
-${CC} ${CPPFLAGS} ${PKG_CFLAGS} ${CFLAGS} -E ${PKG_TEST_FILE} >/dev/null 2>&1
+${CC} ${CPPFLAGS} ${PKG_CFLAGS} ${CFLAGS} -E ${PKG_TEST_FILE} >/dev/null 2>configure.log
 
 # Customize the error
 if [ $? -ne 0 ]; then
-  echo "------------------------- ANTICONF ERROR ---------------------------"
+  echo "--------------------------- [ANTICONF] --------------------------------"
   echo "Configuration failed because $PKG_CONFIG_NAME was not found. Try installing:"
   echo " * deb: $PKG_DEB_NAME (Debian, Ubuntu, etc)"
   echo " * rpm: $PKG_RPM_NAME (Fedora, CentOS, RHEL)"
@@ -75,16 +69,18 @@ if [ $? -ne 0 ]; then
   echo "PATH and PKG_CONFIG_PATH contains a $PKG_CONFIG_NAME.pc file. If pkg-config"
   echo "is unavailable you can set INCLUDE_DIR and LIB_DIR manually via:"
   echo "R CMD INSTALL --configure-vars='INCLUDE_DIR=... LIB_DIR=...'"
+  echo "-------------------------- [ERROR MESSAGE] ---------------------------"
+  cat configure.log
   echo "--------------------------------------------------------------------"
-  exit 1;
+  exit 1
 fi
 
 # Try to link against the correct OpenSSL version
 if [ -z "$AUTOBREW" ]; then
 SONAME=`${CC} -E ${PKG_CFLAGS} src/tests/soname.h | sh | xargs`
 if [ "$SONAME" ]; then
-case "$UNAME" in
-  "Darwin"*)
+case "$OSTYPE" in
+  "darwin"*)
   PKG_LIBS_VERSIONED=`echo "${PKG_LIBS}" | sed "s/-lssl/-lssl.${SONAME}/" | sed "s/-lcrypto/-lcrypto.${SONAME}/"`
   ;;
   *)
@@ -94,10 +90,14 @@ esac
 
 # Test if versioned linking works
 ${CC} ${PKG_CFLAGS} src/tests/main.c ${PKG_LIBS_VERSIONED} -o src/main.exe 2>/dev/null
-if [ $? -eq 0 ]; then
-  rm -f src/main.exe
-  PKG_LIBS="${PKG_LIBS_VERSIONED}"
+if [ $? -eq 0 ]; then rm -f src/main.exe; PKG_LIBS="${PKG_LIBS_VERSIONED}"; fi
+
+
+# Suppress opensslv3 warnings for now
+if [ "$SONAME" = "3" ]; then
+PKG_CFLAGS="$PKG_CFLAGS -DOPENSSL_SUPPRESS_DEPRECATED"
 fi
+
 fi #SONAME
 fi #AUTOBREW
 
