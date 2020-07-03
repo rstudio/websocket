@@ -11,3 +11,4 @@
 ^.vscode$
 ^CONTRIBUTING.md$
 ^\.github$
+^configure.log$
