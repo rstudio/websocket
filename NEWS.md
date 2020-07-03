@@ -1,4 +1,4 @@
-1.2.0.9000
+1.3.0
 =====
 
 * Update to WebSocket++ 0.8.2, in order to work with AsioHeaders 1.16.1-1. (#68)
