@@ -3,6 +3,10 @@
 
 * Update to WebSocket++ 0.8.2, in order to work with AsioHeaders 1.16.1-1. (#68)
 
+* Windows and Mac: Update to OpenSSL 1.1.1g. (#69)
+
+* Building and installing the package no longer leaves files in the system temp directory. (#69)
+
 1.2.0
 =====
 
