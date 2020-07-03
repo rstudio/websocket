@@ -1,6 +1,6 @@
 #!/bin/bash
 
-COMMIT=0.8.1
+COMMIT=0.8.2
 
 set -e
 
