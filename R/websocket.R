@@ -1,6 +1,7 @@
 #' @useDynLib websocket, .registration = TRUE
 #' @import later
 #' @importFrom Rcpp sourceCpp
+#' @importFrom R6 R6Class
 #' @include RcppExports.R
 NULL
 
@@ -143,7 +144,7 @@ null_func <- function(...) { }
 NULL
 
 #' @export
-WebSocket <- R6::R6Class("WebSocket",
+WebSocket <- R6Class("WebSocket",
   public = list(
     initialize = function(url,
       protocols = character(0),
@@ -271,7 +272,7 @@ WebSocket <- R6::R6Class("WebSocket",
   )
 )
 
-Callbacks <- R6::R6Class(
+Callbacks <- R6Class(
   'Callbacks',
   private = list(
     .nextId = integer(0),
