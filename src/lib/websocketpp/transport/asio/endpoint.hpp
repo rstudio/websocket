@@ -45,69 +45,6 @@ namespace ws_websocketpp {
 namespace transport {
 namespace asio {
 
-/***
- * In current versions of libstdc++, the error_constants.h code associated to mingw32
- * does not define certain standard enum values for `std::errc`. (In C++11 standard,
- * sections 19.5.2, 19.5.3.) Asio uses these for lib::asio::errc when it is compiled
- * as a stand-alone library, so because of the libstdc++ defect, code below referring
- * to lib::asio::errc::operation_canceled fails to compile on mingw.
- *
- * This workaround detects the defect using SFINAE and returns 'false' for the check
- * if operation_canceled is not defined, instead of failing to compile.
- *
- * If upstream patches this later by defining those enum values, then the workaround
- * will stop having any effect.
- *
- * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=68307
- */
-namespace _workaround_gcc_libstdcpp_issue_68307_missing_values {
-/***
- * Same as std::enable_if, but don't want to introduce dependency on <type_traits>
- * since that's C++11 only
- */
-template<bool B, class T = void>
-struct enable_if {};
-
-template<class T>
-struct enable_if<true, T> { typedef T type; };
-
-/***
- * Metafunction to test "operation_canceled" value
- */
-template <typename T, typename ENABLE=void>
-struct op_canceled_helper {
-  template <typename U>
-  static inline bool is_op_canceled(const U & u) { return false; }
-};
-
-template <typename T>
-struct op_canceled_helper<T, enable_if<T::operation_canceled == T::operation_canceled, void> > {
-  template<typename U>
-  static inline bool is_op_canceled(const U & u) { return u == T::operation_canceled; }
-};
-
-/***
- * This function is intended to be a drop-in replacement for
- *   (asio_ec == lib::asio::errc::operation_canceled)
- *
- * except that if lib::asio::errc::operation_canceled does not exist, it returns false,
- * instead of failing to compile.
- *
- * When using boost and not asio standalone, then lib::asio::errc is a namespace, not an enum class.
- * So the template code will fail to compile and we need to block it from being instantiated, with this
- * ifdef. When using boost the standard library symbol definitions aren't relevant afaik.
- */
-#ifdef ASIO_STANDALONE
-static inline bool is_op_canceled(const lib::asio::error_code & asio_ec) {
-  return op_canceled_helper<lib::asio::errc, void>::is_op_canceled(asio_ec);
-}
-#else
-static inline bool is_op_canceled(const lib::asio::error_code & asio_ec) {
-  return asio_ec == lib::asio::errc::operation_canceled;
-}
-#endif
-} // namespace _workaround
-
 /// Asio based endpoint transport component
 /**
  * transport::asio::endpoint implements an endpoint transport component using
@@ -224,7 +161,7 @@ public:
             rhs.m_acceptor = NULL;
             rhs.m_listen_backlog = lib::asio::socket_base::max_connections;
             rhs.m_state = UNINITIALIZED;
-
+            
             // TODO: this needs to be updated
         }
         return *this;
@@ -258,8 +195,7 @@ public:
 
         m_io_service = ptr;
         m_external_io_service = true;
-        m_acceptor = lib::make_shared<lib::asio::ip::tcp::acceptor>(
-            lib::ref(*m_io_service));
+        m_acceptor.reset(new lib::asio::ip::tcp::acceptor(*m_io_service));
 
         m_state = READY;
         ec = lib::error_code();
@@ -289,7 +225,7 @@ public:
      * @param ec Set to indicate what error occurred, if any.
      */
     void init_asio(lib::error_code & ec) {
-        // Use a smart pointer until the call is successful and ownership has
+        // Use a smart pointer until the call is successful and ownership has 
         // successfully been taken. Use unique_ptr when available.
         // TODO: remove the use of auto_ptr when C++98/03 support is no longer
         //       necessary.
@@ -311,7 +247,7 @@ public:
      * @see init_asio(io_service_ptr ptr)
      */
     void init_asio() {
-        // Use a smart pointer until the call is successful and ownership has
+        // Use a smart pointer until the call is successful and ownership has 
         // successfully been taken. Use unique_ptr when available.
         // TODO: remove the use of auto_ptr when C++98/03 support is no longer
         //       necessary.
@@ -442,7 +378,7 @@ public:
     lib::asio::io_service & get_io_service() {
         return *m_io_service;
     }
-
+    
     /// Get local TCP endpoint
     /**
      * Extracts the local endpoint from the acceptor. This represents the
@@ -450,7 +386,7 @@ public:
      *
      * Sets a bad_descriptor error if the acceptor is not currently listening
      * or otherwise unavailable.
-     *
+     * 
      * @since 0.7.0
      *
      * @param ec Set to indicate what error occurred, if any.
@@ -489,10 +425,10 @@ public:
 
         m_acceptor->open(ep.protocol(),bec);
         if (bec) {ec = clean_up_listen_after_error(bec);return;}
-
+        
         m_acceptor->set_option(lib::asio::socket_base::reuse_address(m_reuse_addr),bec);
         if (bec) {ec = clean_up_listen_after_error(bec);return;}
-
+        
         // if a TCP pre-bind handler is present, run it
         if (m_tcp_pre_bind_handler) {
             ec = m_tcp_pre_bind_handler(m_acceptor);
@@ -501,13 +437,13 @@ public:
                 return;
             }
         }
-
+        
         m_acceptor->bind(ep,bec);
         if (bec) {ec = clean_up_listen_after_error(bec);return;}
-
+        
         m_acceptor->listen(m_listen_backlog,bec);
         if (bec) {ec = clean_up_listen_after_error(bec);return;}
-
+        
         // Success
         m_state = LISTENING;
         ec = lib::error_code();
@@ -751,9 +687,7 @@ public:
      * @since 0.3.0
      */
     void start_perpetual() {
-        m_work = lib::make_shared<lib::asio::io_service::work>(
-            lib::ref(*m_io_service)
-        );
+        m_work.reset(new lib::asio::io_service::work(*m_io_service));
     }
 
     /// Clears the endpoint's perpetual flag, allowing it to exit when empty
@@ -891,7 +825,7 @@ protected:
         m_elog = e;
     }
 
-    void handle_accept(accept_handler callback, lib::asio::error_code const &
+    void handle_accept(accept_handler callback, lib::asio::error_code const & 
         asio_ec)
     {
         lib::error_code ret_ec;
@@ -899,7 +833,7 @@ protected:
         m_alog->write(log::alevel::devel, "asio::handle_accept");
 
         if (asio_ec) {
-            if (_workaround_gcc_libstdcpp_issue_68307_missing_values::is_op_canceled(asio_ec)) {
+            if (asio_ec == lib::asio::errc::operation_canceled) {
                 ret_ec = make_error_code(ws_websocketpp::error::operation_canceled);
             } else {
                 log_err(log::elevel::info,"asio handle_accept",asio_ec);
@@ -917,8 +851,7 @@ protected:
 
         // Create a resolver
         if (!m_resolver) {
-            m_resolver = lib::make_shared<lib::asio::ip::tcp::resolver>(
-                lib::ref(*m_io_service));
+            m_resolver.reset(new lib::asio::ip::tcp::resolver(*m_io_service));
         }
 
         tcon->set_uri(u);
