@@ -2,37 +2,15 @@
 
 There were no ERRORs or WARNINGs.
 
-There were 3 NOTEs:
-
-*  checking CRAN incoming feasibility ... NOTE
-
-Maintainer: ‘Winston Chang <winston@rstudio.com>’
-
-New maintainer:
-  Winston Chang <winston@rstudio.com>
-Old maintainer(s):
-  Alan Dipert <alan@rstudio.com>
-
-As mentioned above, Alan Dipert no longer is at RStudio and his email address has been deactivated, so I am asking to take over maintainership.
+There were 2 NOTEs:
 
 * checking installed package size ... NOTE
-  installed size is 12.7Mb
+  installed size is 14.1Mb
   sub-directories of 1Mb or more:
-    libs  12.5Mb
+    libs  13.9Mb
 
 The websocketpp C++ library is several megabytes in size, so this is unavoidable.
 
 * GNU make is a SystemRequirements.
 
 GNU syntax += is used in Makevars.in to append to the PKG_LIBS variable.
-
-
-## Regarding Package Check Results
-
-On https://cloud.r-project.org/web/checks/check_results_websocket.html, the
-`r-patched-solaris-x86` platforms are listed with
-status ERROR.
-
-### `r-patched-solaris-x86`
-
-We have used a Solaris VM, but haven't been able to reproduce the error at https://www.r-project.org/nosvn/R.check/r-patched-solaris-x86/websocket-00check.html when running the tests manually, or with `R CMD check`. I believe it may be an intermittent error that is happening due to network timeouts on the Solaris build machine.
