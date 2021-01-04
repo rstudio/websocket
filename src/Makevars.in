@@ -1,8 +1,6 @@
 # Use C++11 if available
 CXX_STD=CXX11
 
-PKG_CFLAGS = -DSTRICT_R_HEADERS
-PKG_CXXFLAGS = -DSTRICT_R_HEADERS
 PKG_CPPFLAGS = -I./lib @cflags@
 PKG_LIBS += @libs@
 
