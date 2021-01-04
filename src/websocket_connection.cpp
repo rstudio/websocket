@@ -245,9 +245,10 @@ void WebsocketConnection::removeHandlers() {
   ASSERT_MAIN_THREAD()
   // Clear the references to the parts of the WebSocket R6 object. This is
   // necessary for the WebSocket R6 object to get GC'd by R.
-  cpp11::function new_env = cpp11::package("base")["new.env"];
-  robjPublic  = cpp11::environment(new_env());
-  robjPrivate = cpp11::environment(new_env());
+  cpp11::function emptyenv_fn = cpp11::package("base")["emptyenv"];
+  cpp11::environment emptyenv = cpp11::environment(emptyenv_fn());
+  robjPublic  = emptyenv;
+  robjPrivate = emptyenv;
 }
 
 cpp11::function WebsocketConnection::getInvoker(std::string name) {
