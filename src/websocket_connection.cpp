@@ -1,4 +1,4 @@
-#include <Rcpp.h>
+#include "cpp11.hpp"
 #include "websocket_defs.h"
 #include "websocket_connection.h"
 #include "debug.h"
@@ -16,7 +16,9 @@ static context_ptr on_tls_init() {
       asio::ssl::context::no_sslv3 |
       asio::ssl::context::single_dh_use);
   } catch (std::exception &e) {
-    Rcpp::Rcerr << "Error in context pointer: " << e.what() << std::endl;
+    // TODO: Fix this!
+    cpp11::stop("Error in context pointer");
+    // cpp11::stop("Error in context pointer: " + e.what() + std::endl);
   }
   return ctx;
 }
@@ -30,14 +32,23 @@ void invoke_function_callback(void* data) {
   delete fun;
 }
 
+// Convert a std::string to a cpp11:raws
+cpp11::raws to_raw(const std::string input) {
+  cpp11::writable::raws rv(input.size());
+  const char* input_c = input.c_str();
+  for(unsigned long i=0; i<input.size(); i++) {
+    rv[i] = input_c[i];
+  }
+  return rv;
+}
 
 WebsocketConnection::WebsocketConnection(
   std::string uri,
   int loop_id,
-  Rcpp::Environment robjPublic,
-  Rcpp::Environment robjPrivate,
-  Rcpp::CharacterVector accessLogChannels,
-  Rcpp::CharacterVector errorLogChannels,
+  cpp11::environment robjPublic,
+  cpp11::environment robjPrivate,
+  cpp11::strings accessLogChannels,
+  cpp11::strings errorLogChannels,
   int maxMessageSize
 )
 : uri(uri),
@@ -47,7 +58,7 @@ WebsocketConnection::WebsocketConnection(
 {
   ASSERT_MAIN_THREAD()
   if (uri.size() < 6) {
-    throw Rcpp::exception("Invalid websocket URI: too short");
+    cpp11::stop("Invalid websocket URI: too short");
   }
 
 
@@ -59,7 +70,7 @@ WebsocketConnection::WebsocketConnection(
     client->set_tls_init_handler(bind(&on_tls_init));
 
   } else {
-    throw Rcpp::exception("Invalid websocket URI: must begin with ws:// or wss://");
+    cpp11::stop("Invalid websocket URI: must begin with ws:// or wss://");
   }
 
   if (accessLogChannels.size() > 0) {
@@ -84,7 +95,7 @@ WebsocketConnection::WebsocketConnection(
   client->setup_connection(uri, ec);
   if (ec) {
     // TODO Should we call onFail here?
-    Rcpp::stop("Could not create connection because: " + ec.message());
+    cpp11::stop("Could not create connection because: " + ec.message());
   }
 }
 
@@ -102,21 +113,24 @@ void WebsocketConnection::handleMessage(ws_websocketpp::connection_hdl, message_
 
 void WebsocketConnection::rHandleMessage(message_ptr msg) {
   ASSERT_MAIN_THREAD()
-  Rcpp::List event;
-  event["target"] = robjPublic;
+  cpp11::writable::list event(2);
+  event[0] = robjPublic;
 
   ws_websocketpp::frame::opcode::value opcode = msg->get_opcode();
   if (opcode == ws_websocketpp::frame::opcode::value::text) {
-    event["data"] = msg->get_payload();
+    event[1] = cpp11::as_sexp(msg->get_payload());
 
   } else if (opcode == ws_websocketpp::frame::opcode::value::binary) {
     const std::string msg_str = msg->get_payload();
-    event["data"] = std::vector<uint8_t>(msg_str.begin(), msg_str.end());
+    event[1] = to_raw(msg_str);
+    //const uint8_t* msg_data = reinterpret_cast<const uint8_t*>(msg_str.c_str());
+    //event["data"] = cpp11::raws(*msg_data);
 
   } else {
-    Rcpp::stop("Unknown opcode for message (not text or binary).");
+    cpp11::stop("Unknown opcode for message (not text or binary).");
   }
 
+  event.names() = { "target", "data" };
   getInvoker("message")(event);
 }
 
@@ -136,12 +150,18 @@ void WebsocketConnection::handleClose(ws_websocketpp::connection_hdl) {
 void WebsocketConnection::rHandleClose(ws_websocketpp::close::status::value code, std::string reason) {
   ASSERT_MAIN_THREAD()
   state = WebsocketConnection::STATE::CLOSED;
-  Rcpp::List event;
-  event["target"] = robjPublic;
-  event["code"] = code;
-  event["reason"] = reason;
+  cpp11::writable::list event = {
+    robjPublic,
+    cpp11::as_sexp(code),
+    cpp11::as_sexp(reason)
+  };
+  event.names() = {
+    "target",
+    "code",
+    "reason"
+  };
 
-  Rcpp::Function onClose = getInvoker("close");
+  cpp11::function onClose = getInvoker("close");
   removeHandlers();
   onClose(event);
 }
@@ -166,8 +186,8 @@ void WebsocketConnection::rHandleOpen() {
   }
   state = WebsocketConnection::STATE::OPEN;
 
-  Rcpp::List event;
-  event["target"] = robjPublic;
+  cpp11::writable::list event = { robjPublic };
+  event.names() = { "target" };
   getInvoker("open")(event);
 }
 
@@ -189,11 +209,16 @@ void WebsocketConnection::rHandleFail() {
   ws_websocketpp::lib::error_code ec = client->get_ec();
   std::string errMessage = ec.message();
 
-  Rcpp::List event;
-  event["target"] = robjPublic;
-  event["message"] = errMessage;
+  cpp11::writable::list event = {
+    robjPublic,
+    cpp11::as_sexp(errMessage)
+  };
+  event.names() = {
+    "target",
+    "message"
+  };
 
-  Rcpp::Function onFail = getInvoker("error");
+  cpp11::function onFail = getInvoker("error");
   removeHandlers();
   onFail(event);
 }
@@ -220,12 +245,14 @@ void WebsocketConnection::removeHandlers() {
   ASSERT_MAIN_THREAD()
   // Clear the references to the parts of the WebSocket R6 object. This is
   // necessary for the WebSocket R6 object to get GC'd by R.
-  robjPublic = Rcpp::Environment();
-  robjPrivate = Rcpp::Environment();
+  cpp11::function new_env = cpp11::package("base")["new.env"];
+  robjPublic  = cpp11::environment(new_env());
+  robjPrivate = cpp11::environment(new_env());
 }
 
-Rcpp::Function WebsocketConnection::getInvoker(std::string name) {
+cpp11::function WebsocketConnection::getInvoker(std::string name) {
   ASSERT_MAIN_THREAD()
-  Rcpp::Function gi = robjPrivate.get("getInvoker");
-  return gi(name);
+  cpp11::function get_invoker(robjPrivate["getInvoker"]);
+  cpp11::function invoker(get_invoker(name));
+  return invoker;
 }

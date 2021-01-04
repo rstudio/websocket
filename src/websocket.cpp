@@ -11,7 +11,7 @@
 
 
 #include <iostream>
-#include <Rcpp.h>
+#include "cpp11.hpp"
 #include "wrapped_print.h"
 #include <websocketpp/common/functional.hpp>
 #include "client.hpp"
@@ -20,12 +20,10 @@
 #include "websocket_connection.h"
 #include "debug.h"
 
-using namespace Rcpp;
-
 
 shared_ptr<WebsocketConnection> xptrGetWsConn(SEXP wsc_xptr) {
   if (TYPEOF(wsc_xptr) != EXTPTRSXP) {
-    throw Rcpp::exception("Expected external pointer.");
+    cpp11::stop("Expected external pointer.");
   }
   return *reinterpret_cast<shared_ptr<WebsocketConnection>*>(R_ExternalPtrAddr(wsc_xptr));
 }
@@ -47,14 +45,14 @@ void wsc_deleter(SEXP wsc_xptr) {
 }
 
 
-// [[Rcpp::export]]
+[[cpp11::register]]
 SEXP wsCreate(
   std::string uri,
   int loop_id,
-  Rcpp::Environment robjPublic,
-  Rcpp::Environment robjPrivate,
-  Rcpp::CharacterVector accessLogChannels,
-  Rcpp::CharacterVector errorLogChannels,
+  cpp11::environment robjPublic,
+  cpp11::environment robjPrivate,
+  cpp11::strings accessLogChannels,
+  cpp11::strings errorLogChannels,
   int maxMessageSize
 ) {
   REGISTER_MAIN_THREAD()
@@ -69,26 +67,24 @@ SEXP wsCreate(
   return wsc_xptr;
 }
 
-// [[Rcpp::export]]
+[[cpp11::register]]
 void wsAppendHeader(SEXP wsc_xptr, std::string key, std::string value) {
   ASSERT_MAIN_THREAD()
   shared_ptr<WebsocketConnection> wsc = xptrGetWsConn(wsc_xptr);
   wsc->client->append_header(key, value);
 }
 
-// [[Rcpp::export]]
-void wsAddProtocols(SEXP wsc_xptr, CharacterVector protocols) {
+[[cpp11::register]]
+void wsAddProtocols(SEXP wsc_xptr, cpp11::strings protocols) {
   ASSERT_MAIN_THREAD()
   shared_ptr<WebsocketConnection> wsc = xptrGetWsConn(wsc_xptr);
-  for (Rcpp::CharacterVector::iterator it = protocols.begin();
-       it != protocols.end();
-       it++) {
-    std::string protocol = Rcpp::as<std::string>(*it);
+  for (auto it = protocols.begin(); it != protocols.end(); ++it) {
+    std::string protocol = *it;
     wsc->client->add_subprotocol(protocol);
   }
 }
 
-// [[Rcpp::export]]
+[[cpp11::register]]
 void wsConnect(SEXP wsc_xptr) {
   ASSERT_MAIN_THREAD()
   shared_ptr<WebsocketConnection> wsc = xptrGetWsConn(wsc_xptr);
@@ -101,7 +97,7 @@ void wsConnect(SEXP wsc_xptr) {
   wst->begin();
 }
 
-// [[Rcpp::export]]
+[[cpp11::register]]
 void wsSend(SEXP wsc_xptr, SEXP msg) {
   ASSERT_MAIN_THREAD()
   shared_ptr<WebsocketConnection> wsc = xptrGetWsConn(wsc_xptr);
@@ -122,25 +118,25 @@ void wsSend(SEXP wsc_xptr, SEXP msg) {
   } else if (TYPEOF(msg) == RAWSXP) {
     wsc->client->send(RAW(msg), Rf_length(msg), ws_websocketpp::frame::opcode::binary);
   } else {
-    stop("msg must be a one-element character vector or a raw vector.");
+    cpp11::stop("msg must be a one-element character vector or a raw vector.");
   }
 }
 
-// [[Rcpp::export]]
+[[cpp11::register]]
 void wsClose(SEXP wsc_xptr, uint16_t code, std::string reason) {
   ASSERT_MAIN_THREAD()
   shared_ptr<WebsocketConnection> wsc = xptrGetWsConn(wsc_xptr);
   wsc->close(code, reason);
 }
 
-// [[Rcpp::export]]
+[[cpp11::register]]
 std::string wsProtocol(SEXP wsc_xptr) {
   ASSERT_MAIN_THREAD()
   shared_ptr<WebsocketConnection> wsc = xptrGetWsConn(wsc_xptr);
   return wsc->client->get_subprotocol();
 }
 
-// [[Rcpp::export]]
+[[cpp11::register]]
 std::string wsState(SEXP wsc_xptr) {
   ASSERT_MAIN_THREAD()
   shared_ptr<WebsocketConnection> wsc = xptrGetWsConn(wsc_xptr);
@@ -157,12 +153,12 @@ std::string wsState(SEXP wsc_xptr) {
   return "UNKNOWN";
 }
 
-// [[Rcpp::export]]
+[[cpp11::register]]
 void wsUpdateLogChannels(
   SEXP wsc_xptr,
   std::string accessOrError,
   std::string setOrClear,
-  Rcpp::CharacterVector logChannels
+  cpp11::strings logChannels
 ) {
   ASSERT_MAIN_THREAD()
   shared_ptr<WebsocketConnection> wsc = xptrGetWsConn(wsc_xptr);

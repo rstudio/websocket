@@ -3,5 +3,4 @@
 export(WebSocket)
 import(later)
 importFrom(R6,R6Class)
-importFrom(Rcpp,sourceCpp)
 useDynLib(websocket, .registration = TRUE)

@@ -19,15 +19,14 @@ License: GPL-2
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
-Imports: Rcpp,
+Imports:
     R6,
-    later (>= 1.1.0)
-LinkingTo: Rcpp, BH, AsioHeaders, later
-SystemRequirements: GNU make, OpenSSL >= 1.0.2
+    later (>= 1.1.0.9001)
+Remotes:
+    r-lib/later@no-rcpp
+LinkingTo: cpp11, AsioHeaders, later
+SystemRequirements: C++11, GNU make, OpenSSL >= 1.0.2
 RoxygenNote: 7.1.1
-Collate:
-    'RcppExports.R'
-    'websocket.R'
 Suggests:
     httpuv,
     testthat,
