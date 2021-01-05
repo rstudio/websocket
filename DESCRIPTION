@@ -1,5 +1,5 @@
 Package: websocket
-Version: 1.3.2
+Version: 1.3.2.9001
 Title: 'WebSocket' Client Library
 Description: Provides a 'WebSocket' client interface for R.
     'WebSocket' is a protocol for low-overhead real-time communication:
@@ -23,7 +23,7 @@ Imports:
     R6,
     later (>= 1.1.0.9001)
 Remotes:
-    r-lib/later@no-rcpp
+    r-lib/later
 LinkingTo: cpp11, AsioHeaders, later
 SystemRequirements: C++11, GNU make, OpenSSL >= 1.0.2
 RoxygenNote: 7.1.1
