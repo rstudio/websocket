@@ -180,6 +180,11 @@ test_that("Basic websocket communication", {
 })
 
 test_that("WebSocket object can be garbage collected", {
+  skip_if(
+    R.version$major == "3" && grepl("^4\\.", R.version$minor),
+    "GC behavior for this test is strange on R 3.4 (but works on older and newer versions of R)"
+  )
+
   s <- echo_server()
   on.exit(shut_down_server(s))
   url <- server_url(s)
