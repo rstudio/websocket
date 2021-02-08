@@ -171,7 +171,6 @@ check_ws <- function(wsUrl) {
 }
 
 
-context("Basic WebSocket")
 test_that("Basic websocket communication", {
   s <- echo_server()
   on.exit(shut_down_server(s))
@@ -333,7 +332,7 @@ test_that("WebSocket can be closed before fully open", {
   # If no connection attempt is made, then we'll stay in the pre-connectiong
   # state, and the onClose callback won't be invoked.
   onCloseCalled <- FALSE
-  ws <- WebSocket$new("ws://echo.websocket.org", autoConnect = FALSE)
+  ws <- WebSocket$new(url, autoConnect = FALSE)
   ws$onClose(function(event) {
     onCloseCalled <<- TRUE
   })
@@ -441,8 +440,10 @@ test_that("WebSocket persists after reference is gone, and can be GC'd after con
 
 
 
-context("Basic SSL WebSocket")
 test_that("Basic ssl websocket communication", {
+  # Don't want network connectivity issues on CRAN to cause package to be
+  # rejected.
+  skip_on_cran()
   check_ws("wss://echo.websocket.org/")
 })
 
