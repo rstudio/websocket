@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # Anticonf (tm) script by Jeroen Ooms (2020)
 # This script will query 'pkg-config' for the required cflags and ldflags.
 # If pkg-config is unavailable or does not find the library, try setting
@@ -10,7 +9,7 @@ PKG_CONFIG_NAME="openssl"
 PKG_DEB_NAME="libssl-dev"
 PKG_RPM_NAME="openssl-devel"
 PKG_CSW_NAME="libssl_dev"
-PKG_BREW_NAME="openssl"
+PKG_BREW_NAME="openssl@1.1"
 PKG_TEST_FILE="tools/version.c"
 PKG_LIBS="-lssl -lcrypto"
 PKG_CFLAGS=""
@@ -31,19 +30,16 @@ elif [ "$PKGCONFIG_CFLAGS" ] || [ "$PKGCONFIG_LIBS" ]; then
   echo "Found pkg-config cflags and libs!"
   PKG_CFLAGS=${PKGCONFIG_CFLAGS}
   PKG_LIBS=${PKGCONFIG_LIBS}
-else
-  case "$OSTYPE" in "darwin"*)
+elif [ `uname` = "Darwin" ]; then
   brew --version 2>/dev/null
   if [ $? -eq 0 ]; then
     BREWDIR=`brew --prefix`
     PKG_CFLAGS="-I$BREWDIR/opt/openssl/include"
     PKG_LIBS="-L$BREWDIR/opt/openssl/lib $PKG_LIBS"
   else
-    curl -sfL "https://autobrew.github.io/scripts/openssl" > autobrew
-    source autobrew
+    curl -sfL "https://autobrew.github.io/scripts/$PKG_BREW_NAME" > autobrew
+    . ./autobrew
   fi
-  ;;
-  esac
 fi
 
 # Find compiler
@@ -79,19 +75,15 @@ fi
 if [ -z "$AUTOBREW" ]; then
 SONAME=`${CC} -E ${PKG_CFLAGS} src/tests/soname.h | sh | xargs`
 if [ "$SONAME" ]; then
-case "$OSTYPE" in
-  "darwin"*)
+if [ `uname` = "Darwin" ]; then
   PKG_LIBS_VERSIONED=`echo "${PKG_LIBS}" | sed "s/-lssl/-lssl.${SONAME}/" | sed "s/-lcrypto/-lcrypto.${SONAME}/"`
-  ;;
-  *)
+else
   PKG_LIBS_VERSIONED=`echo "${PKG_LIBS}" | sed "s/-lssl/-l:libssl.so.${SONAME}/" | sed "s/-lcrypto/-l:libcrypto.so.${SONAME}/"`
-  ;;
-esac
+fi
 
 # Test if versioned linking works
 ${CC} ${PKG_CFLAGS} src/tests/main.c ${PKG_LIBS_VERSIONED} -o src/main.exe 2>/dev/null
 if [ $? -eq 0 ]; then rm -f src/main.exe; PKG_LIBS="${PKG_LIBS_VERSIONED}"; fi
-
 
 # Suppress opensslv3 warnings for now
 if [ "$SONAME" = "3" ]; then
