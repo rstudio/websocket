@@ -1,4 +1,4 @@
-1.3.1.9000
+1.3.2
 =====
 
 * Made a tweak to autobrew in `configure` script. (@jeroen, #75)
