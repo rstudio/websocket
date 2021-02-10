@@ -85,6 +85,6 @@ namespace WrappedOstream {
   static WrappedStreambuf err_buf(false);
   static std::ostream cout(&out_buf);
   static std::ostream cerr(&err_buf);
-};
+}
 
 #endif
