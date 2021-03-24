@@ -16,9 +16,7 @@ static context_ptr on_tls_init() {
       asio::ssl::context::no_sslv3 |
       asio::ssl::context::single_dh_use);
   } catch (std::exception &e) {
-    // TODO: Fix this!
-    cpp11::stop("Error in context pointer");
-    // cpp11::stop("Error in context pointer: " + e.what() + std::endl);
+    cpp11::stop(std::string("Error in context pointer: ") + e.what() + "\n");
   }
   return ctx;
 }
