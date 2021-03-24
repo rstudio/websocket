@@ -3,7 +3,7 @@
 
 #define ASIO_STANDALONE
 #include "wrapped_print.h"
-#include <Rcpp.h>
+#include "cpp11.hpp"
 #include <websocketpp/config/asio_no_tls_client.hpp>
 #include <websocketpp/config/asio_client.hpp>
 #include <websocketpp/client.hpp>
@@ -38,7 +38,7 @@ public:
   virtual void clear_access_channels(ws_websocketpp::log::level channels) = 0;
   virtual void set_error_channels(ws_websocketpp::log::level channels) = 0;
   virtual void clear_error_channels(ws_websocketpp::log::level channels) = 0;
-  virtual void update_log_channels(std::string accessOrError, std::string setOrClear, Rcpp::CharacterVector logChannels) = 0;
+  virtual void update_log_channels(std::string accessOrError, std::string setOrClear, cpp11::strings logChannels) = 0;
   virtual void init_asio() = 0;
   virtual void set_tls_init_handler(ws_websocketpp::transport::asio::tls_socket::tls_init_handler h) = 0;
   virtual void set_open_handler(ws_websocketpp::open_handler h) = 0;
@@ -89,7 +89,7 @@ public:
   void clear_error_channels(ws_websocketpp::log::level channels) {
     client.clear_error_channels(channels);
   };
-  void update_log_channels(std::string accessOrError, std::string setOrClear, Rcpp::CharacterVector logChannels) {
+  void update_log_channels(std::string accessOrError, std::string setOrClear, cpp11::strings logChannels) {
     if (logChannels.size() == 0) return;
     ws_websocketpp::log::level channel;
     std::string fnName = accessOrError + "_" + setOrClear;
@@ -217,7 +217,7 @@ private:
     else if (logLevel == "access_core")     return ws_websocketpp::log::alevel::access_core;
     else if (logLevel == "all")             return ws_websocketpp::log::alevel::all;
     else
-      Rcpp::stop("logLevel must be one of the access logging levels (alevel).  See https://www.zaphoyd.com/websocketpp/manual/reference/logging");
+      cpp11::stop("logLevel must be one of the access logging levels (alevel).  See https://www.zaphoyd.com/websocketpp/manual/reference/logging");
   }
 
   ws_websocketpp::log::level getErrorLogLevel(std::string logLevel) {
@@ -230,7 +230,7 @@ private:
     else if (logLevel == "fatal")   return ws_websocketpp::log::elevel::fatal;
     else if (logLevel == "all")     return ws_websocketpp::log::elevel::all;
     else
-      Rcpp::stop("logLevel must be one of the error logging levels (elevel).  See https://www.zaphoyd.com/websocketpp/manual/reference/logging");
+      cpp11::stop("logLevel must be one of the error logging levels (elevel).  See https://www.zaphoyd.com/websocketpp/manual/reference/logging");
   }
 
 };

@@ -1,8 +1,6 @@
 #' @useDynLib websocket, .registration = TRUE
 #' @import later
-#' @importFrom Rcpp sourceCpp
 #' @importFrom R6 R6Class
-#' @include RcppExports.R
 NULL
 
 # Used to "null out" handler functions after a websocket client is closed

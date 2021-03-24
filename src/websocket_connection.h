@@ -1,25 +1,28 @@
 #ifndef WEBSOCKET_CONNECTION_HPP
 #define WEBSOCKET_CONNECTION_HPP
 
-#include <boost/noncopyable.hpp>
 #include <later_api.h>
-#include <Rcpp.h>
+#include "cpp11.hpp"
 #include "websocket_defs.h"
 
 
-class WebsocketConnection : public boost::noncopyable, 
-                            public enable_shared_from_this<WebsocketConnection>
+class WebsocketConnection : public enable_shared_from_this<WebsocketConnection>
 {
 public:
   WebsocketConnection(
     std::string uri,
     int loop_id,
-    Rcpp::Environment robjPublic,
-    Rcpp::Environment robjPrivate,
-    Rcpp::CharacterVector accessLogChannels,
-    Rcpp::CharacterVector errorLogChannels,
+    cpp11::environment robjPublic,
+    cpp11::environment robjPrivate,
+    cpp11::strings accessLogChannels,
+    cpp11::strings errorLogChannels,
     int maxMessageSize
   );
+
+  // Make noncopyable (without boost)
+  WebsocketConnection(const WebsocketConnection&) = delete;
+  WebsocketConnection& operator=(const WebsocketConnection&) = delete;
+
 
   void rHandleMessage(message_ptr msg);
   void rHandleClose(ws_websocketpp::close::status::value code, std::string reason);
@@ -41,8 +44,8 @@ public:
 private:
   std::string uri;
   int loop_id;
-  Rcpp::Environment robjPublic;
-  Rcpp::Environment robjPrivate;
+  cpp11::environment robjPublic;
+  cpp11::environment robjPrivate;
 
   // This value should be touched only from the main thread.
   bool closeOnOpen = false;
@@ -57,7 +60,7 @@ private:
 
   void removeHandlers();
 
-  Rcpp::Function getInvoker(std::string name);
+  cpp11::function getInvoker(std::string name);
 };
 
 #endif
