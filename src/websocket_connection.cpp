@@ -34,7 +34,7 @@ void invoke_function_callback(void* data) {
 cpp11::raws to_raw(const std::string input) {
   cpp11::writable::raws rv(input.size());
   const char* input_c = input.c_str();
-  for(unsigned long i=0; i<input.size(); i++) {
+  for(int i=0; i<input.size(); i++) {
     rv[i] = input_c[i];
   }
   return rv;
