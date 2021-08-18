@@ -22,6 +22,7 @@ Imports:
     R6,
     later (>= 1.2.0)
 LinkingTo: cpp11, AsioHeaders, later
+BugReports: https://github.com/rstudio/websocket/issues
 SystemRequirements: C++11, GNU make, OpenSSL >= 1.0.2
 RoxygenNote: 7.1.1
 Suggests:
