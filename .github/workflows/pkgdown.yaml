@@ -3,6 +3,11 @@ on:
     branches:
       - main
       - master
+      - rc-**
+  pull_request:
+    branches:
+      - master
+      - main
 
 name: pkgdown
 
@@ -33,8 +38,10 @@ jobs:
           path: |
             ${{ env.R_LIBS_USER }}/*
             !${{ env.R_LIBS_USER }}/pak
-          key: ubuntu-20.04-${{ steps.install-r.outputs.installed-r-version }}-1-${{ hashFiles('.github/r-depends.rds') }}
-          restore-keys: ubuntu-20.04-${{ steps.install-r.outputs.installed-r-version }}-1-
+          key: ubuntu-20.04-${{ steps.install-r.outputs.installed-r-version }}-pkgdown-1-${{ hashFiles('.github/r-depends.rds') }}
+          restore-keys: |
+            ubuntu-20.04-${{ steps.install-r.outputs.installed-r-version }}-pkgdown-1-
+            ubuntu-20.04-${{ steps.install-r.outputs.installed-r-version }}-1-
 
       - name: Install system dependencies
         if: runner.os == 'Linux'
@@ -52,7 +59,21 @@ jobs:
       - name: Install package
         run: R CMD INSTALL .
 
-      - name: Build and deploy pkgdown site
+      - name: Build Site (PR)
+        if: github.event_name != 'push'
+        shell: Rscript {0}
+        run: |
+          pkgdown::build_site(new_process = FALSE)
+      # Must validate after. Otherwise files are saved and `pkgdown::build_site()` gets mad
+      - name: Validate all topics exist (PR)
+        if: github.event_name != 'push'
+        shell: Rscript {0}
+        run: |
+          pkgdown::build_reference_index()
+          stopifnot(length(warnings()) == 0)
+
+      - name: Build and deploy pkgdown site (push)
+        if: github.event_name == 'push'
         run: |
           git config --local user.name "$GITHUB_ACTOR"
           git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
