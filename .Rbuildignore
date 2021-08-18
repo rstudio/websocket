@@ -13,3 +13,4 @@
 ^\.github$
 ^configure.log$
 ^revdep$
+^pkgdown$
