@@ -30,9 +30,9 @@ There were no ERRORs or WARNINGs.
 There were 2 NOTEs:
 
 * checking installed package size ... NOTE
-  installed size is 14.1Mb
+  installed size is  9.6Mb
   sub-directories of 1Mb or more:
-    libs  13.9Mb
+    libs   9.5Mb
 
 The websocketpp C++ library is several megabytes in size, so this is unavoidable.
 
