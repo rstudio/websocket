@@ -12,3 +12,5 @@
 ^CONTRIBUTING.md$
 ^\.github$
 ^configure.log$
+^revdep$
+^pkgdown$
