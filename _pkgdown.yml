@@ -1,6 +1,9 @@
+url: https://rstudio.github.io/websocket/
+
 template:
   params:
     bootswatch: cosmo
+
 navbar:
   type: inverse
   left:
@@ -13,6 +16,7 @@ navbar:
         href: articles/overview.html
     - text: Reference
       href: reference/index.html
+
 authors:
   RStudio:
     href: https://www.rstudio.com
