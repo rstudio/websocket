@@ -6,6 +6,9 @@ development:
 template:
   params:
     bootswatch: cosmo
+    docsearch:
+      api_key: '9e39a401e6bab5df9d3b823b69a4085b'
+      index_name: 'websocket'
 
 navbar:
   type: inverse
