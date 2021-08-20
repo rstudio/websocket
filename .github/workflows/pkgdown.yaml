@@ -64,13 +64,10 @@ jobs:
         shell: Rscript {0}
         run: |
           pkgdown::build_site(new_process = FALSE)
-      # Must validate after. Otherwise files are saved and `pkgdown::build_site()` gets mad
-      - name: Validate all topics exist (PR)
-        if: github.event_name != 'push'
-        shell: Rscript {0}
-        run: |
-          pkgdown::build_reference_index()
-          stopifnot(length(warnings()) == 0)
+          # Must validate after building site
+          testthat::expect_warning({
+            pkgdown::build_reference_index()
+          }, NA)
 
       - name: Build and deploy pkgdown site (push)
         if: github.event_name == 'push'

@@ -1,4 +1,4 @@
-# websocket <img src="man/figures/websocket_logo.svg" align="right" height="250px" />
+# websocket <a href='https://rstudio.github.io/websocket'><img src='man/figures/logo.svg' align="right" height="139" /></a>
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/websocket)](https://cran.r-project.org/package=websocket)

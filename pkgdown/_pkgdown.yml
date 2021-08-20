@@ -1,6 +1,15 @@
+url: https://rstudio.github.io/websocket/
+
+development:
+  mode: auto
+
 template:
   params:
     bootswatch: cosmo
+    docsearch:
+      api_key: '9e39a401e6bab5df9d3b823b69a4085b'
+      index_name: 'websocket'
+
 navbar:
   type: inverse
   left:
@@ -13,6 +22,7 @@ navbar:
         href: articles/overview.html
     - text: Reference
       href: reference/index.html
+
 authors:
   RStudio:
     href: https://www.rstudio.com
