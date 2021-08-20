@@ -1,0 +1,10 @@
+pandoc: 2.7.3
+pkgdown: 1.6.1
+pkgdown_sha: ~
+articles:
+  overview: overview.html
+last_built: 2021-08-20T14:55Z
+urls:
+  reference: https://rstudio.github.io/websocket//reference
+  article: https://rstudio.github.io/websocket//articles
+
