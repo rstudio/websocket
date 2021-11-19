@@ -293,25 +293,25 @@ function that can be invoked to cancel that particular registration.</p>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>## Only run this example in interactive R sessions</span>
-<span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
-
-<span class='co'># Create a websocket using the websocket.org test server</span>
-<span class='va'>ws</span> <span class='op'>&lt;-</span> <span class='va'>WebSocket</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='st'>"ws://echo.websocket.org/"</span><span class='op'>)</span>
-<span class='va'>ws</span><span class='op'>$</span><span class='fu'>onMessage</span><span class='op'>(</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>event</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='st'>"Client got msg:"</span>, <span class='va'>event</span><span class='op'>$</span><span class='va'>data</span>, <span class='st'>"\n"</span><span class='op'>)</span>
-<span class='op'>}</span><span class='op'>)</span>
-<span class='va'>ws</span><span class='op'>$</span><span class='fu'>onClose</span><span class='op'>(</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>event</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='st'>"Client disconnected\n"</span><span class='op'>)</span>
-<span class='op'>}</span><span class='op'>)</span>
-<span class='va'>ws</span><span class='op'>$</span><span class='fu'>onOpen</span><span class='op'>(</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>event</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='st'>"Client connected\n"</span><span class='op'>)</span>
-<span class='op'>}</span><span class='op'>)</span>
-
-<span class='co'># Try sending a message with ws$send("hello").</span>
-<span class='co'># Close the websocket with ws$close() after you're done with it.</span>
-<span class='op'>}</span>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'>## Only run this example in interactive R sessions</span></span>
+<span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Create a websocket using the websocket.org test server</span></span>
+<span class='r-in'><span class='va'>ws</span> <span class='op'>&lt;-</span> <span class='va'>WebSocket</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='st'>"ws://echo.websocket.org/"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>ws</span><span class='op'>$</span><span class='fu'>onMessage</span><span class='op'>(</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>event</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'>  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='st'>"Client got msg:"</span>, <span class='va'>event</span><span class='op'>$</span><span class='va'>data</span>, <span class='st'>"\n"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>}</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>ws</span><span class='op'>$</span><span class='fu'>onClose</span><span class='op'>(</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>event</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'>  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='st'>"Client disconnected\n"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>}</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>ws</span><span class='op'>$</span><span class='fu'>onOpen</span><span class='op'>(</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>event</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'>  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='st'>"Client connected\n"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>}</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Try sending a message with ws$send("hello").</span></span>
+<span class='r-in'><span class='co'># Close the websocket with ws$close() after you're done with it.</span></span>
+<span class='r-in'><span class='op'>}</span></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
