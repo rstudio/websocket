@@ -152,7 +152,9 @@ WebSocket <- R6Class("WebSocket",
       errorLogChannels = NULL,
       maxMessageSize = 32 * 1024 * 1024,
       loop = later::current_loop(),
-      proxy_url = NULL
+      proxyUrl = NULL,
+      proxyUsername = NULL,
+      proxyPassword = NULL
     ) {
       private$callbacks <- new.env(parent = emptyenv())
       private$callbacks$open <- Callbacks$new()
@@ -176,8 +178,12 @@ WebSocket <- R6Class("WebSocket",
       })
       wsAddProtocols(private$wsObj, protocols)
 
-      if (!is.null(proxy_url)) {
-        wsAddProxy(private$wsObj, proxy_url)
+      if (!is.null(proxyUrl)) {
+        wsAddProxy(private$wsObj, proxyUrl)
+
+        if(!is.null(proxyUsername)) {
+          wsAddProxyBasicAuth(private$wsObj, proxyUsername, proxyPassword);
+        }
       }
 
       private$pendingConnect <- TRUE
