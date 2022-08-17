@@ -85,6 +85,13 @@ void wsAddProtocols(SEXP wsc_xptr, cpp11::strings protocols) {
 }
 
 [[cpp11::register]]
+void wsAddProxy(SEXP wsc_xptr, std::string proxy_url) {
+  ASSERT_MAIN_THREAD()
+  shared_ptr<WebsocketConnection> wsc = xptrGetWsConn(wsc_xptr);
+  wsc->client->set_proxy(proxy_url);
+}
+
+[[cpp11::register]]
 void wsConnect(SEXP wsc_xptr) {
   ASSERT_MAIN_THREAD()
   shared_ptr<WebsocketConnection> wsc = xptrGetWsConn(wsc_xptr);

@@ -12,6 +12,10 @@ wsAddProtocols <- function(wsc_xptr, protocols) {
   invisible(.Call(`_websocket_wsAddProtocols`, wsc_xptr, protocols))
 }
 
+wsAddProxy <- function(wsc_xptr, proxy_url) {
+  invisible(.Call(`_websocket_wsAddProxy`, wsc_xptr, proxy_url))
+}
+
 wsConnect <- function(wsc_xptr) {
   invisible(.Call(`_websocket_wsConnect`, wsc_xptr))
 }
