@@ -116,6 +116,11 @@ null_func <- function(...) { }
 #' @param maxMessageSize The maximum size of a message in bytes. If a message
 #'   larger than this is sent, the connection will fail with the \code{message_too_big}
 #'   protocol error.
+#' @param proxyUrl Optional parameter to connect to websocket through proxy,
+#'   will usually begin with \code{http://} or \code{https://}.
+#' @param proxyUsername Optional parameter to specify proxy username
+#' @param proxyPassword Optional parameter to specify proxy password, can not be
+#' \code{NULL} if \code{proxyUsername} is given.
 #'
 #'
 #' @name WebSocket
@@ -151,7 +156,10 @@ WebSocket <- R6Class("WebSocket",
       accessLogChannels = c("none"),
       errorLogChannels = NULL,
       maxMessageSize = 32 * 1024 * 1024,
-      loop = later::current_loop()
+      loop = later::current_loop(),
+      proxyUrl = NULL,
+      proxyUsername = NULL,
+      proxyPassword = NULL
     ) {
       private$callbacks <- new.env(parent = emptyenv())
       private$callbacks$open <- Callbacks$new()
@@ -174,6 +182,15 @@ WebSocket <- R6Class("WebSocket",
         wsAppendHeader(private$wsObj, key, value)
       })
       wsAddProtocols(private$wsObj, protocols)
+
+      if (!is.null(proxyUrl)) {
+        wsAddProxy(private$wsObj, proxyUrl)
+
+        if (!is.null(proxyUsername)) {
+          if (is.null(proxyPassword))
+          wsAddProxyBasicAuth(private$wsObj, proxyUsername, proxyPassword);
+        }
+      }
 
       private$pendingConnect <- TRUE
       if (autoConnect) {

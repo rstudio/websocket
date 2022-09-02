@@ -49,6 +49,8 @@ public:
   virtual void setup_connection(std::string location, ws_websocketpp::lib::error_code &ec) = 0;
   virtual void append_header(std::string key, std::string value) = 0;
   virtual void add_subprotocol(std::string const & request) = 0;
+  virtual void set_proxy(std::string const & proxy_url) = 0;
+  virtual void set_proxy_basic_auth(std::string const & username, std::string const & password) = 0;
   virtual void connect() = 0;
 
   virtual std::string get_subprotocol() const = 0;
@@ -137,6 +139,12 @@ public:
   void add_subprotocol(std::string const & value) {
     con->add_subprotocol(value);
   };
+  void set_proxy(std::string const & proxy_url) {
+    this->con->set_proxy(proxy_url);
+  }
+  void set_proxy_basic_auth(std::string const & username, std::string const & password) {
+    this->con->set_proxy_basic_auth(username, password);
+  }
   void connect() {
     client.connect(this->con);
   };

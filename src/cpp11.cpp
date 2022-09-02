@@ -3,6 +3,7 @@
 
 
 #include "cpp11/declarations.hpp"
+#include <R_ext/Visibility.h>
 
 // websocket.cpp
 SEXP wsCreate(std::string uri, int loop_id, cpp11::environment robjPublic, cpp11::environment robjPrivate, cpp11::strings accessLogChannels, cpp11::strings errorLogChannels, int maxMessageSize);
@@ -24,6 +25,22 @@ void wsAddProtocols(SEXP wsc_xptr, cpp11::strings protocols);
 extern "C" SEXP _websocket_wsAddProtocols(SEXP wsc_xptr, SEXP protocols) {
   BEGIN_CPP11
     wsAddProtocols(cpp11::as_cpp<cpp11::decay_t<SEXP>>(wsc_xptr), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(protocols));
+    return R_NilValue;
+  END_CPP11
+}
+// websocket.cpp
+void wsAddProxy(SEXP wsc_xptr, std::string proxy_url);
+extern "C" SEXP _websocket_wsAddProxy(SEXP wsc_xptr, SEXP proxy_url) {
+  BEGIN_CPP11
+    wsAddProxy(cpp11::as_cpp<cpp11::decay_t<SEXP>>(wsc_xptr), cpp11::as_cpp<cpp11::decay_t<std::string>>(proxy_url));
+    return R_NilValue;
+  END_CPP11
+}
+// websocket.cpp
+void wsAddProxyBasicAuth(SEXP wsc_xptr, std::string username, std::string password);
+extern "C" SEXP _websocket_wsAddProxyBasicAuth(SEXP wsc_xptr, SEXP username, SEXP password) {
+  BEGIN_CPP11
+    wsAddProxyBasicAuth(cpp11::as_cpp<cpp11::decay_t<SEXP>>(wsc_xptr), cpp11::as_cpp<cpp11::decay_t<std::string>>(username), cpp11::as_cpp<cpp11::decay_t<std::string>>(password));
     return R_NilValue;
   END_CPP11
 }
@@ -75,19 +92,10 @@ extern "C" SEXP _websocket_wsUpdateLogChannels(SEXP wsc_xptr, SEXP accessOrError
 }
 
 extern "C" {
-/* .Call calls */
-extern SEXP _websocket_wsAddProtocols(SEXP, SEXP);
-extern SEXP _websocket_wsAppendHeader(SEXP, SEXP, SEXP);
-extern SEXP _websocket_wsClose(SEXP, SEXP, SEXP);
-extern SEXP _websocket_wsConnect(SEXP);
-extern SEXP _websocket_wsCreate(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _websocket_wsProtocol(SEXP);
-extern SEXP _websocket_wsSend(SEXP, SEXP);
-extern SEXP _websocket_wsState(SEXP);
-extern SEXP _websocket_wsUpdateLogChannels(SEXP, SEXP, SEXP, SEXP);
-
 static const R_CallMethodDef CallEntries[] = {
     {"_websocket_wsAddProtocols",      (DL_FUNC) &_websocket_wsAddProtocols,      2},
+    {"_websocket_wsAddProxy",          (DL_FUNC) &_websocket_wsAddProxy,          2},
+    {"_websocket_wsAddProxyBasicAuth", (DL_FUNC) &_websocket_wsAddProxyBasicAuth, 3},
     {"_websocket_wsAppendHeader",      (DL_FUNC) &_websocket_wsAppendHeader,      3},
     {"_websocket_wsClose",             (DL_FUNC) &_websocket_wsClose,             3},
     {"_websocket_wsConnect",           (DL_FUNC) &_websocket_wsConnect,           1},
@@ -100,7 +108,7 @@ static const R_CallMethodDef CallEntries[] = {
 };
 }
 
-extern "C" void R_init_websocket(DllInfo* dll){
+extern "C" attribute_visible void R_init_websocket(DllInfo* dll){
   R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
   R_useDynamicSymbols(dll, FALSE);
   R_forceSymbols(dll, TRUE);

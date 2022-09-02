@@ -1,5 +1,7 @@
 # websocket (development version)
 
+* Add support for connecting to websocket through a proxy
+
 # websocket 1.4.1
 
 * Add UCRT toolchain support (@jeroen, #82)
