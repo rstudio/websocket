@@ -53,6 +53,14 @@ must call `ws$connect()` to establish the WebSocket connection.}
 \item{maxMessageSize}{The maximum size of a message in bytes. If a message
 larger than this is sent, the connection will fail with the \code{message_too_big}
 protocol error.}
+
+\item{proxyUrl}{Optional parameter to connect to websocket through proxy,
+will usually begin with \code{http://} or \code{https://}.}
+
+\item{proxyUsername}{Optional parameter to specify proxy username}
+
+\item{proxyPassword}{Optional parameter to specify proxy password, can not be
+\code{NULL} if \code{proxyUsername} is given.}
 }
 \description{
 \preformatted{
