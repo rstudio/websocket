@@ -28,7 +28,7 @@ The I/O for a WebSocket happens on a separate thread from the main R thread; the
 WebSockets are represented as instances of an [R6](https://github.com/r-lib/R6) object, and are created with `$new()`:
 
 ```{r, eval = FALSE}
-ws <- WebSocket$new("ws://echo.websocket.org/")
+ws <- WebSocket$new("ws://echo.websocket.events/")
 ```
 
 By default, and similarly to how WebSockets in JavaScript work, constructing a WebSocket with `$new()` will automatically initiate the WebSocket connection. In normal usage, such as in a Shiny app or from within a function, this default behavior is ideal. When run interactively from the R console however, the default behavior is problematic. The reason is that the connection will open before the user is given an opportunity to register any event handlers, meaning messages from the server could be dropped.
@@ -36,7 +36,7 @@ By default, and similarly to how WebSockets in JavaScript work, constructing a W
 So, in the console, WebSockets should be created like this:
 
 ```{r, eval = FALSE}
-ws <- WebSocket$new("ws://echo.websocket.org/", autoConnect = FALSE)
+ws <- WebSocket$new("ws://echo.websocket.events/", autoConnect = FALSE)
 # Set up callbacks here...
 ws$connect()
 ```
@@ -51,7 +51,7 @@ When running a block of code like this in a function, or surrounded with `{` and
 
 ```{r, eval = FALSE}
 {
-  ws <- WebSocket$new("ws://echo.websocket.org/")
+  ws <- WebSocket$new("ws://echo.websocket.events/")
   ws$onOpen(function(event) { message("websocket opened") })
 }
 ```
@@ -75,7 +75,7 @@ For example, the following code instantiates a WebSocket, installs an `onOpen` h
 
 ```{r, eval = FALSE}
 {
-  ws <- WebSocket$new("ws://echo.websocket.org/")
+  ws <- WebSocket$new("ws://echo.websocket.events/")
   ws$onOpen(function(event) {
     cat("connected\n")
   })
@@ -108,7 +108,7 @@ The following is an example of an `$onMessage()` handler that immediately remove
 
 ```{r, eval = FALSE}
 {
-  ws <- WebSocket$new("ws://echo.websocket.org/")
+  ws <- WebSocket$new("ws://echo.websocket.events/")
   removeThis <- ws$onMessage(function(event) {
     cat("this is the last time i'll run\n")
     removeThis()
