@@ -1,5 +1,7 @@
 # websocket (development version)
 
+* Update examples from websocket.org to websocket.events. (@jonthegeek, #105)
+
 # websocket 1.4.1
 
 * Add UCRT toolchain support (@jeroen, #82)

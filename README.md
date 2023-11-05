@@ -12,7 +12,7 @@ This is an R WebSocket client library backed by the [websocketpp](https://github
 ```R
 library(websocket)
 
-ws <- WebSocket$new("ws://echo.websocket.org/", autoConnect = FALSE)
+ws <- WebSocket$new("ws://echo.websocket.events/", autoConnect = FALSE)
 ws$onOpen(function(event) {
   cat("Connection opened\n")
 })
@@ -47,7 +47,7 @@ ws$close()
 Note that if you want to `send()` a message as soon as it connects, without having to wait at the console, you can put the `ws$send()` inside of the `ws$onOpen` callback, as in:
 
 ```R
-ws <- WebSocket$new("wss://echo.websocket.org/")
+ws <- WebSocket$new("wss://echo.websocket.events/")
 ws$onMessage(function(event) {
   cat("Client got msg: ", event$data, "\n")
 })
@@ -64,7 +64,7 @@ ws$onOpen(function(event) {
 The websocket (client) package can be used with a WebSocket server, implemented as a httpuv web application, to act as a WebSocket proxy. This proxy can be modified do things like log the traffic in each direction, or
 modify messages sent in either direction.
 
-The proxy will listen to port 5002 on the local machine, and connect to the remote machine at wss://echo.websocket.org:80. In this example, after starting the proxy, we'll connect to it with a WebSocket client in a separate R process, then send a message from that process. Here's what will happen in the proxy:
+The proxy will listen to port 5002 on the local machine, and connect to the remote machine at wss://echo.websocket.events:80. In this example, after starting the proxy, we'll connect to it with a WebSocket client in a separate R process, then send a message from that process. Here's what will happen in the proxy:
 
 * The client will send the message `"hello"`.
 * The proxy will receive `"hello"` from the client, convert it to `"HELLO"`, then send it to the remote echo server.
@@ -80,7 +80,7 @@ library(httpuv)
 library(websocket)
 
 # URL of the remote websocket server
-target_host <- "echo.websocket.org:80"
+target_host <- "echo.websocket.events:80"
 # Should be "ws" or "wss"
 target_protocol <- "ws"
 

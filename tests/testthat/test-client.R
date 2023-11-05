@@ -443,12 +443,9 @@ test_that("WebSocket persists after reference is gone, and can be GC'd after con
   expect_true(finalized)
 })
 
-
-
-# # Test is failing now that websocket.org is dead
-# test_that("Basic ssl websocket communication", {
-#   # Don't want network connectivity issues on CRAN to cause package to be
-#   # rejected.
-#   skip_on_cran()
-#   check_ws("wss://echo.websocket.org/")
-# })
+test_that("Basic ssl websocket communication", {
+  # Don't want network connectivity issues on CRAN to cause package to be
+  # rejected.
+  skip_on_cran()
+  check_ws("wss://echo.websocket.events/")
+})

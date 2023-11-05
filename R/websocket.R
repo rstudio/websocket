@@ -124,8 +124,8 @@ null_func <- function(...) { }
 #' ## Only run this example in interactive R sessions
 #' if (interactive()) {
 #'
-#' # Create a websocket using the websocket.org test server
-#' ws <- WebSocket$new("ws://echo.websocket.org/")
+#' # Create a websocket using the websocket.events test server
+#' ws <- WebSocket$new("ws://echo.websocket.events/")
 #' ws$onMessage(function(event) {
 #'   cat("Client got msg:", event$data, "\n")
 #' })
