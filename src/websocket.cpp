@@ -108,7 +108,7 @@ void wsSend(SEXP wsc_xptr, SEXP msg) {
   {
     // TODO: Make sure that message lifetime is long enough
     const char* msg_ptr = CHAR(STRING_ELT(msg, 0));
-    int len = R_nchar(STRING_ELT(msg, 0), Bytes, FALSE, FALSE, "wsSend");
+    int len = Rf_xlength(STRING_ELT(msg, 0));
     // When send() is called, I believe that the message is immediately
     // appended to the message buffer, and then the actual sending of the
     // message is queued. Since a copy of the message is made, it should be

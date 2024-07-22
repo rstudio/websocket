@@ -1,5 +1,9 @@
 # websocket (development version)
 
+# websocket 1.4.2
+
+* Fixes for C++20, and removed use of non-API function `R_nchar`. (#109)
+
 # websocket 1.4.1
 
 * Add UCRT toolchain support (@jeroen, #82)
