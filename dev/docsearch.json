@@ -2,21 +2,21 @@
   "index_name": "websocket",
   "start_urls": [
     {
-      "url": "https://rstudio.github.io/websocket//index.html",
+      "url": "https://rstudio.github.io/websocket/index.html",
       "selectors_key": "homepage",
       "tags": [
         "homepage"
       ]
     },
     {
-      "url": "https://rstudio.github.io/websocket//reference",
+      "url": "https://rstudio.github.io/websocket/reference",
       "selectors_key": "reference",
       "tags": [
         "reference"
       ]
     },
     {
-      "url": "https://rstudio.github.io/websocket//articles",
+      "url": "https://rstudio.github.io/websocket/articles",
       "selectors_key": "articles",
       "tags": [
         "articles"
@@ -30,7 +30,7 @@
     "/articles/index.html"
   ],
   "sitemap_urls": [
-    "https://rstudio.github.io/websocket//sitemap.xml"
+    "https://rstudio.github.io/websocket/sitemap.xml"
   ],
   "selectors": {
     "homepage": {
