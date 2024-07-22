@@ -5,11 +5,11 @@ Description: Provides a 'WebSocket' client interface for R.
     'WebSocket' is a protocol for low-overhead real-time communication:
     <https://en.wikipedia.org/wiki/WebSocket>.
 Authors@R: c(
-    person("Winston", "Chang", role = c("aut", "cre"), email = "winston@rstudio.com"),
-    person("Joe", "Cheng", role = "aut", email = "joe@rstudio.com"),
+    person("Winston", "Chang", role = c("aut", "cre"), email = "winston@posit.co"),
+    person("Joe", "Cheng", role = "aut", email = "joe@posit.co"),
     person("Alan", "Dipert", role = "aut"),
     person("Barbara", "Borges", role = "aut"),
-    person(family = "RStudio", role = "cph"),
+    person(family = "Posit, PBC", role = "cph"),
     person("Peter", "Thorson", role = c("ctb", "cph"), comment = "WebSocket++ library"),
     person("René", "Nyffenegger", role = c("ctb", "cph"), comment = "Base 64 library"),
     person("Micael", "Hildenborg", role = c("ctb", "cph"), comment = "SHA1 library"),
