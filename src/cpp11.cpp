@@ -3,6 +3,7 @@
 
 
 #include "cpp11/declarations.hpp"
+#include <R_ext/Visibility.h>
 
 // websocket.cpp
 SEXP wsCreate(std::string uri, int loop_id, cpp11::environment robjPublic, cpp11::environment robjPrivate, cpp11::strings accessLogChannels, cpp11::strings errorLogChannels, int maxMessageSize);
@@ -75,17 +76,6 @@ extern "C" SEXP _websocket_wsUpdateLogChannels(SEXP wsc_xptr, SEXP accessOrError
 }
 
 extern "C" {
-/* .Call calls */
-extern SEXP _websocket_wsAddProtocols(SEXP, SEXP);
-extern SEXP _websocket_wsAppendHeader(SEXP, SEXP, SEXP);
-extern SEXP _websocket_wsClose(SEXP, SEXP, SEXP);
-extern SEXP _websocket_wsConnect(SEXP);
-extern SEXP _websocket_wsCreate(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _websocket_wsProtocol(SEXP);
-extern SEXP _websocket_wsSend(SEXP, SEXP);
-extern SEXP _websocket_wsState(SEXP);
-extern SEXP _websocket_wsUpdateLogChannels(SEXP, SEXP, SEXP, SEXP);
-
 static const R_CallMethodDef CallEntries[] = {
     {"_websocket_wsAddProtocols",      (DL_FUNC) &_websocket_wsAddProtocols,      2},
     {"_websocket_wsAppendHeader",      (DL_FUNC) &_websocket_wsAppendHeader,      3},
@@ -100,7 +90,7 @@ static const R_CallMethodDef CallEntries[] = {
 };
 }
 
-extern "C" void R_init_websocket(DllInfo* dll){
+extern "C" attribute_visible void R_init_websocket(DllInfo* dll){
   R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
   R_useDynamicSymbols(dll, FALSE);
   R_forceSymbols(dll, TRUE);

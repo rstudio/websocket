@@ -24,7 +24,7 @@ Imports:
 LinkingTo: cpp11, AsioHeaders, later
 BugReports: https://github.com/rstudio/websocket/issues
 SystemRequirements: GNU make, OpenSSL >= 1.0.2
-RoxygenNote: 7.1.2
+RoxygenNote: 7.3.2
 Suggests:
     httpuv,
     testthat,
