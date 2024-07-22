@@ -4,8 +4,6 @@ OPENSSL_VERSION=1.1.1g
 PKG_CPPFLAGS=-I./lib -I../windows/openssl-$(OPENSSL_VERSION)/include -D_WEBSOCKETPP_CPP11_THREAD_
 PKG_LIBS= -L../windows/openssl-$(OPENSSL_VERSION)/lib${R_ARCH}${CRT} -lssl -lcrypto -lz -lws2_32 -lgdi32 -lcrypt32
 
-CXX_STD=CXX11
-
 #### Debugging flags ####
 # Uncomment to enable thread assertions
 # PKG_CPPFLAGS += -DDEBUG_THREAD -UNDEBUG
