@@ -1,2 +1,9 @@
-CRT=-ucrt
-include Makevars.win
+PKG_CPPFLAGS = -I./lib -D_WEBSOCKETPP_CPP11_THREAD_
+
+ifeq (,$(shell pkg-config --version 2>/dev/null))
+  PKG_LIBS = -lssl -lcrypto -lz -lws2_32 -lgdi32 -lcrypt32
+else
+  PKG_CPPFLAGS += $(shell pkg-config --cflags openssl)
+  PKG_LIBS = $(shell pkg-config --libs openssl)
+endif
+
