@@ -43,7 +43,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">websocket</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.4.1.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.4.2.9000</span>
       </span>
     </div>
 
@@ -98,7 +98,7 @@
       </header><div class="row">
   <div class="contents col-md-9">
 <div class="section level1">
-<div class="page-header"><h1 id="websocket-">websocket <a href="https://rstudio.github.io/websocket"><img src="reference/figures/logo.svg" align="right" height="139"></a>
+<div class="page-header"><h1 id="websocket-">websocket <a href="https://rstudio.github.io/websocket/"><img src="reference/figures/logo.svg" align="right" height="139"></a>
 <a class="anchor" aria-label="anchor" href="#websocket-"></a>
 </h1></div>
 <!-- badges: start -->
@@ -203,10 +203,10 @@
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="va">resp_httr_to_rook</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">resp</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">status</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"^HTTP\\S+ (\\d+).*"</span>, <span class="st">"\\1"</span>, <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/curl/man/parse_headers.html" class="external-link">parse_headers</a></span><span class="op">(</span><span class="va">resp</span><span class="op">$</span><span class="va">headers</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">status</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"^HTTP\\S+ (\\d+).*"</span>, <span class="st">"\\1"</span>, <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/curl/reference/parse_headers.html" class="external-link">parse_headers</a></span><span class="op">(</span><span class="va">resp</span><span class="op">$</span><span class="va">headers</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    status <span class="op">=</span> <span class="va">status</span>,</span>
-<span>    headers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/curl/man/parse_headers.html" class="external-link">parse_headers_list</a></span><span class="op">(</span><span class="va">resp</span><span class="op">$</span><span class="va">headers</span><span class="op">)</span>,</span>
+<span>    headers <span class="op">=</span> <span class="fu"><a href="https://jeroen.r-universe.dev/curl/reference/parse_headers.html" class="external-link">parse_headers_list</a></span><span class="op">(</span><span class="va">resp</span><span class="op">$</span><span class="va">headers</span><span class="op">)</span>,</span>
 <span>    body <span class="op">=</span> <span class="va">resp</span><span class="op">$</span><span class="va">content</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">}</span></span>
@@ -226,9 +226,9 @@
 <span></span>
 <span><span class="va">call</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">req</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">req_curl</span> <span class="op">&lt;-</span> <span class="fu">req_rook_to_curl</span><span class="op">(</span><span class="va">req</span>, <span class="va">target_host</span><span class="op">)</span></span>
-<span>  <span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/curl/man/handle.html" class="external-link">new_handle</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://jeroen.r-universe.dev/curl/reference/handle.html" class="external-link">new_handle</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">handle_setheaders</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">h</span>, <span class="va">req_curl</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">resp_curl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/curl/man/curl_fetch.html" class="external-link">curl_fetch_memory</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"http://"</span>, <span class="va">target_host</span>, <span class="va">req</span><span class="op">$</span><span class="va">PATH_INFO</span><span class="op">)</span>, handle <span class="op">=</span> <span class="va">h</span><span class="op">)</span></span>
+<span>  <span class="va">resp_curl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://jeroen.r-universe.dev/curl/reference/curl_fetch.html" class="external-link">curl_fetch_memory</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"http://"</span>, <span class="va">target_host</span>, <span class="va">req</span><span class="op">$</span><span class="va">PATH_INFO</span><span class="op">)</span>, handle <span class="op">=</span> <span class="va">h</span><span class="op">)</span></span>
 <span>  <span class="fu">resp_httr_to_rook</span><span class="op">(</span><span class="va">resp_curl</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
@@ -440,7 +440,7 @@ Appending ", world" and then sending to client:  HELLO, world</code></pre>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer>
