@@ -1,5 +1,7 @@
 # websocket (development version)
 
+* When compiled with Rtools42 to 45, it now uses the copy of openssl that comes with Rtools. (@kalibera, #113)
+
 # websocket 1.4.2
 
 * Fixes for C++20, and removed use of non-API function `R_nchar`. (#109)
