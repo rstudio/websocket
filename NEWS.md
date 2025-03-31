@@ -1,4 +1,4 @@
-# websocket (development version)
+# websocket (1.4.3)
 
 * When compiled with Rtools42 to 45, it now uses the copy of openssl that comes with Rtools. (@kalibera, #113)
 
