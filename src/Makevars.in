@@ -1,4 +1,5 @@
 PKG_CPPFLAGS = -I./lib @cflags@
+PKG_CXXFLAGS = -D_LIBCPP_DISABLE_DEPRECATION_WARNINGS
 PKG_LIBS += @libs@
 
 #### Debugging flags ####
