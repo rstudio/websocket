@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   overview: overview.html
-last_built: 2025-04-07T20:31Z
+last_built: 2025-04-07T20:44Z
 urls:
   reference: https://rstudio.github.io/websocket/reference
   article: https://rstudio.github.io/websocket/articles
