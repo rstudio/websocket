@@ -1,6 +1,10 @@
-# websocket (development version)
+# websocket 1.4.4
 
-# websocket (1.4.3)
+* Silences inaccurate deprecation warnings from certain C++ compilers. (#116)
+
+* Fixes builds for Windows systems without openssl.pc. (@jeroen, #117)
+
+# websocket 1.4.3
 
 * When compiled with Rtools42 to 45, it now uses the copy of openssl that comes with Rtools. (@kalibera, #113)
 
