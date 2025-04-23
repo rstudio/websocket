@@ -1,5 +1,7 @@
 # websocket (development version)
 
+* Migrate license from GPL-2 to MIT. (#122)
+
 # websocket 1.4.4
 
 * Silences inaccurate deprecation warnings from certain C++ compilers. (#116)
